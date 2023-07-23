@@ -1,0 +1,7 @@
+@import "./mixins/font-face";
+
+@include font-face('SFUI', '../assets/fonts/sfuidisplay-thin', 150, normal);
+@include font-face('SFUI', '../assets/fonts/sfuidisplay-light', 300, normal);
+@include font-face('SFUI', '../assets/fonts/sfuidisplay-regular', 400, normal);
+@include font-face('SFUI', '../assets/fonts/sfuidisplay-medium', 500, normal);
+@include font-face('SFUI', '../assets/fonts/sfuidisplay-bold', 700, normal);
