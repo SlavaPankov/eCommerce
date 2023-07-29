@@ -1,10 +1,10 @@
 import React from 'react';
-import { TestComponent } from './TestComponent';
+import { BaseButton } from './BaseButton';
 
 export function App() {
   return (
     <>
-      <TestComponent />
+      <BaseButton textContent="Получить" />
     </>
   );
 }
