@@ -1,7 +1,6 @@
 @import "./mixins/font-face";
 
-@include font-face('SFUI', '../assets/fonts/sfuidisplay-thin', 150, normal);
-@include font-face('SFUI', '../assets/fonts/sfuidisplay-light', 300, normal);
-@include font-face('SFUI', '../assets/fonts/sfuidisplay-regular', 400, normal);
-@include font-face('SFUI', '../assets/fonts/sfuidisplay-medium', 500, normal);
-@include font-face('SFUI', '../assets/fonts/sfuidisplay-bold', 700, normal);
+@include font-face('OpenSans', '../assets/fonts/OpenSans-Regular', 400, normal);
+@include font-face('OpenSans', '../assets/fonts/OpenSans-SemiBold', 600, normal);
+@include font-face('OpenSans', '../assets/fonts/OpenSans-Bold', 700, normal);
+@include font-face('PlayFair', '../assets/fonts/PlayfairDisplay-Black', 900, normal);
