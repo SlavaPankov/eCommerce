@@ -9,7 +9,7 @@
     "start": "cross-env NODE_ENV=development webpack serve --mode development",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
-    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
+    "format": "prettier --write ./src --config ./.prettierrc",
     "prepare": "husky install",
     "test": "jest"
   },

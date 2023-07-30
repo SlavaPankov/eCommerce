@@ -8,7 +8,10 @@
   border: 2px solid $primary;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color .3s ease-in-out, color .3s ease-in-out, border-color .3s ease-in-out;
+  transition:
+    background-color 0.3s ease-in-out,
+    color 0.3s ease-in-out,
+    border-color 0.3s ease-in-out;
 
   &:hover {
     background-color: $primary-light;
@@ -43,7 +46,10 @@
   color: $primary;
   background-color: transparent;
   border: 2px solid $primary;
-  transition: background-color .3s ease-in-out, color .3s ease-in-out, border-color .3s ease-in-out;
+  transition:
+    background-color 0.3s ease-in-out,
+    color 0.3s ease-in-out,
+    border-color 0.3s ease-in-out;
   cursor: pointer;
 
   &:hover {
