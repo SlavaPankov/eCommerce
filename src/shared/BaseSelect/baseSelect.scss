@@ -1,0 +1,35 @@
+.select {
+  width: 100%;
+}
+
+.listContainer {
+  position: relative;
+}
+
+.list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 3;
+}
+
+.selected {
+  position: relative;
+
+  & li {
+    list-style: none;
+  }
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  right: 17px;
+  transform: translateY(-50%);
+  transition: transform .3s ease-in-out;
+}
+
+.arrowRotate {
+  transform: rotate(-180deg) translateY(50%);
+}
