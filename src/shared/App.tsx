@@ -16,6 +16,7 @@ export function App() {
   });
 
   function handleOnChange(event: ChangeEvent<HTMLInputElement>) {
+    event.target.classList.add('input-write');
     setNameInput({
       ...nameInput,
       value: event.target.value,
@@ -34,7 +35,6 @@ export function App() {
   return (
     <>
       <BaseInputField
-        type="password"
         name="name"
         value={nameInput.value}
         placeholder="Как вас зовут?"

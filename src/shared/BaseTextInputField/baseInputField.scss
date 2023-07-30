@@ -35,8 +35,19 @@
   }
 }
 
+.input_valid {
+  &:focus {
+    outline: none;
+    background-color: $grey_light;
+    border-color: $green_input;
+  }
+}
+
 .input_error {
-  border-color: $red_input;
+  &:focus {
+    background-color: $grey_light;
+    border-color: $red_input;
+  }
 }
 
 .error {

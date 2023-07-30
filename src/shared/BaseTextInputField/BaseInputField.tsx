@@ -21,7 +21,8 @@ export function BaseInputField({
 }: IBaseTextInputFieldProps) {
   const inputClassName = classNames({
     [`${styles.input}`]: true,
-    [`${styles.input_error}`]: error
+    [`${styles.input_error}`]: error,
+    [`${styles.input_valid}`]: !error && value
   });
 
   return (
