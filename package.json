@@ -4,8 +4,8 @@
   "description": "final task RSSchool",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack --mode development",
-    "prod": "cross-env NODE_ENV=production webpack --mode production",
+    "build:dev": "cross-env NODE_ENV=development webpack --mode development",
+    "build:prod": "cross-env NODE_ENV=production webpack --mode production",
     "start": "cross-env NODE_ENV=development webpack serve --mode development",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
