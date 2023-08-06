@@ -4,9 +4,9 @@
   "description": "final task RSSchool",
   "main": "index.js",
   "scripts": {
-    "build:dev": "cross-env NODE_ENV=development webpack --mode development",
-    "build:prod": "cross-env NODE_ENV=production webpack --mode production",
-    "start": "cross-env NODE_ENV=development webpack serve --mode development",
+    "build:dev": "cross-env CLIENT_ID=4bSNZh_zfv1XQrD4AaF13Y6K SECRET=9wgV3ezgbnVCpR7EskHayQcUjDnT29xM NODE_ENV=development webpack --mode development",
+    "build:prod": "cross-env CLIENT_ID=4bSNZh_zfv1XQrD4AaF13Y6K SECRET=9wgV3ezgbnVCpR7EskHayQcUjDnT29xM NODE_ENV=production webpack --mode production",
+    "start": "cross-env CLIENT_ID=4bSNZh_zfv1XQrD4AaF13Y6K SECRET=9wgV3ezgbnVCpR7EskHayQcUjDnT29xM NODE_ENV=development webpack serve --mode development",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "format": "prettier --write ./src --config ./.prettierrc",
@@ -31,6 +31,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
+    "@types/node-fetch": "^2.6.4",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/react-redux": "^7.1.25",
@@ -55,6 +56,7 @@
     "jest": "^29.6.2",
     "jest-environment-jsdom": "^29.6.2",
     "lint-staged": "^13.2.3",
+    "node-fetch": "2.6.7",
     "prettier": "^3.0.0",
     "react-test-renderer": "^18.2.0",
     "sass": "^1.64.1",
@@ -69,6 +71,9 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "@commercetools/platform-sdk": "^4.11.0",
+    "@commercetools/sdk-auth": "^4.0.1",
+    "@commercetools/sdk-client-v2": "^2.2.0",
     "axios": "^1.4.0",
     "classnames": "^2.3.2",
     "react": "^18.2.0",
@@ -77,6 +82,7 @@
     "react-router-dom": "^6.14.2",
     "redux": "^4.2.1",
     "redux-devtools-extension": "^2.13.9",
+    "redux-thunk": "^2.4.2",
     "swiper": "^9.4.1"
   }
 }

@@ -1,5 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useProductsData } from '../hooks/useProductsData';
 
 export function App() {
-  return <h1>eCommerce App</h1>;
+  const { products } = useProductsData();
+
+  useEffect(() => {
+    if (products.length) {
+      console.log(products);
+    }
+  }, [products]);
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<h1>eCommerce App with Router & Store</h1>} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
