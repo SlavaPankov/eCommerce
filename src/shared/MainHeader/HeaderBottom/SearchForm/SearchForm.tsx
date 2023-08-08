@@ -18,7 +18,7 @@ export function SearchForm() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
-    console.log(`Ищем ${[...formData][0][1]} в категории Все`);
+    console.log(`Ищем ${[...formData][0][1]} в категории ${category}`);
   };
 
   const handleClick = (event?: MouseEvent<HTMLLIElement>) => {
