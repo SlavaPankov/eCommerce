@@ -1,0 +1,9 @@
+.top {
+  display: flex;
+  background-color: $grey_light;
+
+  &_container {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+}
