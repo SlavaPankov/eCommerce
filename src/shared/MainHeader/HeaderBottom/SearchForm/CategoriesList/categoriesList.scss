@@ -1,0 +1,10 @@
+.list {
+  width: 100%;
+  max-width: 100%;
+  padding: 40px 30px 22px !important;
+  border: 2px solid $grey_light;
+  border-top: none;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  column-count: 2;
+}
