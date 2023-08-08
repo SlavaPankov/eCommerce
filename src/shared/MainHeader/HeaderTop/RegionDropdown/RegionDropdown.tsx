@@ -2,9 +2,9 @@
 import React, { useEffect, useState, FocusEvent } from 'react';
 import classNames from 'classnames';
 import { BaseDropdown } from '../../../BaseDropdown';
+import { RegionDropdownItem } from './RegionDropdownItem';
 import styles from './regionDropdown.scss';
 import { IRegion } from '../../../../types/interfaces/IRegion';
-import { RegionDropdownItem } from './RegionDropdownItem';
 
 const initialRegions: Array<IRegion> = [
   {
