@@ -55,7 +55,7 @@
     "husky": "^8.0.3",
     "jest": "^29.6.2",
     "jest-environment-jsdom": "^29.6.2",
-    "lint-staged": "^13.2.3",
+    "lint-staged": "^13.0.3",
     "node-fetch": "2.6.7",
     "prettier": "^3.0.0",
     "react-test-renderer": "^18.2.0",
@@ -84,5 +84,9 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-thunk": "^2.4.2",
     "swiper": "^9.4.1"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx,js,jsx}": ["prettier --write ./src --config ./.prettierrc","eslint"],
+    "src/**/*.{html,scss,css}": ["prettier --write ./src --config ./.prettierrc"]
   }
 }
