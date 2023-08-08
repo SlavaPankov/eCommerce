@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useProductsData } from '../hooks/useProductsData';
+import { MainHeader } from './MainHeader/MainHeader';
 
 export function App() {
   const { products } = useProductsData();
@@ -13,6 +14,9 @@ export function App() {
 
   return (
     <BrowserRouter>
+      <Routes>
+        <Route path="*" element={<MainHeader />} />
+      </Routes>
       <Routes>
         <Route path="/" element={<h1>eCommerce App with Router & Store</h1>} />
       </Routes>

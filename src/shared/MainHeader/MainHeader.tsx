@@ -1,5 +1,10 @@
 import React from 'react';
+import { HeaderTop } from './HeaderTop';
 
 export function MainHeader() {
-  return <header>Header</header>;
+  return (
+    <header>
+      <HeaderTop />
+    </header>
+  );
 }
