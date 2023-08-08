@@ -1,0 +1,41 @@
+.selected {
+  position: relative;
+  max-width: 300px;
+  width: 100%;
+  padding: 17px 32px;
+  border: 2px solid $grey_light;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: $primary;
+  cursor: pointer;
+  transition:
+    border-color 0.3s ease-in-out,
+    background-color 0.3s ease-in-out;
+  z-index: 2;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    width: 8px;
+    height: 8px;
+    transform: translateY(-50%) rotate(45deg);
+    border-bottom: 1px solid $primary;
+    border-right: 1px solid $primary;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  &:hover {
+    border-color: $primary;
+  }
+
+  &:focus {
+    outline: none;
+    background-color: $pink_light;
+    border-color: $primary;
+  }
+}

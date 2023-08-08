@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useState, KeyboardEvent } from 'react';
+import classNames from 'classnames';
 import styles from './baseDropdown.scss';
 
 interface IBaseDropdownProps {
@@ -7,6 +8,7 @@ interface IBaseDropdownProps {
   isOpen?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
+  className?: string;
 }
 
 const NOOP = () => {};
@@ -16,7 +18,8 @@ export function BaseDropdown({
   button,
   isOpen = false,
   onOpen = NOOP,
-  onClose = NOOP
+  onClose = NOOP,
+  className = ''
 }: IBaseDropdownProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(isOpen);
 
@@ -41,6 +44,11 @@ export function BaseDropdown({
     }
   }, [isDropdownOpen]);
 
+  const listClassName = classNames({
+    [`${styles.list}`]: true,
+    [`${className}`]: className !== ''
+  });
+
   return (
     <div className={styles.container}>
       <div onKeyDown={handleKeyDown} onClick={handleOpen}>
@@ -49,7 +57,7 @@ export function BaseDropdown({
       {isDropdownOpen && (
         <div className={styles.listContainer}>
           <div
-            className={styles.list}
+            className={listClassName}
             onClick={() => setIsDropdownOpen(false)}
             onKeyDown={handleKeyDown}>
             {children}
