@@ -1,4 +1,5 @@
 @import 'normalize';
+@import './mixins/breakpoints';
 
 html {
   box-sizing: border-box;
@@ -79,6 +80,21 @@ a {
   width: $container-width;
   padding: 0 $container-offset;
   margin: 0 auto;
+
+  @include big-desktop {
+    width: $container-width-1024;
+    padding: 0 $container-offset-1024;
+  }
+
+  @include small-tablet {
+    width: $container-width-768;
+    padding: 0 $container-offset-768;
+  }
+
+  @include mobile {
+    width: $container-width-320;
+    padding: 0 $container-offset-320;
+  }
 }
 
 .visually-hidden {

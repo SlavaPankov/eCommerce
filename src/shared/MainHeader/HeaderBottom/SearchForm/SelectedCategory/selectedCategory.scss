@@ -1,3 +1,5 @@
+@import '../../../../../styles/mixins/breakpoints';
+
 .selected {
   position: relative;
   max-width: 300px;
@@ -15,6 +17,16 @@
     border-color 0.3s ease-in-out,
     background-color 0.3s ease-in-out;
   z-index: 2;
+
+  @include small-tablet {
+    max-width: 189px;
+  }
+
+  @include mobile {
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+    max-width: 100%;
+  }
 
   &::after {
     content: '';
