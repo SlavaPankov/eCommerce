@@ -1,0 +1,25 @@
+.top {
+  background-color: $md_grey;
+}
+
+.container {
+  padding-top: 24px !important;
+  padding-bottom: 24px !important;
+  display: flex;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 31px;
+  margin-right: 32px;
+}
+
+.right {
+  max-width: 841px;
+  margin-left: auto;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}

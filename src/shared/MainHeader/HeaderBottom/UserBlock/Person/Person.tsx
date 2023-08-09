@@ -6,9 +6,9 @@ import styles from './person.scss';
 export function Person() {
   return (
     <Link className={styles.link} to="/login">
-      <span>
+      <div>
         <PersonIcon />
-      </span>
+      </div>
     </Link>
   );
 }
