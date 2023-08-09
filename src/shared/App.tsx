@@ -4,10 +4,11 @@ import { useProductsData } from '../hooks/useProductsData';
 import { MainHeader } from './MainHeader/MainHeader';
 import { BaseSpinner } from './BaseSpinner';
 import { LoginPage } from '../pages/LoginPage/LoginPage';
+import { NotFound } from '../pages/NotFound';
 
 export function App() {
   useProductsData();
-
+  
   return (
     <BrowserRouter>
       <Routes>
@@ -16,6 +17,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<BaseSpinner />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
