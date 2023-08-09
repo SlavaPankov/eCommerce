@@ -1,11 +1,33 @@
+@import '../../../../styles/mixins/breakpoints';
+
 .nav {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+
+  @include big-desktop {
+    margin-left: 0;
+    max-width: 710px;
+    width: 100%;
+  }
+
+  @include small-tablet {
+    max-width: 100%;
+    margin-right: 0;
+  }
 }
 
 .list {
   display: flex;
   align-items: center;
   gap: 64px;
+
+  @include big-desktop {
+    width: 100%;
+    max-width: 100%;
+    justify-content: space-between;
+    gap: 0;
+  }
 }
 
 .link {

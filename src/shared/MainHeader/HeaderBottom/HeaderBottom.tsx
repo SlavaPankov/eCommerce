@@ -12,7 +12,9 @@ export function HeaderBottom() {
   return (
     <div className={containerClassName}>
       <SearchForm />
-      <UserBlock />
+      <div className={styles.user_wrapper}>
+        <UserBlock />
+      </div>
     </div>
   );
 }
