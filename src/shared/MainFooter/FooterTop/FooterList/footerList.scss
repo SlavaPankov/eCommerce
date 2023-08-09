@@ -1,3 +1,5 @@
+@import '../../../../styles/mixins/breakpoints';
+
 .heading {
   margin: 0 0 10px;
   padding: 0;
@@ -15,6 +17,9 @@
 .list_container {
   display: flex;
   flex-direction: column;
+  @include mobile {
+    flex-basis: 50%;
+  }
 }
 
 .item:not(:last-child) {

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { HeaderLogo } from '../../Icons';
 import { MiddleNavigation } from './MiddleNavigation';
 import styles from './headerMiddle.scss';
+import { Burger } from '../../Burger';
+import { UserBlock } from '../HeaderBottom/UserBlock';
+import { Logo } from '../../Logo';
 
 export function HeaderMiddle() {
   const containerClassName = classNames('container', {
@@ -12,10 +13,18 @@ export function HeaderMiddle() {
 
   return (
     <div className={containerClassName}>
-      <Link to="/">
-        <HeaderLogo />
-      </Link>
-      <MiddleNavigation />
+      <Burger>
+        <MiddleNavigation />
+      </Burger>
+      <div className={styles.logo_wrapper}>
+        <Logo />
+      </div>
+      <div className={styles.user_wrapper}>
+        <UserBlock />
+      </div>
+      <div className={styles.wrapper_smtablet}>
+        <MiddleNavigation />
+      </div>
     </div>
   );
 }

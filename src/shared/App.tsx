@@ -4,6 +4,7 @@ import { useProductsData } from '../hooks/useProductsData';
 import { MainHeader } from './MainHeader';
 import { BaseSpinner } from './BaseSpinner';
 import { MainFooter } from './MainFooter';
+import { NotFound } from '../pages/NotFound';
 
 export function App() {
   useProductsData();
@@ -15,6 +16,7 @@ export function App() {
       </Routes>
       <Routes>
         <Route path="/" element={<BaseSpinner />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Routes>
         <Route path="*" element={<MainFooter />} />
