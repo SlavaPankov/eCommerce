@@ -1,0 +1,42 @@
+.form {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1rem;
+
+  & label {
+    width: 69%;
+  }
+
+  &__header_login {
+    color: var(--black, #333);
+    font-family: Open Sans;
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+    padding: 0rem;
+  }
+
+  &__header_register {
+    color: var(--black, #333);
+    font-family: Open Sans;
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 2.2rem;
+    padding: 0rem;
+  }
+
+  &__header_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+  }
+
+  &__register_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+  }
+}
