@@ -10,6 +10,6 @@ export interface IProduct {
   };
   categories: Array<CategoryReference>;
   attributes: Array<Attribute>;
-  price: number;
-  discountedPrice: number;
+  price: string;
+  discountedPrice: string;
 }
