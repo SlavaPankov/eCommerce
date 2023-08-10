@@ -12,7 +12,15 @@ interface ISpecialsListProps {
 
 export function SpecialsList({ list }: ISpecialsListProps) {
   return (
-    <Swiper modules={[Navigation]} slidesPerGroup={3} slidesPerView={3} spaceBetween={32}>
+    <Swiper
+      modules={[Navigation]}
+      slidesPerGroup={3}
+      slidesPerView={3}
+      spaceBetween={32}
+      navigation={{
+        prevEl: '#special-prev',
+        nextEl: '#special-next'
+      }}>
       {list.map((item) => (
         <SwiperSlide key={item.id}>
           <SpecialCard

@@ -26,10 +26,16 @@ export function SpecialCard({
     <div className={styles.card}>
       <span className={styles.discount}>- {discount}</span>
       <img className={styles.image} src={imageSrc} alt={title} />
-      <h2 className={styles.title}>{title}</h2>
+      <h2 className={styles.title}>
+        {title
+          .split(' ')
+          .slice(0, title.split(' ').length - 1)
+          .join(' ')}{' '}
+        <br /> {title.split(' ').slice(-1).join(' ')}
+      </h2>
       <div className={styles.priceBlock}>
-        <span className={styles.price}>{price.toLocaleString()} руб</span>
-        <span className={styles.discountedPrice}>{discountedPrice.toLocaleString()} руб</span>
+        <span className={styles.price}>{discountedPrice.toLocaleString()} руб</span>
+        <span className={styles.discountedPrice}>{price.toLocaleString()} руб</span>
       </div>
       <a href="#" data-key={productKey}>
         <BaseButton textContent="Купить" mode={EBaseButtonMode.secondary} />

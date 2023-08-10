@@ -1,4 +1,5 @@
 .card {
+  box-sizing: border-box;
   position: relative;
   padding: 30px;
   background-color: $grey_light;
@@ -47,7 +48,7 @@
 }
 
 .priceBlock {
-  max-width: 100%;
+  max-width: 204px;
   width: 100%;
   display: flex;
   align-items: center;
