@@ -4,3 +4,6 @@ export * from './HeaderLogo/HeaderLogo';
 export * from './SearchIcon/SearchIcon';
 export * from './PersonIcon/PersonIcon';
 export * from './CartIcon/CartIcon';
+export * from './FacebookIcon/FacebookIcon';
+export * from './InstagramIcon/InstagramIcon';
+export * from './VkIcon/VkIcon';

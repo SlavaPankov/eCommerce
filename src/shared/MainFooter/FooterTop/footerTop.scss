@@ -1,0 +1,48 @@
+@import '../../../styles/mixins/breakpoints';
+
+.top {
+  background-color: $md_grey;
+}
+
+.container {
+  padding-top: 24px !important;
+  padding-bottom: 24px !important;
+  display: flex;
+
+  @include small-tablet {
+    flex-direction: column;
+    gap: 24px;
+  }
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 31px;
+  margin-right: 32px;
+
+  @include small-tablet {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-right: 0;
+  }
+}
+
+.right {
+  max-width: 841px;
+  margin-left: auto;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  @include small-tablet {
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  @include mobile {
+    flex-wrap: wrap;
+    row-gap: 24px;
+  }
+}
