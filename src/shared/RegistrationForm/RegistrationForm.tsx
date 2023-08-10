@@ -1,35 +1,35 @@
-// import { Link } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import styles from './registrationForm.scss';
 import { BaseButton } from '../BaseButton';
-import { BaseInputField } from '../BaseTextInputField';
+import { BaseInputField } from '../BaseInputField';
 
-// interface IRegistrationFormFields {
-//   firstName: string;
-//   lastName: string;
-//   DOB: string;
-//   email: string;
-//   password1: string;
-//   password2: string;
-// }
+interface IFormData {
+  firstName: string;
+  lastName: string;
+  birthDate: string;
+  email: string;
+  password1: string;
+  password2: string;
+}
 
 export function RegistrationForm() {
-  const [form] = useState({
+  const [formData, setFormData] = useState<IFormData>({
     firstName: '',
     lastName: '',
-    DOB: '',
+    birthDate: '',
     email: '',
     password1: '',
     password2: ''
   });
 
-  function handleInputChange() {
-    console.log('input');
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   }
-  //    event: ChangeEvent<HTMLInputElement>,
-  //    inputType: IRegistrationFormFields
-  //  ) {
-  //    setForm({ ...form, inputType: event.target.value });
+
+  const handleFocusBirthDate = (event: FormEvent<HTMLInputElement>) => {
+    // eslint-disable-next-line no-param-reassign
+    event.currentTarget.type = 'date';
+  };
 
   return (
     <form className={styles.form}>
@@ -39,45 +39,46 @@ export function RegistrationForm() {
       </span>
       <BaseInputField
         name="firstName"
-        value={form.firstName}
+        value={formData.firstName}
         type="text"
-        placeholder="Ваше имя*"
-        onChange={handleInputChange}
+        placeholder="Ваше имя"
+        onChange={handleChange}
       />
       <BaseInputField
         name="lastName"
-        value={form.lastName}
+        value={formData.lastName}
         type="text"
-        placeholder="Ваша фамилия*"
-        onChange={handleInputChange}
+        placeholder="Ваша фамилия"
+        onChange={handleChange}
       />
       <BaseInputField
-        name="DOB"
-        value={form.DOB}
-        type="date"
+        name="birthDate"
+        value={formData.birthDate}
+        type="text"
         placeholder="Дата рождения"
-        onChange={handleInputChange}
+        onChange={handleChange}
+        onFocus={handleFocusBirthDate}
       />
       <BaseInputField
         name="email"
-        value={form.email}
+        value={formData.email}
         type="email"
         placeholder="Ваш e-mail*"
-        onChange={handleInputChange}
+        onChange={handleChange}
       />
       <BaseInputField
         name="password1"
-        value={form.password1}
+        value={formData.password1}
         type="password"
         placeholder="Придумайте пароль*"
-        onChange={handleInputChange}
+        onChange={handleChange}
       />
       <BaseInputField
         name="password2"
-        value={form.password2}
+        value={formData.password2}
         type="password"
         placeholder="Повторите пароль*"
-        onChange={handleInputChange}
+        onChange={handleChange}
       />
 
       <BaseButton textContent="Отправить" />
