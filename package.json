@@ -86,7 +86,12 @@
     "swiper": "^9.4.1"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx,js,jsx}": ["prettier --write ./src --config ./.prettierrc","eslint"],
-    "src/**/*.{html,scss,css}": ["prettier --write ./src --config ./.prettierrc"]
+    "src/**/*.{ts,tsx,js,jsx}": [
+      "prettier --write ./src --config ./.prettierrc",
+      "eslint"
+    ],
+    "src/**/*.{html,scss,css}": [
+      "prettier --write ./src --config ./.prettierrc"
+    ]
   }
 }

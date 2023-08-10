@@ -95,6 +95,30 @@ module.exports = {
         ]
       },
       {
+        test: /\.css$/i,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'sass-resources-loader',
+            options: {
+              resources: [path.resolve(__dirname, './src/styles/vars.scss')]
+            }
+          }
+        ]
+      },
+      {
         test: /\.(?:ico|png|jpeg|jpg|svg)$/i,
         type: 'asset/resource'
       },

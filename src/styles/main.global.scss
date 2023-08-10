@@ -108,4 +108,20 @@ a {
   clip: rect(0 0 0 0);
 }
 
+.swiper-horizontal > .swiper-pagination-bullets,
+.swiper-pagination-bullets.swiper-pagination-horizontal,
+.swiper-pagination-custom,
+.swiper-pagination-fraction {
+  bottom: 23px !important;
+
+  @include small-tablet {
+    bottom: 20px !important;
+  }
+
+  @include mobile {
+    display: none;
+    bottom: 25vw !important;
+  }
+}
+
 @import 'fonts';
