@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IProduct } from '../../types/interfaces/IProduct';
 import { getApiRoot, PROJECT_KEY } from '../../client/BuildClient';
-import { EImages } from '../../types/enums/EImages';
+import { createProductsFromResponse } from '../../utils/createProductsFromResponse';
 
 interface IProductsState {
   loading: boolean;
@@ -24,23 +24,7 @@ export const productsRequestAsync = createAsyncThunk('products/getProducts', asy
     .productProjections()
     .get()
     .execute()
-    .then(({ body }) => {
-      return body.results.map((item) => ({
-        id: item.id,
-        name: item.name.ru,
-        key: item.key || '',
-        images: {
-          preview:
-            item.masterVariant.images?.find((image) => image.label === EImages.preview)?.url || '',
-          slider:
-            item.masterVariant.images
-              ?.filter((image) => image.label === EImages.slider)
-              .map((filteredImage) => filteredImage.url) || []
-        },
-        attributes: item.masterVariant.attributes || [],
-        categories: item.categories || []
-      }));
-    })
+    .then(({ body }): Array<IProduct> => createProductsFromResponse(body))
     .catch((error: Error) => error);
 });
 
