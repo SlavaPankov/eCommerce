@@ -4,9 +4,9 @@
   "description": "final task RSSchool",
   "main": "index.js",
   "scripts": {
-    "build:dev": "cross-env CLIENT_ID=4bSNZh_zfv1XQrD4AaF13Y6K SECRET=9wgV3ezgbnVCpR7EskHayQcUjDnT29xM NODE_ENV=development webpack --mode development",
-    "build:prod": "cross-env CLIENT_ID=4bSNZh_zfv1XQrD4AaF13Y6K SECRET=9wgV3ezgbnVCpR7EskHayQcUjDnT29xM NODE_ENV=production webpack --mode production",
-    "start": "cross-env CLIENT_ID=4bSNZh_zfv1XQrD4AaF13Y6K SECRET=9wgV3ezgbnVCpR7EskHayQcUjDnT29xM NODE_ENV=development webpack serve --mode development",
+    "build:dev": "cross-env CLIENT_ID=Q2pY3AGLV5XCRIE1Ldkpmh45 SECRET=nuElp6WGlXH1forcDySoCzcqca-4S1hC NODE_ENV=development webpack --mode development",
+    "build:prod": "cross-env CLIENT_ID=Q2pY3AGLV5XCRIE1Ldkpmh45 SECRET=nuElp6WGlXH1forcDySoCzcqca-4S1hC NODE_ENV=production webpack --mode production",
+    "start": "cross-env CLIENT_ID=Q2pY3AGLV5XCRIE1Ldkpmh45 SECRET=nuElp6WGlXH1forcDySoCzcqca-4S1hC NODE_ENV=development webpack serve --mode development",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "format": "prettier --write ./src --config ./.prettierrc",

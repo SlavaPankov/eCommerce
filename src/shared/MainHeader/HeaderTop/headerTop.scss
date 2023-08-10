@@ -1,9 +1,100 @@
+@import '../../../styles/mixins/breakpoints';
+
 .top {
   background-color: $grey_light;
+
+  &_tablet {
+    display: none;
+
+    @include big-desktop {
+      display: block;
+    }
+  }
 
   &_container {
     padding-top: 15px !important;
     padding-bottom: 15px !important;
     display: flex;
+
+    @include big-desktop {
+      justify-content: space-between;
+    }
+
+    &_tablet {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px !important;
+      padding-bottom: 20px !important;
+
+      @include mobile {
+        flex-wrap: wrap;
+        row-gap: 18px;
+      }
+    }
+  }
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+
+  @include big-desktop {
+    display: none;
+  }
+}
+
+.user_wrapper {
+  display: none;
+
+  @include big-desktop {
+    display: block;
+  }
+
+  @include small-tablet {
+    display: none;
+  }
+}
+
+.header_top_container {
+  display: flex;
+  flex-direction: column;
+
+  @include mobile {
+    flex-direction: column-reverse;
+  }
+}
+
+.navigation_wrapper {
+  margin-left: auto;
+  width: fit-content;
+
+  @include big-desktop {
+    display: flex;
+    align-items: center;
+    margin-left: 0;
+    max-width: 710px;
+    width: 100%;
+    margin-right: 32px;
+  }
+
+  @include small-tablet {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  @include mobile {
+    display: none;
+  }
+}
+
+.logo_wrapper {
+  display: none;
+
+  @include mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 }

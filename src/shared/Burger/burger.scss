@@ -1,0 +1,93 @@
+@import '../../styles/mixins/breakpoints';
+
+$burger-width: 24px;
+$burger-height: 23px;
+$burger-line-height: 3px;
+
+.burger {
+  display: none;
+  position: relative;
+  border: none;
+  padding: 0;
+  width: $burger-width;
+  height: $burger-height;
+  color: $black;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 4;
+
+  @include small-tablet {
+    display: block;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: $burger-line-height;
+    background-color: $primary;
+    border-radius: 4px;
+    transition:
+      transform 0.3s ease-in-out,
+      top 0.3s ease-in-out;
+  }
+
+  &::before {
+    top: 0;
+  }
+
+  &::after {
+    top: calc(100% - $burger-line-height);
+  }
+
+  &_line {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: $burger-line-height;
+    background-color: $primary;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease-in-out;
+    border-radius: 4px;
+  }
+
+  &__active {
+    &::before {
+      top: 50%;
+      transform: rotate(45deg);
+      transition:
+        transform 0.3s ease-in-out,
+        top 0.3s ease-in-out;
+    }
+
+    &::after {
+      top: 50%;
+      transform: rotate(-45deg);
+      transition:
+        transform 0.3s ease-in-out,
+        top 0.3s ease-in-out;
+    }
+
+    .burger_line {
+      transform: scale(0);
+      transition: transform 0.3s ease-in-out;
+    }
+  }
+}
+
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform: translateX(-101%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 3;
+
+  &__active {
+    transform: none;
+  }
+}

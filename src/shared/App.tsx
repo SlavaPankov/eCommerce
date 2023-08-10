@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useProductsData } from '../hooks/useProductsData';
-import { MainHeader } from './MainHeader/MainHeader';
+import { MainHeader } from './MainHeader';
 import { BaseSpinner } from './BaseSpinner';
 import { LoginPage } from '../pages/LoginPage/LoginPage';
+import { MainFooter } from './MainFooter';
 import { NotFound } from '../pages/NotFound';
 
 export function App() {
@@ -18,6 +19,9 @@ export function App() {
         <Route path="/" element={<BaseSpinner />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Routes>
+        <Route path="*" element={<MainFooter />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,6 +1,48 @@
+@import '../../../styles/mixins/breakpoints';
+
 .container {
+  position: relative;
   padding-top: 32px !important;
   padding-bottom: 32px !important;
   display: flex;
   align-items: center;
+
+  @include small-tablet {
+    justify-content: space-between;
+  }
+
+  @include mobile {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    border-top: 1px solid $grey_light;
+    border-bottom: 1px solid $grey_light;
+    margin-bottom: 16px !important;
+  }
+}
+
+.wrapper_smtablet {
+  margin-left: auto;
+
+  @include big-desktop {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  @include small-tablet {
+    display: none;
+  }
+}
+
+.user_wrapper {
+  display: none;
+
+  @include small-tablet {
+    display: block;
+  }
+}
+
+.logo_wrapper {
+  @include mobile {
+    display: none;
+  }
 }
