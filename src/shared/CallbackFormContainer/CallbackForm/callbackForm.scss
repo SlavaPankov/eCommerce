@@ -1,0 +1,15 @@
+.form {
+  max-width: 624px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  & label {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+
+  & button {
+    margin-bottom: 12px;
+  }
+}
