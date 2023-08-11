@@ -8,12 +8,15 @@ export function useSpecialsData() {
   const specials = useAppSelector<Array<IProduct>>((state) => state.specials.payload);
   const loading = useAppSelector<boolean>((state) => state.specials.loading);
   const error = useAppSelector<string>((state) => state.specials.error);
+  const token = useAppSelector<string>((state) => state.token.payload.token);
 
   useEffect(() => {
-    if (specials.length === 0) {
-      dispatch(specialsRequestAsync());
+    if (!token) {
+      return;
     }
-  }, [specials]);
+
+    dispatch(specialsRequestAsync(token));
+  }, [token]);
 
   return {
     specials,

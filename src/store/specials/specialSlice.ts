@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 import { IProduct } from '../../types/interfaces/IProduct';
-import { getApiRoot, PROJECT_KEY } from '../../client/BuildClient';
 import { createProductsFromResponse } from '../../utils/createProductsFromResponse';
+import { apiConfig } from '../../cfg/apiConfig';
 
 interface ISpecialsState {
   loading: boolean;
@@ -16,20 +17,23 @@ const initialState: ISpecialsState = {
   payload: []
 };
 
-export const specialsRequestAsync = createAsyncThunk('specials/getSpecials', async () => {
-  return getApiRoot()
-    .withProjectKey({ projectKey: PROJECT_KEY })
-    .productProjections()
-    .get({
-      queryArgs: {
-        where:
-          'masterVariant(prices(discounted(discount(id="4b0c7a74-004a-499a-b884-d00a12b8a93a"))))'
-      }
-    })
-    .execute()
-    .then(({ body }): Array<IProduct> => createProductsFromResponse(body))
-    .catch((error: Error) => error);
-});
+export const specialsRequestAsync = createAsyncThunk(
+  'specials/getSpecials',
+  async (token: string) => {
+    return axios
+      .get(`${apiConfig.baseUrl}/${apiConfig.projectKey}/product-projections`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        params: {
+          where:
+            'masterVariant(prices(discounted(discount(id="4b0c7a74-004a-499a-b884-d00a12b8a93a"))))'
+        }
+      })
+      .then(({ data }): Array<IProduct> => createProductsFromResponse(data))
+      .catch((error: Error) => error);
+  }
+);
 
 export const specialsSlice = createSlice({
   name: 'specialsSlice',
