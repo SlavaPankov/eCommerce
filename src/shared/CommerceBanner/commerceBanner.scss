@@ -1,0 +1,27 @@
+.section {
+  background: url('../../assets/images/commerce.jpg') center center no-repeat $grey;
+  background-size: cover;
+}
+
+.container {
+  padding-top: 150px !important;
+  padding-bottom: 150px !important;
+}
+
+.title {
+  font-family: 'PlayFair', 'OpenSans', sans-serif;
+  margin: 0;
+  font-size: 60px;
+  line-height: 120%;
+  font-weight: 900;
+  color: $gold;
+}
+
+.subtitle {
+  max-width: 500px;
+  font-size: 48px;
+  line-height: 120%;
+  font-weight: 400;
+  color: $white;
+  margin-bottom: 49px;
+}

@@ -3,6 +3,7 @@ import { Content } from '../../shared/Content';
 import { MainSlider } from '../../shared/MainSlider';
 import { SpecialsListContainer } from '../../shared/SpecialsListContainer';
 import { HighRatingContainer } from '../../shared/HighRatingContainer';
+import { CommerceBanner } from '../../shared/CommerceBanner';
 
 export function MainPage() {
   return (
@@ -10,6 +11,7 @@ export function MainPage() {
       <MainSlider />
       <SpecialsListContainer />
       <HighRatingContainer />
+      <CommerceBanner />
     </Content>
   );
 }
