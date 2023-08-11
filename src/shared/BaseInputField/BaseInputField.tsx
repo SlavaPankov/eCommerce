@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, FormEvent } from 'react';
 import classNames from 'classnames';
 import styles from './baseInputField.scss';
 
@@ -9,6 +9,7 @@ interface IBaseTextInputFieldProps {
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   error?: string;
   type?: string;
+  onFocus?: (event: FormEvent<HTMLInputElement>) => void;
 }
 
 export function BaseInputField({
@@ -16,6 +17,7 @@ export function BaseInputField({
   value,
   placeholder,
   onChange,
+  onFocus = () => {},
   error = '',
   type = 'text'
 }: IBaseTextInputFieldProps) {
@@ -36,6 +38,7 @@ export function BaseInputField({
         value={value}
         placeholder={placeholder}
         onChange={onChange}
+        onFocus={onFocus}
       />
     </label>
   );
