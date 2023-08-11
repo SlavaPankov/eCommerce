@@ -79,7 +79,7 @@ export function LoginForm() {
           <BaseInputField
             name="password"
             value={password}
-            type="password"
+            type={isEyeClicked ? 'text' : 'password'}
             placeholder="Ваш пароль*"
             onChange={handleChangePassword}
             error={passwordError}
