@@ -3,7 +3,7 @@ import React, { ChangeEvent, useState } from 'react';
 import classNames from 'classnames';
 import styles from './loginForm.scss';
 import { BaseButton } from '../BaseButton';
-import { BaseInputField } from '../BaseTextInputField';
+import { BaseInputField } from '../BaseInputField';
 
 export function LoginForm() {
   const [email, setEmail] = useState('');

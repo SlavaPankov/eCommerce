@@ -53,8 +53,6 @@ export const categoriesAsyncRequest = createAsyncThunk('categories/getCategories
         }
       }
 
-      console.log(categories);
-
       return categories;
     })
     .catch((error: Error) => error);
