@@ -4,6 +4,7 @@ import { MainHeader } from './MainHeader';
 import { MainFooter } from './MainFooter';
 import { NotFound } from '../pages/NotFound';
 import { MainPage } from '../pages/MainPage';
+import { LoginPage } from '../pages/LoginPage';
 
 export function App() {
   return (
@@ -13,6 +14,7 @@ export function App() {
       </Routes>
       <Routes>
         <Route path="/" element={<MainPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Routes>

@@ -2,6 +2,7 @@ import React, { ChangeEvent, useState } from 'react';
 import styles from './callbackForm.scss';
 import { BaseInputField } from '../../BaseTextInputField';
 import { BaseButton } from '../../BaseButton';
+import { BaseCheckbox } from '../../BaseCheckbox';
 
 interface IFormData {
   name: string;
@@ -50,6 +51,14 @@ export function CallbackForm() {
         error={formError.email}
       />
       <BaseButton textContent="Отправить" />
+      <BaseCheckbox
+        name="agreement"
+        value="test"
+        onChange={() => {}}
+        isChecked={true}
+        id="checkbox"
+        label="Принимаю пользовательское соглашение"
+      />
     </form>
   );
 }
