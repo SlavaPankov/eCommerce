@@ -36,12 +36,12 @@ export function LoginForm() {
 
   const handlePasswordValidation = (input: string) => {
     const passwordTrimmed = input.trim();
-    const pwdRegex = /^(?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?\d)(?=\S*?[!@#$%^&*])\S{8,}$/;
+    const pwdRegex = /^(?=\S*?[A-ZА-Я])(?=\S*?[a-zа-я])(?=\S*?\d)(?=\S*?[!@#$%^&*])\S{8,30}$/;
     if (!passwordTrimmed) {
       setPasswordError('Введите пароль');
     } else if (!pwdRegex.test(passwordTrimmed)) {
-      setPasswordError(`Недопустимый формат! Пароль должен содержать не менее 8 символов, 
-      иметь хотя бы одну заглавную (A-Z) и строчную буквы (a-z), один номер и один спец. символ`);
+      setPasswordError(`Недопустимый формат! Пароль должен содержать 8-30 символов, 
+      иметь хотя бы одну заглавную и строчную буквы, один номер и один спец. символ`);
     } else {
       setPasswordError('');
     }
