@@ -2,6 +2,7 @@ import { ProductProjectionPagedQueryResponse } from '@commercetools/platform-sdk
 import { EImages } from '../types/enums/EImages';
 import { IProduct } from '../types/interfaces/IProduct';
 import { getFormattedPrice } from './getFormattedPrice';
+import { getRandomRating } from './getRandomRating';
 
 export function createProductsFromResponse(
   body: ProductProjectionPagedQueryResponse
@@ -23,6 +24,7 @@ export function createProductsFromResponse(
     price: getFormattedPrice({ price: item.masterVariant.prices?.[0].value.centAmount }),
     discountedPrice: getFormattedPrice({
       price: item.masterVariant.prices?.[0].discounted?.value.centAmount
-    })
+    }),
+    rating: getRandomRating({})
   }));
 }

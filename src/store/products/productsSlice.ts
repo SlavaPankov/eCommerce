@@ -18,15 +18,23 @@ const initialState: IProductsState = {
   products: []
 };
 
-export const productsRequestAsync = createAsyncThunk('products/getProducts', async () => {
-  return getApiRoot()
-    .withProjectKey({ projectKey: PROJECT_KEY })
-    .productProjections()
-    .get()
-    .execute()
-    .then(({ body }): Array<IProduct> => createProductsFromResponse(body))
-    .catch((error: Error) => error);
-});
+export const productsRequestAsync = createAsyncThunk(
+  'products/getProducts',
+  async ({ offset }: { offset: number }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: PROJECT_KEY })
+      .productProjections()
+      .get({
+        queryArgs: {
+          limit: 24,
+          offset
+        }
+      })
+      .execute()
+      .then(({ body }): Array<IProduct> => createProductsFromResponse(body))
+      .catch((error: Error) => error);
+  }
+);
 
 export const productsSlice = createSlice({
   name: 'tokenSlice',
@@ -37,6 +45,7 @@ export const productsSlice = createSlice({
     },
 
     productsLoadingSuccess: (state, action: PayloadAction<Array<IProduct>>) => {
+      console.log(action.payload);
       state.loading = false;
       state.products = action.payload;
     },
@@ -44,6 +53,10 @@ export const productsSlice = createSlice({
     productsLoadingError: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
+    },
+
+    setOffset: (state, action: PayloadAction<number>) => {
+      state.offset += action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -54,7 +67,7 @@ export const productsSlice = createSlice({
     builder.addCase(productsRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
       if (Array.isArray(action.payload)) {
-        state.products = action.payload;
+        state.products.push(...action.payload);
       }
     });
 
@@ -66,5 +79,7 @@ export const productsSlice = createSlice({
     });
   }
 });
+
+export const { setOffset } = productsSlice.actions;
 
 export default productsSlice.reducer;

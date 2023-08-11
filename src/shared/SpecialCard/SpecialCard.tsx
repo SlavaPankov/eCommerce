@@ -23,7 +23,7 @@ export function SpecialCard({
   ).toLocaleString();
 
   return (
-    <div className={styles.card}>
+    <article className={styles.card}>
       <span className={styles.discount}>- {discount}</span>
       <img className={styles.image} src={imageSrc} alt={title} />
       <h2 className={styles.title}>
@@ -40,6 +40,6 @@ export function SpecialCard({
       <a href="#" data-key={productKey}>
         <BaseButton textContent="Купить" mode={EBaseButtonMode.secondary} />
       </a>
-    </div>
+    </article>
   );
 }

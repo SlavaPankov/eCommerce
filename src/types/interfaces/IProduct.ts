@@ -12,4 +12,5 @@ export interface IProduct {
   attributes: Array<Attribute>;
   price: string;
   discountedPrice: string;
+  rating: number;
 }
