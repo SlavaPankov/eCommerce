@@ -22,7 +22,7 @@ export function LoginForm() {
     [`${styles.eye_icon_active}`]: isEyeClicked
   });
 
-  const handleEmailValidation = (input: string) => {
+  const validateEmail = (input: string) => {
     const emailTrimmed = input.trim();
     const emailRegex = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
     if (!emailTrimmed) {
@@ -34,7 +34,7 @@ export function LoginForm() {
     }
   };
 
-  const handlePasswordValidation = (input: string) => {
+  const validatePassword = (input: string) => {
     const passwordTrimmed = input.trim();
     const pwdRegex = /^(?=\S*?[A-ZА-Я])(?=\S*?[a-zа-я])(?=\S*?\d)(?=\S*?[!@#$%^&*])\S{8,30}$/;
     if (!passwordTrimmed) {
@@ -46,7 +46,7 @@ export function LoginForm() {
     } else if (passwordTrimmed.includes(' ')) {
       setPasswordError('Недопустимый формат! Ваш пароль содержит пробел');
     } else if (!pwdRegex.test(passwordTrimmed)) {
-      setPasswordError(`Недопустимый формат! Пароль должен содержать 8-30 символов, 
+      setPasswordError(`Недопустимый формат! Пароль должен 
       иметь хотя бы одну заглавную и строчную буквы, один номер и один спец. символ`);
     } else {
       setPasswordError('');
@@ -55,12 +55,12 @@ export function LoginForm() {
 
   const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
-    handleEmailValidation(event.target.value);
+    validateEmail(event.target.value);
   };
 
   const handleChangePassword = (event: ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
-    handlePasswordValidation(event.target.value);
+    validatePassword(event.target.value);
   };
 
   const handleEyeClick = () => {
