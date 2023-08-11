@@ -9,7 +9,7 @@ import { NotFound } from '../pages/NotFound';
 
 export function App() {
   useProductsData();
-  
+
   return (
     <BrowserRouter>
       <Routes>
