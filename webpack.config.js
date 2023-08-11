@@ -120,7 +120,10 @@ module.exports = {
       },
       {
         test: /\.(?:ico|png|jpeg|jpg|svg)$/i,
-        type: 'asset/resource'
+        type: 'asset/resource',
+        generator: {
+          filename: `images/${filename('[ext]')}`
+        }
       },
       {
         test: /\.(?:|woff|woff2|ttf)$/i,

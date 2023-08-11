@@ -1,0 +1,201 @@
+.card {
+  padding-top: 30px;
+  padding-bottom: 32px;
+  background-color: $grey_light;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  padding-left: 30px !important;
+}
+
+.subLink {
+  position: relative;
+  font-size: 14px;
+  line-height: 100%;
+  font-weight: 400;
+  color: $grey;
+  transition: color 0.3s ease-in-out;
+
+  & span {
+    position: relative;
+    z-index: 2;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -2px;
+    width: calc(100% + 4px);
+    height: 100%;
+    background-color: transparent;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  &:hover {
+    color: $primary;
+  }
+
+  &:focus {
+    outline: none;
+    color: $primary_shade;
+
+    &::after {
+      background-color: $pink_violet;
+    }
+  }
+
+  &:active {
+    color: $primary_shade;
+  }
+}
+
+.headingLink {
+  padding-left: 30px;
+
+  &:hover .heading {
+    color: $primary_light;
+  }
+
+  &:focus {
+    outline: none;
+
+    & .heading {
+      color: $primary_shade;
+
+      &::after {
+        background-color: $pink_violet;
+      }
+    }
+  }
+
+  &:active {
+    &.heading {
+      color: $primary_shade;
+    }
+  }
+}
+
+.heading {
+  position: relative;
+  font-size: 24px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+  margin-bottom: 30px;
+  transition: color 0.3s ease-in-out;
+  z-index: 2;
+
+  & span {
+    position: relative;
+    z-index: 3;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -2px;
+    width: calc(100% + 4px);
+    height: 100%;
+    background-color: transparent;
+    transition: background-color 0.3s ease-in-out;
+  }
+}
+
+.catalogLink {
+  padding-left: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+  line-height: 120%;
+  font-weight: 700;
+  color: $primary;
+  transition: color 0.3s ease-in-out;
+
+  & span {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: calc(100% + 1px);
+      width: 100%;
+      height: 2px;
+      background-color: transparent;
+      transition: background-color 0.3s ease-in-out;
+    }
+  }
+
+  &:hover {
+    & span::after {
+      background-color: $primary;
+    }
+
+    & button {
+      background-color: $primary;
+
+      &::after {
+        border-color: $white;
+      }
+    }
+  }
+
+  &:focus {
+    outline: none;
+    & span::after {
+      background-color: $primary;
+    }
+
+    & button {
+      background-color: $primary_light;
+
+      &::after {
+        border-color: $white;
+      }
+    }
+  }
+
+  &:active {
+    & span {
+      color: $primary_shade;
+    }
+
+    & span::after {
+      background-color: $primary_shade;
+    }
+
+    & button {
+      background-color: $primary_shade;
+      border-color: $primary_shade !important;
+
+      &::after {
+        border-color: $white;
+      }
+    }
+  }
+
+  & button {
+    width: 22px;
+    height: 22px;
+
+    &::after {
+      width: 6px;
+      height: 6px;
+    }
+  }
+}
+
+.image {
+  margin-bottom: 30px;
+}

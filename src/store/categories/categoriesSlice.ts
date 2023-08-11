@@ -2,6 +2,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getApiRoot, PROJECT_KEY } from '../../client/BuildClient';
 import { ICategory } from '../../types/interfaces/ICategory';
+import { getCategoriesImages } from '../../utils/getCategoriesImages';
+import noImage from '../../assets/images/noPhoto.png';
+import { ISubcategory } from '../../types/interfaces/ISubcategory';
 
 interface ICategoriesState {
   loading: boolean;
@@ -21,15 +24,40 @@ export const categoriesAsyncRequest = createAsyncThunk('categories/getCategories
     .categories()
     .get()
     .execute()
-    .then(({ body }) => {
-      return body.results.map((category) => ({
-        id: category.id,
-        name: category.name.ru,
-        slug: category.slug.ru,
-        externalId: category.externalId
-      }));
+    .then(({ body }): Array<ICategory> => {
+      const categories: Array<ICategory> = body.results
+        .filter((item) => !item.parent)
+        .map((category, index) => ({
+          id: category.id,
+          name: category.name.ru,
+          slug: category.slug.ru,
+          externalId: category.externalId,
+          imageSrc: getCategoriesImages()[index] || noImage,
+          subcategories: []
+        }));
+      const subcategories: Array<ISubcategory> = body.results
+        .filter((item) => item.parent)
+        .map((category) => ({
+          id: category.id,
+          parentId: category.parent?.id || '',
+          name: category.name.ru,
+          slug: category.slug.ru,
+          externalId: category.externalId
+        }));
+
+      for (let i = 0; i < categories.length; i += 1) {
+        for (let j = 0; j < subcategories.length; j += 1) {
+          if (subcategories[j].parentId === categories[i].id) {
+            categories[i].subcategories.push(subcategories[j]);
+          }
+        }
+      }
+
+      console.log(categories);
+
+      return categories;
     })
-    .catch((error: Error) => error.message);
+    .catch((error: Error) => error);
 });
 
 export const categoriesSlice = createSlice({
@@ -64,8 +92,8 @@ export const categoriesSlice = createSlice({
 
     builder.addCase(categoriesAsyncRequest.rejected, (state, action) => {
       state.loading = false;
-      if (typeof action.payload === 'string') {
-        state.error = action.payload;
+      if (action.payload instanceof Error) {
+        state.error = action.payload.message;
       }
     });
   }

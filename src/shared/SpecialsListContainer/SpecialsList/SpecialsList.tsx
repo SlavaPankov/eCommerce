@@ -1,10 +1,10 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
-import { IProduct } from '../../types/interfaces/IProduct';
+import { IProduct } from '../../../types/interfaces/IProduct';
 
 import 'swiper/css';
-import { SpecialCard } from '../SpecialCard';
+import { SpecialCard } from '../../SpecialCard';
 
 interface ISpecialsListProps {
   list: Array<IProduct>;

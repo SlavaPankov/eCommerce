@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { useSpecialsData } from '../../hooks/useSpecialsData';
-import { SpecialsList } from '../SpecialsList';
+import { SpecialsList } from './SpecialsList';
 import { BaseHeading } from '../BaseHeading';
 import styles from './specialsListContainer.scss';
 import { BaseRoundButton } from '../BaseRoundButton';

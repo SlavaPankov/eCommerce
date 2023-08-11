@@ -1,8 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
-import { IProduct } from '../../types/interfaces/IProduct';
+import { IProduct } from '../../../types/interfaces/IProduct';
+import { ProductCard } from '../../ProductCard';
 import styles from './highRatingList.scss';
-import { ProductCard } from '../ProductCard';
 
 interface IHighRatingList {
   list: Array<IProduct>;

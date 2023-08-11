@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { useProductsData } from '../../hooks/useProductsData';
 import { BaseButton } from '../BaseButton';
 import { IProduct } from '../../types/interfaces/IProduct';
-import { HighRatingList } from '../HighRatingList';
+import { HighRatingList } from './HighRatingList';
 import styles from './highRatingContainer.scss';
 import { BaseHeading } from '../BaseHeading';
 
