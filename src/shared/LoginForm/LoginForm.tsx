@@ -24,7 +24,7 @@ export function LoginForm() {
 
   const handleEmailValidation = (input: string) => {
     const emailTrimmed = input.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
     if (!emailTrimmed) {
       setEmailError('Введите e-mail');
     } else if (!emailRegex.test(emailTrimmed)) {
@@ -39,6 +39,12 @@ export function LoginForm() {
     const pwdRegex = /^(?=\S*?[A-ZА-Я])(?=\S*?[a-zа-я])(?=\S*?\d)(?=\S*?[!@#$%^&*])\S{8,30}$/;
     if (!passwordTrimmed) {
       setPasswordError('Введите пароль');
+    } else if (passwordTrimmed.length < 8) {
+      setPasswordError('Недопустимый формат! Ваш пароль короче 8 символов');
+    } else if (passwordTrimmed.length > 30) {
+      setPasswordError('Недопустимый формат! Ваш пароль превышает 30 символов');
+    } else if (passwordTrimmed.includes(' ')) {
+      setPasswordError('Недопустимый формат! Ваш пароль содержит пробел');
     } else if (!pwdRegex.test(passwordTrimmed)) {
       setPasswordError(`Недопустимый формат! Пароль должен содержать 8-30 символов, 
       иметь хотя бы одну заглавную и строчную буквы, один номер и один спец. символ`);
