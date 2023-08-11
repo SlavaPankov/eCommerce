@@ -1,8 +1,18 @@
+@import '../../../styles/mixins/breakpoints';
+
 .form {
   max-width: 624px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+
+  @include big-desktop {
+    max-width: 405px;
+  }
+
+  @include mobile {
+    max-width: 100%;
+  }
 
   & label {
     width: 100%;

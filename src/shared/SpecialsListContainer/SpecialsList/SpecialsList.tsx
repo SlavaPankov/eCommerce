@@ -11,12 +11,30 @@ interface ISpecialsListProps {
 }
 
 export function SpecialsList({ list }: ISpecialsListProps) {
+  const breakpoints = {
+    320: {
+      slidesPerView: 1,
+      slidesPerGroup: 1
+    },
+
+    600: {
+      slidesPerView: 1,
+      slidesPerGroup: 1
+    },
+
+    850: {
+      slidesPerView: 3,
+      slidesPerGroup: 3
+    }
+  };
+
   return (
     <Swiper
       modules={[Navigation]}
       slidesPerGroup={3}
       slidesPerView={3}
       spaceBetween={32}
+      breakpoints={breakpoints}
       navigation={{
         prevEl: '#special-prev',
         nextEl: '#special-next'

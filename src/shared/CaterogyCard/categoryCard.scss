@@ -1,3 +1,5 @@
+@import '../../styles/mixins/breakpoints';
+
 .card {
   padding-top: 30px;
   padding-bottom: 32px;
@@ -6,6 +8,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  height: 100%;
 }
 
 .list {
@@ -14,6 +17,18 @@
   gap: 30px;
   flex-wrap: wrap;
   padding-left: 30px !important;
+  padding-right: 30px !important;
+
+  @include big-desktop {
+    gap: 26px;
+    row-gap: 15px;
+  }
+
+  @include mobile {
+    row-gap: 0;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
 }
 
 .subLink {
@@ -23,6 +38,10 @@
   font-weight: 400;
   color: $grey;
   transition: color 0.3s ease-in-out;
+
+  @include mobile {
+    font-size: 10px;
+  }
 
   & span {
     position: relative;
@@ -61,6 +80,11 @@
 .headingLink {
   padding-left: 30px;
 
+  @include mobile {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
   &:hover .heading {
     color: $primary_light;
   }
@@ -94,6 +118,10 @@
   transition: color 0.3s ease-in-out;
   z-index: 2;
 
+  @include mobile {
+    font-size: 16px;
+  }
+
   & span {
     position: relative;
     z-index: 3;
@@ -121,6 +149,14 @@
   font-weight: 700;
   color: $primary;
   transition: color 0.3s ease-in-out;
+
+  @include big-desktop {
+    margin-top: auto;
+  }
+
+  @include mobile {
+    display: none;
+  }
 
   & span {
     position: relative;
@@ -198,4 +234,8 @@
 
 .image {
   margin-bottom: 30px;
+
+  @include big-desktop {
+    height: 100%;
+  }
 }

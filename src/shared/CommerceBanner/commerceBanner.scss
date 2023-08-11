@@ -1,11 +1,42 @@
+@import '../../styles/mixins/breakpoints';
+
 .section {
   background: url('../../assets/images/commerce.jpg') center center no-repeat $grey;
   background-size: cover;
+
+  @include big-desktop {
+    background: url('../../assets/images/commerce-tablet.jpg') center center no-repeat $grey;
+  }
+
+  @include small-tablet {
+    background: url('../../assets/images/commerce-smtablet.jpg') center center no-repeat $grey;
+  }
+
+  @include small-tablet {
+    background: url('../../assets/images/commerce-mobile.jpg') center top no-repeat $white;
+    background-size: contain;
+  }
 }
 
 .container {
+  position: relative;
   padding-top: 150px !important;
-  padding-bottom: 150px !important;
+  padding-bottom: 259px !important;
+
+  @include mobile {
+    padding-top: 30px !important;
+    padding-bottom: 50.94vw !important;
+  }
+
+  & button {
+    position: absolute;
+    bottom: 150px;
+
+    @include mobile {
+      width: calc(100% - $container-offset-320 * 2);
+      bottom: 0;
+    }
+  }
 }
 
 .title {
@@ -15,6 +46,11 @@
   line-height: 120%;
   font-weight: 900;
   color: $gold;
+
+  @include mobile {
+    font-size: 7.5vw;
+    line-height: 120%;
+  }
 }
 
 .subtitle {
@@ -24,4 +60,10 @@
   font-weight: 400;
   color: $white;
   margin-bottom: 49px;
+
+  @include mobile {
+    max-width: 58.44vw;
+    font-size: 5.25vw;
+    line-height: 135%;
+  }
 }

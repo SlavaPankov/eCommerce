@@ -1,6 +1,22 @@
+@import '../../styles/mixins/breakpoints';
+
 .container {
   padding-top: 35px !important;
   padding-bottom: 70px !important;
+  background: url('../../assets/images/callback.png') right center no-repeat transparent;
+  background-size: contain !important;
+
+  @include big-desktop {
+    background: url('../../assets/images/callback-tablet.png') right center no-repeat transparent;
+  }
+
+  @include small-tablet {
+    background: url('../../assets/images/callback-smtablet.png') right center no-repeat transparent;
+  }
+
+  @include mobile {
+    background: none;
+  }
 
   & > h2 {
     margin-bottom: 5px;
@@ -14,4 +30,12 @@
   line-height: normal;
   font-weight: 400;
   color: $black;
+
+  @include big-desktop {
+    max-width: 405px;
+  }
+
+  @include mobile {
+    max-width: 100%;
+  }
 }
