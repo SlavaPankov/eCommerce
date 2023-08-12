@@ -2,13 +2,19 @@ import React from 'react';
 import styles from './specialCard.scss';
 import { BaseButton } from '../BaseButton';
 import { EBaseButtonMode } from '../../types/enums/EBaseButtonMode';
+import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
+import { ICartAction } from '../../types/interfaces/ICartAction';
+import { EActionTypes } from '../../types/enums/EActionTypes';
+import { addLineItemRequestAsync } from '../../store/cart/cartSlice';
 
 interface ISpecialCardProps {
+  id: string;
   imageSrc: string;
   title: string;
   price: string;
   discountedPrice: string;
   productKey: string;
+  variantId: number;
 }
 
 export function SpecialCard({
@@ -16,11 +22,32 @@ export function SpecialCard({
   title,
   price,
   discountedPrice,
-  productKey
+  productKey,
+  variantId,
+  id
 }: ISpecialCardProps) {
+  const dispatch = useAppDispatch();
+  const { cart } = useAppSelector((state) => state.cart);
+  const token = useAppSelector<string>((state) => state.token.payload.token);
   const discount: string = (
     Number(price.replace(/\s/g, '')) - Number(discountedPrice.replace(/\s/g, ''))
   ).toLocaleString();
+
+  const handleClick = () => {
+    const addAction: ICartAction = {
+      action: EActionTypes.addLineItem,
+      productId: id,
+      variantId
+    };
+
+    dispatch(
+      addLineItemRequestAsync({
+        token,
+        cartId: cart.id,
+        addAction
+      })
+    );
+  };
 
   return (
     <article className={styles.card}>
@@ -38,7 +65,7 @@ export function SpecialCard({
         <span className={styles.discountedPrice}>{price.toLocaleString()} руб</span>
       </div>
       <a href="#" data-key={productKey}>
-        <BaseButton textContent="Купить" mode={EBaseButtonMode.secondary} />
+        <BaseButton onClick={handleClick} textContent="Купить" mode={EBaseButtonMode.secondary} />
       </a>
     </article>
   );

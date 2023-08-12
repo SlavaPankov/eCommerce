@@ -42,7 +42,6 @@ export const tokenRequestAsync = createAsyncThunk('token/getToken', async () => 
       }
     )
     .then(({ data }): IToken => {
-      console.log(data);
       return {
         token: data.access_token,
         expires_in: data.expires_in
