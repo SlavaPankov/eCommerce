@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState, FormEvent, MouseEvent } from 'react';
-import { BaseInputField } from '../../../BaseTextInputField';
+import { BaseInputField } from '../../../BaseInputField';
 import styles from './searchForm.scss';
 import { SearchIcon } from '../../../Icons';
 import { BaseRoundButton } from '../../../BaseRoundButton';
