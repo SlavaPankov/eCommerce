@@ -2,9 +2,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 import { apiConfig } from '../../cfg/apiConfig';
-import { getFormattedPrice } from '../../utils/getFormattedPrice';
 import { ICart } from '../../types/interfaces/ICart';
 import { ICartAction } from '../../types/interfaces/ICartAction';
+import { createCartFromResponse } from '../../utils/createCartFromResponse';
 
 interface ICartState {
   loading: boolean;
@@ -22,7 +22,8 @@ const initialState: ICartState = {
     totalPrice: '',
     billingAddress: { country: '' },
     shippingAddress: { country: '' },
-    discountCodes: []
+    discountCodes: [],
+    version: 0
   }
 };
 
@@ -43,15 +44,7 @@ export const createCartRequestAsync = createAsyncThunk('me/createCart', async (t
     .then((response) => {
       if (response.status === 200 || response.status === 201) {
         const { data } = response;
-        return {
-          id: data.id,
-          customerId: data.customerId,
-          lineItems: data.lineItems,
-          totalPrice: getFormattedPrice({ price: data.totalPrice.centAmount }),
-          billingAddress: data.billingAddress,
-          shippingAddress: data.shippingAddress,
-          discountCodes: data.shippingAddress
-        };
+        return createCartFromResponse(data);
       }
 
       return response.data;
@@ -71,15 +64,7 @@ export const getActiveCartRequestAsync = createAsyncThunk(
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           const { data } = response;
-          return {
-            id: data.id,
-            customerId: data.customerId,
-            lineItems: data.lineItems,
-            totalPrice: getFormattedPrice({ price: data.totalPrice.centAmount }),
-            billingAddress: data.billingAddress,
-            shippingAddress: data.shippingAddress,
-            discountCodes: data.shippingAddress
-          };
+          return createCartFromResponse(data);
         }
 
         return response.data;
@@ -93,17 +78,19 @@ export const addLineItemRequestAsync = createAsyncThunk(
   async ({
     token,
     cartId,
+    version,
     addAction
   }: {
     token: string;
     cartId: string;
+    version: number;
     addAction: ICartAction;
   }) => {
     return axios
       .post(
         `${apiConfig.baseUrl}/${apiConfig.projectKey}/me/carts/${cartId}`,
         {
-          version: 1,
+          version,
           actions: [
             {
               action: addAction.action,
@@ -122,15 +109,7 @@ export const addLineItemRequestAsync = createAsyncThunk(
       .then((response) => {
         if (response.status === 200 || response.status === 201) {
           const { data } = response;
-          return {
-            id: data.id,
-            customerId: data.customerId,
-            lineItems: data.lineItems,
-            totalPrice: getFormattedPrice({ price: data.totalPrice.centAmount }),
-            billingAddress: data.billingAddress,
-            shippingAddress: data.shippingAddress,
-            discountCodes: data.shippingAddress
-          };
+          return createCartFromResponse(data);
         }
 
         return response.data;

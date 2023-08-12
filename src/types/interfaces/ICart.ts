@@ -1,4 +1,4 @@
-import { Address, LineItem } from '@commercetools/platform-sdk';
+import { Address, DiscountCodeInfo, LineItem } from '@commercetools/platform-sdk';
 
 export interface ICart {
   id: string;
@@ -7,5 +7,6 @@ export interface ICart {
   totalPrice: string;
   billingAddress: Address;
   shippingAddress: Address;
-  discountCodes: Array<string>;
+  discountCodes: Array<DiscountCodeInfo>;
+  version: number;
 }

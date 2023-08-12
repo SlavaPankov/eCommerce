@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './specialCard.scss';
 import { BaseButton } from '../BaseButton';
 import { EBaseButtonMode } from '../../types/enums/EBaseButtonMode';
@@ -44,7 +45,8 @@ export function SpecialCard({
       addLineItemRequestAsync({
         token,
         cartId: cart.id,
-        addAction
+        addAction,
+        version: cart.version
       })
     );
   };
@@ -53,20 +55,20 @@ export function SpecialCard({
     <article className={styles.card}>
       <span className={styles.discount}>- {discount}</span>
       <img className={styles.image} src={imageSrc} alt={title} />
-      <h2 className={styles.title}>
-        {title
-          .split(' ')
-          .slice(0, title.split(' ').length - 1)
-          .join(' ')}{' '}
-        <br /> {title.split(' ').slice(-1).join(' ')}
-      </h2>
+      <Link to="#" data-key={productKey}>
+        <h2 className={styles.title}>
+          {title
+            .split(' ')
+            .slice(0, title.split(' ').length - 1)
+            .join(' ')}{' '}
+          <br /> {title.split(' ').slice(-1).join(' ')}
+        </h2>
+      </Link>
       <div className={styles.priceBlock}>
         <span className={styles.price}>{discountedPrice.toLocaleString()} руб</span>
         <span className={styles.discountedPrice}>{price.toLocaleString()} руб</span>
       </div>
-      <a href="#" data-key={productKey}>
-        <BaseButton onClick={handleClick} textContent="Купить" mode={EBaseButtonMode.secondary} />
-      </a>
+      <BaseButton onClick={handleClick} textContent="Купить" mode={EBaseButtonMode.secondary} />
     </article>
   );
 }
