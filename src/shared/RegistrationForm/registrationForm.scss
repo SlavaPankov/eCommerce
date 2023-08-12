@@ -1,3 +1,5 @@
+@import '../../styles/vars.scss';
+
 .form {
   display: flex;
   align-items: flex-start;
@@ -7,17 +9,26 @@
   margin: 0 auto;
 
   &__header {
+    color: var(--black, #333);
     font-size: 2rem;
     font-weight: 400;
     padding: 0rem;
   }
 
   &__text {
+    color: var(--black, #333);
     font-size: 1rem;
     font-weight: 400;
   }
 
   & label {
     width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  .form {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
