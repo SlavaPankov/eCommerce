@@ -16,7 +16,7 @@
   transition:
     border-color 0.3s ease-in-out,
     background-color 0.3s ease-in-out;
-  z-index: 2;
+  z-index: 10;
 
   @include small-tablet {
     max-width: 189px;

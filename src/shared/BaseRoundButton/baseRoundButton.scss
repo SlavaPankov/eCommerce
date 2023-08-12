@@ -48,10 +48,21 @@
   }
 
   &:disabled {
-    border-color: $grey;
+    border-color: $grey !important;
+    cursor: default;
+
+    &:hover {
+      background-color: transparent;
+    }
 
     &::after {
       border-color: $grey;
+    }
+  }
+
+  &_rotate {
+    &::after {
+      transform: translate(-30%, -50%) rotate(135deg);
     }
   }
 }

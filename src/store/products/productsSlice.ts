@@ -2,7 +2,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IProduct } from '../../types/interfaces/IProduct';
 import { getApiRoot, PROJECT_KEY } from '../../client/BuildClient';
-import { EImages } from '../../types/enums/EImages';
+import { createProductsFromResponse } from '../../utils/createProductsFromResponse';
 
 interface IProductsState {
   loading: boolean;
@@ -18,31 +18,23 @@ const initialState: IProductsState = {
   products: []
 };
 
-export const productsRequestAsync = createAsyncThunk('products/getProducts', async () => {
-  return getApiRoot()
-    .withProjectKey({ projectKey: PROJECT_KEY })
-    .productProjections()
-    .get()
-    .execute()
-    .then(({ body }) => {
-      return body.results.map((item) => ({
-        id: item.id,
-        name: item.name.ru,
-        key: item.key || '',
-        images: {
-          preview:
-            item.masterVariant.images?.find((image) => image.label === EImages.preview)?.url || '',
-          slider:
-            item.masterVariant.images
-              ?.filter((image) => image.label === EImages.slider)
-              .map((filteredImage) => filteredImage.url) || []
-        },
-        attributes: item.masterVariant.attributes || [],
-        categories: item.categories || []
-      }));
-    })
-    .catch((error: Error) => error);
-});
+export const productsRequestAsync = createAsyncThunk(
+  'products/getProducts',
+  async ({ offset }: { offset: number }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: PROJECT_KEY })
+      .productProjections()
+      .get({
+        queryArgs: {
+          limit: 24,
+          offset
+        }
+      })
+      .execute()
+      .then(({ body }): Array<IProduct> => createProductsFromResponse(body))
+      .catch((error: Error) => error);
+  }
+);
 
 export const productsSlice = createSlice({
   name: 'tokenSlice',
@@ -53,6 +45,7 @@ export const productsSlice = createSlice({
     },
 
     productsLoadingSuccess: (state, action: PayloadAction<Array<IProduct>>) => {
+      console.log(action.payload);
       state.loading = false;
       state.products = action.payload;
     },
@@ -60,6 +53,10 @@ export const productsSlice = createSlice({
     productsLoadingError: (state, action: PayloadAction<string>) => {
       state.loading = false;
       state.error = action.payload;
+    },
+
+    setOffset: (state, action: PayloadAction<number>) => {
+      state.offset += action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -70,7 +67,7 @@ export const productsSlice = createSlice({
     builder.addCase(productsRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
       if (Array.isArray(action.payload)) {
-        state.products = action.payload;
+        state.products.push(...action.payload);
       }
     });
 
@@ -82,5 +79,7 @@ export const productsSlice = createSlice({
     });
   }
 });
+
+export const { setOffset } = productsSlice.actions;
 
 export default productsSlice.reducer;
