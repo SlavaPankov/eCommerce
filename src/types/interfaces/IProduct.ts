@@ -10,4 +10,7 @@ export interface IProduct {
   };
   categories: Array<CategoryReference>;
   attributes: Array<Attribute>;
+  price: string;
+  discountedPrice: string;
+  rating: number;
 }

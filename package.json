@@ -34,6 +34,7 @@
     "@types/node-fetch": "^2.6.4",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@types/react-input-mask": "^3.0.2",
     "@types/react-redux": "^7.1.25",
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^6.1.0",
@@ -78,6 +79,7 @@
     "classnames": "^2.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-input-mask": "^2.0.4",
     "react-redux": "^8.1.1",
     "react-router-dom": "^6.14.2",
     "redux": "^4.2.1",
@@ -86,7 +88,12 @@
     "swiper": "^9.4.1"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx,js,jsx}": ["prettier --write ./src --config ./.prettierrc","eslint"],
-    "src/**/*.{html,scss,css}": ["prettier --write ./src --config ./.prettierrc"]
+    "src/**/*.{ts,tsx,js,jsx}": [
+      "prettier --write ./src --config ./.prettierrc",
+      "eslint"
+    ],
+    "src/**/*.{html,scss,css}": [
+      "prettier --write ./src --config ./.prettierrc"
+    ]
   }
 }

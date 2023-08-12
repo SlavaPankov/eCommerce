@@ -1,0 +1,36 @@
+@import '../../../styles/mixins/breakpoints';
+
+.form {
+  max-width: 624px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  @include big-desktop {
+    max-width: 405px;
+  }
+
+  @include mobile {
+    max-width: 100%;
+  }
+
+  & label {
+    width: 100%;
+    margin-bottom: 30px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  & button {
+    margin-bottom: 12px;
+  }
+}
+
+.error {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 400;
+  color: $red_input;
+  margin-bottom: 30px;
+}

@@ -1,22 +1,21 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useProductsData } from '../hooks/useProductsData';
 import { MainHeader } from './MainHeader';
-import { BaseSpinner } from './BaseSpinner';
-import { LoginPage } from '../pages/LoginPage/LoginPage';
+import { RegistrationPage } from '../pages/RegistrationPage';
 import { MainFooter } from './MainFooter';
 import { NotFound } from '../pages/NotFound';
+import { MainPage } from '../pages/MainPage';
+import { LoginPage } from '../pages/LoginPage';
 
 export function App() {
-  useProductsData();
-
   return (
     <BrowserRouter>
       <Routes>
         <Route path="*" element={<MainHeader />} />
       </Routes>
       <Routes>
-        <Route path="/" element={<BaseSpinner />} />
+        <Route path="/" element={<MainPage />} />
+        <Route path="/registrate" element={<RegistrationPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

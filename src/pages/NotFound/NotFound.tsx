@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { ElephantIcon } from '../../shared/Icons/ElephantIcon/ElephantIcon';
+import { ElephantIcon } from '../../shared/Icons';
 import styles from './notFound.scss';
 
 export function NotFound() {
