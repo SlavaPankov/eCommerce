@@ -28,6 +28,7 @@ export function SpecialCard({
   id
 }: ISpecialCardProps) {
   const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state) => state.cart);
   const { cart } = useAppSelector((state) => state.cart);
   const token = useAppSelector<string>((state) => state.token.payload.token);
   const discount: string = (
@@ -68,7 +69,12 @@ export function SpecialCard({
         <span className={styles.price}>{discountedPrice.toLocaleString()} руб</span>
         <span className={styles.discountedPrice}>{price.toLocaleString()} руб</span>
       </div>
-      <BaseButton onClick={handleClick} textContent="Купить" mode={EBaseButtonMode.secondary} />
+      <BaseButton
+        isDisabled={!loading}
+        onClick={handleClick}
+        textContent="Купить"
+        mode={EBaseButtonMode.secondary}
+      />
     </article>
   );
 }

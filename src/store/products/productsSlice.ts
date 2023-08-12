@@ -2,7 +2,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { IProduct } from '../../types/interfaces/IProduct';
-import { getApiRoot, PROJECT_KEY } from '../../client/BuildClient';
 import { createProductsFromResponse } from '../../utils/createProductsFromResponse';
 import { apiConfig } from '../../cfg/apiConfig';
 
@@ -19,24 +18,6 @@ const initialState: IProductsState = {
   error: '',
   products: []
 };
-
-export const productsRequestAsyncOld = createAsyncThunk(
-  'products/getProducts',
-  async ({ offset }: { offset: number }) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: PROJECT_KEY })
-      .productProjections()
-      .get({
-        queryArgs: {
-          limit: 24,
-          offset
-        }
-      })
-      .execute()
-      .then(({ body }): Array<IProduct> => createProductsFromResponse(body))
-      .catch((error: Error) => error);
-  }
-);
 
 interface IProductsRequestProps {
   offset: number;

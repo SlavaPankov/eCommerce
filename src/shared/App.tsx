@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { MainHeader } from './MainHeader';
 import { RegistrationPage } from '../pages/RegistrationPage';
@@ -15,6 +15,11 @@ export function App() {
   const token = useAppSelector<string>((state) => state.token.payload.token);
   const { error: cartError } = useAppSelector((state) => state.cart);
   const localToken = localStorage.getItem('token');
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  useEffect(() => {
+    setIsFirstLoad(false);
+  }, []);
 
   useEffect(() => {
     if (!token && localToken) {
@@ -29,11 +34,11 @@ export function App() {
       return;
     }
 
-    if (!cartError) {
+    if (!cartError && isFirstLoad) {
       dispatch(getActiveCartRequestAsync(token));
     }
 
-    if (cartError) {
+    if (cartError && isFirstLoad) {
       dispatch(createCartRequestAsync(token));
     }
   }, [token, cartError]);
