@@ -1,0 +1,23 @@
+.container {
+  padding-top: 35px !important;
+  padding-bottom: 35px !important;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 26px;
+
+  & h2 {
+    flex-basis: 50%;
+  }
+
+  & .slider {
+    width: 100%;
+  }
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: flex-end;
+  flex-basis: 50%;
+}

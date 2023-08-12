@@ -3,17 +3,22 @@ import classNames from 'classnames';
 import styles from './baseRoundButton.scss';
 
 interface IBaseRoundButtonProps {
-  isRight?: boolean;
+  isLeft?: boolean;
   handleClick?: (event?: MouseEvent<HTMLButtonElement>) => void;
+  id?: string;
 }
 
 const NOOP = () => {};
 
-export function BaseRoundButton({ handleClick = NOOP, isRight = true }: IBaseRoundButtonProps) {
+export function BaseRoundButton({
+  handleClick = NOOP,
+  isLeft = false,
+  id = ''
+}: IBaseRoundButtonProps) {
   const className = classNames('btn-reset', {
     [`${styles.btn}`]: true,
-    [`${styles.btn_rotate}`]: !isRight
+    [`${styles.btn_rotate}`]: isLeft
   });
 
-  return <button className={className} onClick={handleClick}></button>;
+  return <button id={id} className={className} onClick={handleClick}></button>;
 }
