@@ -70,7 +70,7 @@ export function SpecialCard({
         <span className={styles.discountedPrice}>{price.toLocaleString()} руб</span>
       </div>
       <BaseButton
-        isDisabled={!loading}
+        isDisabled={loading}
         onClick={handleClick}
         textContent="Купить"
         mode={EBaseButtonMode.secondary}
