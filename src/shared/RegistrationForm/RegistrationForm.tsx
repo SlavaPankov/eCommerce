@@ -1,10 +1,12 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
+import classNames from 'classnames';
 import styles from './registrationForm.scss';
 import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import { EErrorText } from '../../types/enums/EErrorText';
 import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRegex';
+import { RegistrationAddress } from './RagistrationAddress';
 
 interface IFormData {
   firstName: string;
@@ -33,7 +35,6 @@ export function RegistrationForm() {
     password: '',
     passwordConfirmed: ''
   });
-
   const [formError, setFormError] = useState<IFormData>({
     firstName: '',
     lastName: '',
@@ -42,19 +43,18 @@ export function RegistrationForm() {
     password: '',
     passwordConfirmed: ''
   });
-
   const [disabled, setDisabled] = useState<boolean>(true);
+  const [addressCount, setAddressCount] = useState<number>(0);
+  const [renderAddress, setRenderAddress] = useState<Array<number>>([]);
 
   function checkForm() {
-    let result = true;
-    if (formData.email && formData.password && formData.passwordConfirmed) {
-      let k: keyof typeof formError;
-      // eslint-disable-next-line no-restricted-syntax, guard-for-in
-      for (k in formError) {
-        result = !formError[k].length;
+    Object.values(formError).forEach((value) => {
+      if (value) {
+        setDisabled(false);
+      } else {
+        setDisabled(true);
       }
-    }
-    setDisabled(result);
+    });
   }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -128,9 +128,30 @@ export function RegistrationForm() {
     }
   };
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
+
+    const data = new FormData(event.currentTarget);
+
+    console.log([...data]);
+  };
+
+  const handleClickAddAddress = () => {
+    if (addressCount >= 3) {
+      return;
+    }
+
+    setRenderAddress([...renderAddress, addressCount]);
+    setAddressCount(addressCount + 1);
+  };
+
+  const formClassName = classNames('container', {
+    [`${styles.form}`]: true
+  });
+
   return (
     <section>
-      <form className={styles.form}>
+      <form className={formClassName} onSubmit={handleSubmit}>
         <h1 className={styles.form__header}>Регистрация</h1>
         <span className={styles.form__text}>
           Зарегистрируйтесь, чтобы получать специальные предложения. <br />
@@ -191,7 +212,19 @@ export function RegistrationForm() {
           onBlur={handleBlurRequired}
           error={formError.passwordConfirmed}
         />
-
+        <h2 className={styles.address_title}>Адреса</h2>
+        {renderAddress.map((item, index) => (
+          <RegistrationAddress
+            addressCount={addressCount}
+            setAddressCount={setAddressCount}
+            key={index}
+          />
+        ))}
+        {addressCount < 3 ? (
+          <div className={styles.addAddress} onClick={handleClickAddAddress}>
+            Добавить адрес
+          </div>
+        ) : null}
         <BaseButton textContent="Зарегистрироваться" isDisabled={disabled} />
       </form>
     </section>

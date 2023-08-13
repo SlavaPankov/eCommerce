@@ -1,0 +1,31 @@
+.address {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 100%;
+  width: 66%;
+  padding-bottom: 20px;
+
+  &:not(:last-child) {
+    border-bottom: 2px solid $grey_light;
+  }
+
+  & label {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cross {
+  position: absolute;
+  top: 0;
+  right: -30px;
+  cursor: pointer;
+}
