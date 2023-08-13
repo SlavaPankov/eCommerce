@@ -96,7 +96,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <BaseButton textContent="Войти" />
+      <BaseButton textContent="Войти" isDisabled={!!emailError || !!passwordError} />
       <div className={styles.form__register_wrapper}>
         <h1 className={styles.form__header_register}>Не регистрировались?</h1>
         <Link to="/registrate">
