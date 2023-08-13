@@ -5,18 +5,15 @@
   align-items: flex-start;
   flex-direction: column;
   gap: 1rem;
+  color: $black;
 
   &__header_login {
-    color: var(--black, #333);
-    font-family: Open Sans;
     font-size: 2rem;
     font-weight: 400;
     padding: 0rem;
   }
 
   &__header_register {
-    color: var(--black, #333);
-    font-family: Open Sans;
     font-size: 2rem;
     font-weight: 400;
     margin-bottom: 2rem;
