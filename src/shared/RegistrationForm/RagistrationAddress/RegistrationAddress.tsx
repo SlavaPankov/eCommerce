@@ -232,14 +232,16 @@ export function RegistrationAddress({
         />
       </div>
       <BaseCheckbox
-        name={`${EFieldsNames.isDefaultShipping}_${index}`}
+        type="radio"
+        name="defaultShipping"
         value={EFieldsNames.isDefaultShipping}
         onChange={handleChangeCheckbox}
         isChecked={checkboxData.isDefaultShipping}
         label="Сделать адресом для доставки по умолчанию"
       />
       <BaseCheckbox
-        name={`${EFieldsNames.isDefaultBilling}_${index}`}
+        type="radio"
+        name="defaultBilling"
         value={EFieldsNames.isDefaultBilling}
         onChange={handleChangeCheckbox}
         isChecked={checkboxData.isDefaultBilling}

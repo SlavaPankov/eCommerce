@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { CustomerDraft } from '@commercetools/platform-sdk';
+import { BaseAddress } from '@commercetools/platform-sdk';
 import styles from './registrationForm.scss';
 import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
@@ -25,6 +25,19 @@ enum EFieldsNames {
   email = 'email',
   password = 'password',
   passwordConfirmed = 'passwordConfirmed'
+}
+
+interface ICustomerDraft {
+  email: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  password: string;
+  addresses: Array<BaseAddress>;
+  shippingAddresses: Array<number>;
+  billingAddresses: Array<number>;
+  defaultShippingAddress?: number;
+  defaultBillingAddress?: number;
 }
 
 export function RegistrationForm() {
@@ -134,16 +147,19 @@ export function RegistrationForm() {
 
     const data = new FormData(event.currentTarget);
     const dataObject: { [p: string]: FormDataEntryValue } = Object.fromEntries(data.entries());
+    const tempAddresses: Array<{ [k: string]: string }> = [];
 
-    console.log(
-      Object.fromEntries(
-        Object.entries(dataObject)
-          .filter(([key]) => key.includes('0'))
-          .map(([key, value]) => [key, value])
-      )
-    );
+    renderAddress.forEach((item, index) => {
+      tempAddresses.push(
+        Object.fromEntries(
+          Object.entries(dataObject)
+            .filter(([key]) => key.includes(index.toString()))
+            .map(([key, value]) => [key.split('_')[0], value.toString()])
+        )
+      );
+    });
 
-    const customerDraft: CustomerDraft = {
+    const customerDraft: ICustomerDraft = {
       email: dataObject.email.toString(),
       firstName: dataObject.firstName.toString(),
       lastName: dataObject.lastName.toString(),
@@ -154,8 +170,32 @@ export function RegistrationForm() {
       billingAddresses: []
     };
 
-    customerDraft.addresses?.push({
-      country: ''
+    tempAddresses.forEach((item) => {
+      if (item.typeShipping) {
+        customerDraft.shippingAddresses?.push(+item.typeShipping);
+      }
+
+      if (item.typeBilling) {
+        customerDraft.billingAddresses?.push(+item.typeBilling);
+      }
+
+      if (item.deafultShipping) {
+        customerDraft.defaultBillingAddress = +item.deafultShipping;
+      }
+
+      if (item.deafultBilling) {
+        customerDraft.defaultBillingAddress = +item.deafultBilling;
+      }
+
+      customerDraft.addresses?.push({
+        country: item.country,
+        postalCode: item.postalCode,
+        region: item.region,
+        city: item.city,
+        streetName: item.streetName,
+        building: item.building,
+        apartment: item.apartment
+      });
     });
 
     console.log(customerDraft);

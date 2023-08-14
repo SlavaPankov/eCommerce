@@ -7,11 +7,18 @@ interface IBaseCheckboxProps {
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
   isChecked: boolean;
-  // id?: string | number;
   label: string;
+  type?: 'checkbox' | 'radio';
 }
 
-export function BaseCheckbox({ name, value, onChange, isChecked, label }: IBaseCheckboxProps) {
+export function BaseCheckbox({
+  name,
+  value,
+  onChange,
+  isChecked,
+  label,
+  type = 'checkbox'
+}: IBaseCheckboxProps) {
   const inputClassName = classNames('visually-hidden', {
     [`${styles.checkbox__field}`]: true
   });
@@ -19,7 +26,7 @@ export function BaseCheckbox({ name, value, onChange, isChecked, label }: IBaseC
   return (
     <label className={styles.checkbox}>
       <input
-        type="checkbox"
+        type={type}
         className={inputClassName}
         name={name}
         value={value}
