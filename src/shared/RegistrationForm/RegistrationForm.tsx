@@ -1,7 +1,7 @@
+/* eslint-disable no-param-reassign */
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
-import { BaseAddress } from '@commercetools/platform-sdk';
 import styles from './registrationForm.scss';
 import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
@@ -22,13 +22,27 @@ enum EFieldsNames {
   passwordConfirmed = 'passwordConfirmed'
 }
 
+interface IBaseAddress {
+  country: string;
+  postalCode: string;
+  region: string;
+  city: string;
+  streetName: string;
+  building: string;
+  apartment: string;
+  isTypeShipping?: boolean;
+  isTypeBilling?: boolean;
+  isDefaultShipping?: boolean;
+  isDefaultBilling?: boolean;
+}
+
 interface ICustomerDraft {
   email: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
   password: string;
-  addresses: Array<BaseAddress>;
+  addresses: Array<IBaseAddress>;
   shippingAddresses: Array<number>;
   billingAddresses: Array<number>;
   defaultShippingAddress?: number;
@@ -42,17 +56,17 @@ export function RegistrationForm() {
   const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
   const [globalFormError, setGlobalFormError] = useState<string>('');
 
-  function isFormValid() {
-    let flag = true;
-
-    document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
-      if (item.value === '') {
-        flag = false;
-      }
-    });
-
-    return flag;
-  }
+  // function isFormValid(): boolean {
+  //   let flag = true;
+  //
+  //   document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
+  //     if (item.value === '') {
+  //       flag = false;
+  //     }
+  //   });
+  //
+  //   return flag;
+  // }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({ ...formError, [event.target.name]: '' });
@@ -137,30 +151,35 @@ export function RegistrationForm() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
 
-    if (!isFormValid()) {
-      const tempError: { [k: string]: string } = {};
-      document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
-        if (item.value === '') {
-          tempError[item.name] = EErrorText.requiredField;
-        }
-      });
-      setFormError({
-        ...formError,
-        ...tempError
-      });
-      setGlobalFormError('Заполните все обязательные поля');
-      return;
-    }
+    // if (!isFormValid()) {
+    //   const tempError: IFormData = {};
+    //   document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
+    //     if (item.value === '') {
+    //       tempError[item.name] = EErrorText.requiredField;
+    //     }
+    //   });
+    //   setFormError({
+    //     ...formError,
+    //     ...tempError
+    //   });
+    //   setGlobalFormError('Заполните все обязательные поля');
+    //   return;
+    // }
 
     const data = new FormData(event.currentTarget);
-    const dataObject: { [p: string]: FormDataEntryValue } = Object.fromEntries(data.entries());
+    const dataObject: { [k: string]: FormDataEntryValue } = Object.fromEntries(data.entries());
     const tempAddresses: Array<{ [k: string]: string }> = [];
 
     renderAddress.forEach((item, index) => {
       tempAddresses.push(
         Object.fromEntries(
           Object.entries(dataObject)
-            .filter(([key]) => key.includes(index.toString()))
+            .filter(
+              ([key, value]) =>
+                key.includes(index.toString()) ||
+                (key === 'defaultShipping' && Number(value) === index) ||
+                (key === 'defaultBilling' && Number(value) === index)
+            )
             .map(([key, value]) => [key.split('_')[0], value.toString()])
         )
       );
@@ -177,32 +196,69 @@ export function RegistrationForm() {
       billingAddresses: []
     };
 
-    tempAddresses.forEach((item) => {
-      if (item.typeShipping) {
-        customerDraft.shippingAddresses?.push(+item.typeShipping);
-      }
+    for (let i = 0; i < tempAddresses.length; i += 1) {
+      const item = tempAddresses[i];
+      let flag = true;
 
-      if (item.typeBilling) {
-        customerDraft.billingAddresses?.push(+item.typeBilling);
-      }
-
-      if (item.deafultShipping) {
-        customerDraft.defaultBillingAddress = +item.deafultShipping;
-      }
-
-      if (item.deafultBilling) {
-        customerDraft.defaultBillingAddress = +item.deafultBilling;
-      }
-
-      customerDraft.addresses?.push({
-        country: item.country,
-        postalCode: item.postalCode,
-        region: item.region,
-        city: item.city,
-        streetName: item.streetName,
-        building: item.building,
-        apartment: item.apartment
+      Object.values(item).forEach((value) => {
+        if (!value) {
+          flag = false;
+        }
       });
+
+      if (!flag) {
+        // if (item.typeShipping) {
+        //   customerDraft.shippingAddresses?.push(+item.typeShipping);
+        // }
+        //
+        // if (item.typeBilling) {
+        //   customerDraft.billingAddresses?.push(+item.typeBilling);
+        // }
+        //
+        // if (item.deafultShipping) {
+        //   customerDraft.defaultBillingAddress = +item.deafultShipping;
+        // }
+        //
+        // if (item.deafultBilling) {
+        //   customerDraft.defaultBillingAddress = +item.deafultBilling;
+        // }
+
+        customerDraft.addresses?.push({
+          country: item.country,
+          postalCode: item.postalCode,
+          region: item.region,
+          city: item.city,
+          streetName: item.streetName,
+          building: item.building,
+          apartment: item.apartment,
+          isTypeBilling: !!item.typeBilling,
+          isTypeShipping: !!item.typeShipping,
+          isDefaultBilling: !!item.defaultShipping,
+          isDefaultShipping: !!item.defaultBilling
+        });
+      }
+    }
+
+    customerDraft.addresses.forEach((address, index) => {
+      if (address.isDefaultShipping) {
+        customerDraft.defaultShippingAddress = index;
+        delete address.isDefaultShipping;
+      }
+
+      if (address.isDefaultBilling) {
+        customerDraft.defaultBillingAddress = index;
+        delete address.isDefaultBilling;
+      }
+
+      if (address.isTypeShipping) {
+        customerDraft.shippingAddresses.push(index);
+        delete address.isTypeShipping;
+      }
+
+      if (address.isTypeBilling) {
+        customerDraft.billingAddresses.push(index);
+        delete address.isTypeBilling;
+      }
     });
 
     console.log(customerDraft);
@@ -232,7 +288,7 @@ export function RegistrationForm() {
         <BaseInputField
           isRequired={true}
           name={EFieldsNames.firstName}
-          value={formData.firstName || ''}
+          value={formData[EFieldsNames.firstName] || ''}
           type="text"
           placeholder="Ваше имя*"
           onChange={handleChange}
@@ -242,7 +298,7 @@ export function RegistrationForm() {
         <BaseInputField
           isRequired={true}
           name={EFieldsNames.lastName}
-          value={formData.lastName || ''}
+          value={formData[EFieldsNames.lastName] || ''}
           type="text"
           placeholder="Ваша фамилия*"
           onChange={handleChange}
@@ -252,7 +308,7 @@ export function RegistrationForm() {
         <BaseInputField
           isRequired={true}
           name={EFieldsNames.birthDate}
-          value={formData.birthDate || ''}
+          value={formData[EFieldsNames.birthDate] || ''}
           type="text"
           placeholder="Дата рождения*"
           onChange={handleChange}
@@ -263,7 +319,7 @@ export function RegistrationForm() {
         <BaseInputField
           isRequired={true}
           name={EFieldsNames.email}
-          value={formData.email || ''}
+          value={formData[EFieldsNames.email] || ''}
           type="email"
           placeholder="Ваш e-mail*"
           onChange={handleChange}
@@ -273,7 +329,7 @@ export function RegistrationForm() {
         <BaseInputField
           isRequired={true}
           name={EFieldsNames.password}
-          value={formData.password || ''}
+          value={formData[EFieldsNames.password] || ''}
           type="password"
           placeholder="Придумайте пароль*"
           onChange={handleChange}
@@ -283,7 +339,7 @@ export function RegistrationForm() {
         <BaseInputField
           isRequired={true}
           name={EFieldsNames.passwordConfirmed}
-          value={formData.passwordConfirmed || ''}
+          value={formData[EFieldsNames.passwordConfirmed] || ''}
           type="password"
           placeholder="Повторите пароль*"
           onChange={handleChange}

@@ -107,7 +107,7 @@ export function RegistrationAddress({
     ref.current?.parentElement?.remove();
   };
 
-  const handleClickSelect = (event: MouseEvent<HTMLLIElement>) => {
+  const handleClickSelectItem = (event: MouseEvent<HTMLLIElement>) => {
     setSelectedCountry(event.currentTarget.textContent || 'Выберите');
     setFormData({
       ...formData,
@@ -123,7 +123,7 @@ export function RegistrationAddress({
         </span>
       ) : null}
       <div className={styles.type_wrapper}>
-        Тип*:
+        Тип:
         <BaseCheckbox
           name={`${EFieldsNames.typeShipping}_${index}`}
           value={index.toString()}
@@ -153,7 +153,7 @@ export function RegistrationAddress({
           <ul className={styles.list}>
             {countries.map((country, countryIndex) => (
               <li
-                onClick={handleClickSelect}
+                onClick={handleClickSelectItem}
                 className={styles.item}
                 data-value={country.value}
                 key={countryIndex}>
@@ -203,7 +203,7 @@ export function RegistrationAddress({
       <div className={styles.wrapper}>
         <BaseInputField
           name={`${EFieldsNames.building}_${index}`}
-          value={formData[`${EFieldsNames.building}_${index}`]}
+          value={formData[`${EFieldsNames.building}_${index}`] || ''}
           placeholder="Дом"
           onChange={handleChange}
           onBlur={handleBlur}
@@ -212,7 +212,7 @@ export function RegistrationAddress({
         <BaseInputField
           type="number"
           name={`${EFieldsNames.apartment}_${index}`}
-          value={formData[`${EFieldsNames.apartment}_${index}`]}
+          value={formData[`${EFieldsNames.apartment}_${index}`] || ''}
           placeholder="Квартира"
           onChange={handleChange}
           onBlur={handleBlur}
