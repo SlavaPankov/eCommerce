@@ -4,6 +4,7 @@ export interface IProduct {
   id: string;
   name: string;
   key: string;
+  variantId: number;
   images?: {
     preview: string;
     slider: Array<string>;

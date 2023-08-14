@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import axios from 'axios';
 import { IProduct } from '../../types/interfaces/IProduct';
-import { getApiRoot, PROJECT_KEY } from '../../client/BuildClient';
 import { createProductsFromResponse } from '../../utils/createProductsFromResponse';
+import { apiConfig } from '../../cfg/apiConfig';
 
 interface IProductsState {
   loading: boolean;
@@ -18,20 +19,25 @@ const initialState: IProductsState = {
   products: []
 };
 
+interface IProductsRequestProps {
+  offset: number;
+  token: string;
+}
+
 export const productsRequestAsync = createAsyncThunk(
   'products/getProducts',
-  async ({ offset }: { offset: number }) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: PROJECT_KEY })
-      .productProjections()
-      .get({
-        queryArgs: {
+  async ({ offset, token }: IProductsRequestProps) => {
+    return axios
+      .get(`${apiConfig.baseUrl}/${apiConfig.projectKey}/product-projections`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        params: {
           limit: 24,
           offset
         }
       })
-      .execute()
-      .then(({ body }): Array<IProduct> => createProductsFromResponse(body))
+      .then(({ data }): Array<IProduct> => createProductsFromResponse(data))
       .catch((error: Error) => error);
   }
 );

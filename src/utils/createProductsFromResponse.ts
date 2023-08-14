@@ -11,6 +11,7 @@ export function createProductsFromResponse(
     id: item.id,
     name: item.name.ru,
     key: item.key || '',
+    variantId: item.masterVariant.id || 0,
     images: {
       preview:
         item.masterVariant.images?.find((image) => image.label === EImages.preview)?.url || '',
