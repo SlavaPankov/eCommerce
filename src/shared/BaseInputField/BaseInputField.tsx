@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import InputMask from 'react-input-mask';
 import styles from './baseInputField.scss';
 
-interface IBaseTextInputFieldProps {
+interface IBaseInputFieldProps {
   name: string;
   value: string;
   placeholder: string;
@@ -12,6 +12,8 @@ interface IBaseTextInputFieldProps {
   type?: string;
   onFocus?: (event: FormEvent<HTMLInputElement>) => void;
   onBlur?: (event: FormEvent<HTMLInputElement>) => void;
+  isDisabled?: boolean;
+  maxLength?: number;
 }
 
 const NOOP = () => {};
@@ -24,8 +26,10 @@ export function BaseInputField({
   onFocus = NOOP,
   onBlur = NOOP,
   error = '',
-  type = 'text'
-}: IBaseTextInputFieldProps) {
+  type = 'text',
+  isDisabled = false,
+  maxLength = 524288
+}: IBaseInputFieldProps) {
   const inputClassName = classNames({
     [`${styles.input}`]: true,
     [`${styles.input_error}`]: error,
@@ -46,6 +50,8 @@ export function BaseInputField({
           onChange={onChange}
           onFocus={onFocus}
           onBlur={onBlur}
+          disabled={isDisabled}
+          maxLength={maxLength}
         />
       ) : (
         <InputMask
@@ -59,6 +65,7 @@ export function BaseInputField({
           onFocus={onFocus}
           onBlur={onBlur}
           mask="+7 (999) 999-99-99"
+          disabled={isDisabled}
         />
       )}
     </label>

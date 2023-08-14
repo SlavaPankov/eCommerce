@@ -44,8 +44,8 @@ export function RegistrationForm() {
     passwordConfirmed: ''
   });
   const [disabled, setDisabled] = useState<boolean>(true);
-  const [addressCount, setAddressCount] = useState<number>(0);
-  const [renderAddress, setRenderAddress] = useState<Array<number>>([]);
+  const [addressCount, setAddressCount] = useState<number>(1);
+  const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
 
   function checkForm() {
     Object.values(formError).forEach((value) => {
@@ -130,10 +130,12 @@ export function RegistrationForm() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
+    // const customerDraft: CustomerDraft = {};
 
     const data = new FormData(event.currentTarget);
 
     console.log([...data]);
+    console.log(Object.fromEntries(data.entries()));
   };
 
   const handleClickAddAddress = () => {
@@ -215,6 +217,7 @@ export function RegistrationForm() {
         <h2 className={styles.address_title}>Адреса</h2>
         {renderAddress.map((item, index) => (
           <RegistrationAddress
+            index={index}
             addressCount={addressCount}
             setAddressCount={setAddressCount}
             key={index}
