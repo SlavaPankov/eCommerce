@@ -21,6 +21,8 @@ export function HighRatingList({ list }: IHighRatingList) {
             imageSrc={item.images?.preview || ''}
             title={item.name}
             price={item.price}
+            id={item.id}
+            variantId={item.variantId}
           />
         </li>
       ))}

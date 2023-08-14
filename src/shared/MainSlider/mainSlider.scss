@@ -121,3 +121,30 @@
     opacity: 1;
   }
 }
+
+.modal {
+  width: 624px;
+  padding: 50px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  background-color: $white;
+  border-radius: 10px;
+
+  &_title {
+    margin: 0;
+    font-size: 24px;
+    line-height: 130%;
+    font-weight: 400;
+    color: $black;
+  }
+
+  &_content {
+    font-size: 36px;
+    line-height: 130%;
+    font-weight: 700;
+    color: $black;
+  }
+}

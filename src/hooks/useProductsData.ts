@@ -9,12 +9,15 @@ export function useProductsData() {
   const loading = useAppSelector<boolean>((state) => state.products.loading);
   const products = useAppSelector<Array<IProduct>>((state) => state.products.products);
   const offset = useAppSelector<number>((state) => state.products.offset);
+  const token = useAppSelector<string>((state) => state.token.payload.token);
 
   useEffect(() => {
-    if (products.length === 0) {
-      dispatch(productsRequestAsync({ offset }));
+    if (!token) {
+      return;
     }
-  }, [offset]);
+
+    dispatch(productsRequestAsync({ offset, token }));
+  }, [offset, token]);
 
   return {
     error,

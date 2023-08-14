@@ -42,6 +42,8 @@ export function SpecialsList({ list }: ISpecialsListProps) {
       {list.map((item) => (
         <SwiperSlide key={item.id}>
           <SpecialCard
+            id={item.id}
+            variantId={item.variantId}
             imageSrc={item.images?.preview || ''}
             title={item.name}
             price={item.price}

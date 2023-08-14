@@ -4,7 +4,6 @@
   padding-top: 35px !important;
   padding-bottom: 70px !important;
   background: url('../../assets/images/callback.png') right center no-repeat transparent;
-  background-size: contain !important;
 
   @include big-desktop {
     background: url('../../assets/images/callback-tablet.png') right center no-repeat transparent;
@@ -12,6 +11,7 @@
 
   @include small-tablet {
     background: url('../../assets/images/callback-smtablet.png') right center no-repeat transparent;
+    background-size: contain;
   }
 
   @include mobile {
