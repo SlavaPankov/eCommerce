@@ -56,17 +56,17 @@ export function RegistrationForm() {
   const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
   const [globalFormError, setGlobalFormError] = useState<string>('');
 
-  // function isFormValid(): boolean {
-  //   let flag = true;
-  //
-  //   document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
-  //     if (item.value === '') {
-  //       flag = false;
-  //     }
-  //   });
-  //
-  //   return flag;
-  // }
+  function isFormValid() {
+    let flag = true;
+
+    document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
+      if (item.value === '') {
+        flag = false;
+      }
+    });
+
+    return flag;
+  }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({ ...formError, [event.target.name]: '' });
@@ -151,20 +151,20 @@ export function RegistrationForm() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
 
-    // if (!isFormValid()) {
-    //   const tempError: IFormData = {};
-    //   document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
-    //     if (item.value === '') {
-    //       tempError[item.name] = EErrorText.requiredField;
-    //     }
-    //   });
-    //   setFormError({
-    //     ...formError,
-    //     ...tempError
-    //   });
-    //   setGlobalFormError('Заполните все обязательные поля');
-    //   return;
-    // }
+    if (!isFormValid()) {
+      const tempError: IFormData = {};
+      document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
+        if (item.value === '') {
+          tempError[item.name] = EErrorText.requiredField;
+        }
+      });
+      setFormError({
+        ...formError,
+        ...tempError
+      });
+      setGlobalFormError('Заполните все обязательные поля');
+      return;
+    }
 
     const data = new FormData(event.currentTarget);
     const dataObject: { [k: string]: FormDataEntryValue } = Object.fromEntries(data.entries());
@@ -207,22 +207,6 @@ export function RegistrationForm() {
       });
 
       if (!flag) {
-        // if (item.typeShipping) {
-        //   customerDraft.shippingAddresses?.push(+item.typeShipping);
-        // }
-        //
-        // if (item.typeBilling) {
-        //   customerDraft.billingAddresses?.push(+item.typeBilling);
-        // }
-        //
-        // if (item.deafultShipping) {
-        //   customerDraft.defaultBillingAddress = +item.deafultShipping;
-        // }
-        //
-        // if (item.deafultBilling) {
-        //   customerDraft.defaultBillingAddress = +item.deafultBilling;
-        // }
-
         customerDraft.addresses?.push({
           country: item.country,
           postalCode: item.postalCode,
