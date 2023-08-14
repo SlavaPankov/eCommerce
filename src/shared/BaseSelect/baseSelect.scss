@@ -1,8 +1,5 @@
 .select {
   width: 100%;
-}
-
-.listContainer {
   position: relative;
 }
 
@@ -16,6 +13,7 @@
 
 .selected {
   position: relative;
+  cursor: pointer;
 
   & li {
     list-style: none;

@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
+import { CustomerDraft } from '@commercetools/platform-sdk';
 import styles from './registrationForm.scss';
 import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
@@ -43,7 +44,7 @@ export function RegistrationForm() {
     password: '',
     passwordConfirmed: ''
   });
-  const [disabled, setDisabled] = useState<boolean>(true);
+  const [disabled, setDisabled] = useState<boolean>(false);
   const [addressCount, setAddressCount] = useState<number>(1);
   const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
 
@@ -130,12 +131,34 @@ export function RegistrationForm() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
-    // const customerDraft: CustomerDraft = {};
 
     const data = new FormData(event.currentTarget);
+    const dataObject: { [p: string]: FormDataEntryValue } = Object.fromEntries(data.entries());
 
-    console.log([...data]);
-    console.log(Object.fromEntries(data.entries()));
+    console.log(
+      Object.fromEntries(
+        Object.entries(dataObject)
+          .filter(([key]) => key.includes('0'))
+          .map(([key, value]) => [key, value])
+      )
+    );
+
+    const customerDraft: CustomerDraft = {
+      email: dataObject.email.toString(),
+      firstName: dataObject.firstName.toString(),
+      lastName: dataObject.lastName.toString(),
+      dateOfBirth: dataObject.birthDate.toString(),
+      password: dataObject.password.toString(),
+      addresses: [],
+      shippingAddresses: [],
+      billingAddresses: []
+    };
+
+    customerDraft.addresses?.push({
+      country: ''
+    });
+
+    console.log(customerDraft);
   };
 
   const handleClickAddAddress = () => {

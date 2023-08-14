@@ -17,9 +17,32 @@
   }
 }
 
+.country_wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  position: relative;
+
+  & label:first-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  & > div {
+    max-height: 64px;
+    padding: 6px 18px;
+    border-radius: 10px;
+    font-size: 16px;
+    line-height: 250%;
+    border: 1px solid transparent;
+    background-color: $grey_light;
+  }
+}
+
 .wrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 20px;
 }
 
@@ -28,4 +51,22 @@
   top: 0;
   right: -30px;
   cursor: pointer;
+}
+
+.list {
+  width: 100%;
+  margin: 0;
+  padding: 18px;
+  list-style: none;
+  background-color: $grey_light;
+}
+
+.item {
+  cursor: pointer;
+}
+
+.type_wrapper {
+  display: flex;
+  gap: 5px;
+  align-items: center;
 }

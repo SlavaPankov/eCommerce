@@ -1,9 +1,10 @@
-import React, { ChangeEvent, FormEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
 import styles from './registrationAddress.scss';
 import { BaseInputField } from '../../BaseInputField';
 import { CrossIcon } from '../../Icons';
 import { EErrorText } from '../../../types/enums/EErrorText';
 import { BaseCheckbox } from '../../BaseCheckbox';
+import { BaseSelect } from '../../BaseSelect';
 
 enum EFieldsNames {
   country = 'country',
@@ -14,8 +15,26 @@ enum EFieldsNames {
   apartment = 'apartment',
   postalCode = 'postalCode',
   isDefaultShipping = 'isDefaultShipping',
-  isDefaultBilling = 'isDefaultBilling'
+  isDefaultBilling = 'isDefaultBilling',
+  typeBilling = 'typeBilling',
+  typeShipping = 'typeShipping'
 }
+
+interface ICountry {
+  label: string;
+  value: string;
+}
+
+const countries: Array<ICountry> = [
+  {
+    label: 'Россия',
+    value: 'RU'
+  },
+  {
+    label: 'Казахстан',
+    value: 'KZ'
+  }
+];
 
 interface IRegistrationAddressProps {
   addressCount: number;
@@ -30,7 +49,7 @@ export function RegistrationAddress({
 }: IRegistrationAddressProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [formData, setFormData] = useState({
-    [`country_${index}`]: 'Россия',
+    [`country_${index}`]: '',
     [`region_${index}`]: '',
     [`city_${index}`]: '',
     [`building_${index}`]: '',
@@ -38,7 +57,9 @@ export function RegistrationAddress({
     [`streetName_${index}`]: '',
     [`postalCode_${index}`]: '',
     [`isDefaultBilling_${index}`]: '',
-    [`isDefaultShipping_${index}`]: ''
+    [`isDefaultShipping_${index}`]: '',
+    [`typeShipping_${index}`]: '',
+    [`typeBilling_${index}`]: ''
   });
   const [formError, setFormError] = useState({
     [`country_${index}`]: '',
@@ -53,8 +74,11 @@ export function RegistrationAddress({
   });
   const [checkboxData, setCheckboxData] = useState({
     [`isDefaultShipping_${index}`]: false,
-    [`isDefaultBilling_${index}`]: false
+    [`isDefaultBilling_${index}`]: false,
+    [`typeShipping_${index}`]: false,
+    [`typeBilling_${index}`]: false
   });
+  const [selectedCountry, setSelectedCountry] = useState('Выберите');
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({ ...formError, [event.target.name]: '' });
@@ -101,6 +125,14 @@ export function RegistrationAddress({
     ref.current?.parentElement?.remove();
   };
 
+  const handleClickSelect = (event: MouseEvent<HTMLLIElement>) => {
+    setSelectedCountry(event.currentTarget.textContent || 'Выберите');
+    setFormData({
+      ...formData,
+      [`country_${index}`]: event.currentTarget.getAttribute('data-value') || ''
+    });
+  };
+
   return (
     <div className={styles.address}>
       {index !== 0 ? (
@@ -108,16 +140,45 @@ export function RegistrationAddress({
           <CrossIcon />
         </span>
       ) : null}
-      <div className={styles.wrapper}>
+      <div className={styles.type_wrapper}>
+        Тип:
+        <BaseCheckbox
+          name={`${EFieldsNames.typeShipping}_${index}`}
+          value={index.toString()}
+          onChange={handleChangeCheckbox}
+          isChecked={checkboxData[`typeShipping_${index}`]}
+          label="Адрес для доставки"
+        />
+        <BaseCheckbox
+          name={`${EFieldsNames.typeBilling}_${index}`}
+          value={index.toString()}
+          onChange={handleChangeCheckbox}
+          isChecked={checkboxData[`typeBilling_${index}`]}
+          label="Адрес для счетов"
+        />
+      </div>
+      <div className={styles.country_wrapper}>
         <BaseInputField
+          type="hidden"
           name={`${EFieldsNames.country}_${index}`}
           value={formData[`${EFieldsNames.country}_${index}`]}
           placeholder="Страна*"
           onChange={handleChange}
-          isDisabled={true}
         />
+        <BaseSelect selectedValue={selectedCountry}>
+          <ul className={styles.list}>
+            {countries.map((country, countryIndex) => (
+              <li
+                onClick={handleClickSelect}
+                className={styles.item}
+                data-value={country.value}
+                key={countryIndex}>
+                {country.label}
+              </li>
+            ))}
+          </ul>
+        </BaseSelect>
         <BaseInputField
-          type="number"
           name={`${EFieldsNames.postalCode}_${index}`}
           value={formData[`${EFieldsNames.postalCode}_${index}`]}
           placeholder="Почтовый индекс*"
