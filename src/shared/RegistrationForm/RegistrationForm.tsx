@@ -10,12 +10,7 @@ import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRege
 import { RegistrationAddress } from './RagistrationAddress';
 
 interface IFormData {
-  firstName: string;
-  lastName: string;
-  birthDate: string;
-  email: string;
-  password: string;
-  passwordConfirmed: string;
+  [k: string]: string;
 }
 
 enum EFieldsNames {
@@ -41,38 +36,27 @@ interface ICustomerDraft {
 }
 
 export function RegistrationForm() {
-  const [formData, setFormData] = useState<IFormData>({
-    firstName: '',
-    lastName: '',
-    birthDate: '',
-    email: '',
-    password: '',
-    passwordConfirmed: ''
-  });
-  const [formError, setFormError] = useState<IFormData>({
-    firstName: '',
-    lastName: '',
-    birthDate: '',
-    email: '',
-    password: '',
-    passwordConfirmed: ''
-  });
-  const [disabled, setDisabled] = useState<boolean>(false);
+  const [formData, setFormData] = useState<IFormData>({});
+  const [formError, setFormError] = useState<IFormData>({});
   const [addressCount, setAddressCount] = useState<number>(1);
   const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
+  const [globalFormError, setGlobalFormError] = useState<string>('');
 
-  function checkForm() {
-    Object.values(formError).forEach((value) => {
-      if (value) {
-        setDisabled(false);
-      } else {
-        setDisabled(true);
+  function isFormValid() {
+    let flag = true;
+
+    document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
+      if (item.value === '') {
+        flag = false;
       }
     });
+
+    return flag;
   }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({ ...formError, [event.target.name]: '' });
+    setGlobalFormError('');
 
     if (
       event.target.name === EFieldsNames.firstName ||
@@ -86,14 +70,6 @@ export function RegistrationForm() {
       }
       if (event.target.value && !textRegex.test(event.target.value)) {
         setFormError({ ...formError, [event.target.name]: EErrorText.textFormat });
-      }
-    }
-
-    if (event.target.name === EFieldsNames.birthDate) {
-      const currentYear = new Date().getFullYear();
-      const inputYear = new Date(event.target.value).getFullYear();
-      if (currentYear - inputYear > 100 || currentYear - inputYear < 16) {
-        setFormError({ ...formError, [event.target.name]: EErrorText.invalidAge });
       }
     }
 
@@ -116,7 +92,6 @@ export function RegistrationForm() {
     }
 
     setFormData({ ...formData, [event.target.name]: event.target.value });
-    checkForm();
   };
 
   const handleFocusBirthDate = (event: FormEvent<HTMLInputElement>) => {
@@ -131,19 +106,51 @@ export function RegistrationForm() {
         [event.currentTarget.name]: EErrorText.requiredField
       });
     }
-  };
 
-  const handleBlur = (event: FormEvent<HTMLInputElement>) => {
-    if (!event.currentTarget.value) {
-      setFormError({
-        ...formError,
-        [event.currentTarget.name]: ''
-      });
+    if (event.currentTarget.name === EFieldsNames.birthDate) {
+      const birthDate = new Date(event.currentTarget.value);
+      const currentDate = new Date();
+
+      if (Number.isNaN(birthDate.getTime())) {
+        setFormError({
+          ...formError,
+          [event.currentTarget.name]: EErrorText.dateInvalid
+        });
+      }
+
+      if (currentDate.getFullYear() - birthDate.getFullYear() < 13) {
+        setFormError({
+          ...formError,
+          [event.currentTarget.name]: EErrorText.dateToYoung
+        });
+      }
+
+      if (birthDate > currentDate) {
+        setFormError({
+          ...formError,
+          [event.currentTarget.name]: EErrorText.dateOutOfLimit
+        });
+      }
     }
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
+
+    if (!isFormValid()) {
+      const tempError: { [k: string]: string } = {};
+      document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
+        if (item.value === '') {
+          tempError[item.name] = EErrorText.requiredField;
+        }
+      });
+      setFormError({
+        ...formError,
+        ...tempError
+      });
+      setGlobalFormError('Заполните все обязательные поля');
+      return;
+    }
 
     const data = new FormData(event.currentTarget);
     const dataObject: { [p: string]: FormDataEntryValue } = Object.fromEntries(data.entries());
@@ -223,36 +230,40 @@ export function RegistrationForm() {
           Если вы уже зарегистрированы, <Link to="/login">авторизуйтесь</Link>.
         </span>
         <BaseInputField
+          isRequired={true}
           name={EFieldsNames.firstName}
-          value={formData.firstName}
+          value={formData.firstName || ''}
           type="text"
-          placeholder="Ваше имя"
+          placeholder="Ваше имя*"
           onChange={handleChange}
-          onBlur={handleBlur}
+          onBlur={handleBlurRequired}
           error={formError.firstName}
         />
         <BaseInputField
+          isRequired={true}
           name={EFieldsNames.lastName}
-          value={formData.lastName}
+          value={formData.lastName || ''}
           type="text"
-          placeholder="Ваша фамилия"
+          placeholder="Ваша фамилия*"
           onChange={handleChange}
-          onBlur={handleBlur}
+          onBlur={handleBlurRequired}
           error={formError.lastName}
         />
         <BaseInputField
+          isRequired={true}
           name={EFieldsNames.birthDate}
-          value={formData.birthDate}
+          value={formData.birthDate || ''}
           type="text"
-          placeholder="Дата рождения"
+          placeholder="Дата рождения*"
           onChange={handleChange}
           onFocus={handleFocusBirthDate}
-          onBlur={handleBlur}
+          onBlur={handleBlurRequired}
           error={formError.birthDate}
         />
         <BaseInputField
+          isRequired={true}
           name={EFieldsNames.email}
-          value={formData.email}
+          value={formData.email || ''}
           type="email"
           placeholder="Ваш e-mail*"
           onChange={handleChange}
@@ -260,8 +271,9 @@ export function RegistrationForm() {
           error={formError.email}
         />
         <BaseInputField
+          isRequired={true}
           name={EFieldsNames.password}
-          value={formData.password}
+          value={formData.password || ''}
           type="password"
           placeholder="Придумайте пароль*"
           onChange={handleChange}
@@ -269,8 +281,9 @@ export function RegistrationForm() {
           error={formError.password}
         />
         <BaseInputField
+          isRequired={true}
           name={EFieldsNames.passwordConfirmed}
-          value={formData.passwordConfirmed}
+          value={formData.passwordConfirmed || ''}
           type="password"
           placeholder="Повторите пароль*"
           onChange={handleChange}
@@ -280,6 +293,10 @@ export function RegistrationForm() {
         <h2 className={styles.address_title}>Адреса</h2>
         {renderAddress.map((item, index) => (
           <RegistrationAddress
+            formData={formData}
+            formError={formError}
+            setFormData={setFormData}
+            setFormError={setFormError}
             index={index}
             addressCount={addressCount}
             setAddressCount={setAddressCount}
@@ -291,7 +308,8 @@ export function RegistrationForm() {
             Добавить адрес
           </div>
         ) : null}
-        <BaseButton textContent="Зарегистрироваться" isDisabled={disabled} />
+        {globalFormError ? <span className={styles.error}>{globalFormError}</span> : null}
+        <BaseButton textContent="Зарегистрироваться" />
       </form>
     </section>
   );

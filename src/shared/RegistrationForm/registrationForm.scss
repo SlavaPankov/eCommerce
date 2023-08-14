@@ -27,6 +27,20 @@
     font-size: 14px;
     font-weight: 400;
     margin-bottom: 15px;
+
+    & a {
+      color: $primary;
+      text-decoration: underline;
+      transition: color 0.3s ease-in-out;
+
+      &:hover {
+        color: $primary_light;
+      }
+
+      &:active {
+        color: $primary_shade;
+      }
+    }
   }
 
   & label {
@@ -75,4 +89,11 @@
   top: 0;
   right: -30px;
   cursor: pointer;
+}
+
+.error {
+  font-size: 14px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $red_input;
 }

@@ -14,8 +14,6 @@ enum EFieldsNames {
   building = 'building',
   apartment = 'apartment',
   postalCode = 'postalCode',
-  isDefaultShipping = 'isDefaultShipping',
-  isDefaultBilling = 'isDefaultBilling',
   typeBilling = 'typeBilling',
   typeShipping = 'typeShipping'
 }
@@ -37,6 +35,10 @@ const countries: Array<ICountry> = [
 ];
 
 interface IRegistrationAddressProps {
+  formData: { [k: string]: string };
+  setFormData: (data: { [k: string]: string }) => void;
+  formError: { [k: string]: string };
+  setFormError: (data: { [k: string]: string }) => void;
   addressCount: number;
   setAddressCount: (count: number) => void;
   index?: number;
@@ -45,40 +47,20 @@ interface IRegistrationAddressProps {
 export function RegistrationAddress({
   addressCount,
   setAddressCount,
-  index = 0
+  index = 0,
+  formData,
+  setFormData,
+  formError,
+  setFormError
 }: IRegistrationAddressProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [formData, setFormData] = useState({
-    [`country_${index}`]: '',
-    [`region_${index}`]: '',
-    [`city_${index}`]: '',
-    [`building_${index}`]: '',
-    [`apartment_${index}`]: '',
-    [`streetName_${index}`]: '',
-    [`postalCode_${index}`]: '',
-    [`isDefaultBilling_${index}`]: '',
-    [`isDefaultShipping_${index}`]: '',
-    [`typeShipping_${index}`]: '',
-    [`typeBilling_${index}`]: ''
-  });
-  const [formError, setFormError] = useState({
-    [`country_${index}`]: '',
-    [`region_${index}`]: '',
-    [`city_${index}`]: '',
-    [`building_${index}`]: '',
-    [`apartment_${index}`]: '',
-    [`streetName_${index}`]: '',
-    [`postalCode_${index}`]: '',
-    [`isDefaultBilling_${index}`]: '',
-    [`isDefaultShipping_${index}`]: ''
-  });
   const [checkboxData, setCheckboxData] = useState({
-    [`isDefaultShipping_${index}`]: false,
-    [`isDefaultBilling_${index}`]: false,
-    [`typeShipping_${index}`]: false,
+    defaultShipping: false,
+    defaultBilling: false,
+    [`typeShipping_${index}`]: true,
     [`typeBilling_${index}`]: false
   });
-  const [selectedCountry, setSelectedCountry] = useState('Выберите');
+  const [selectedCountry, setSelectedCountry] = useState('Выберите*');
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({ ...formError, [event.target.name]: '' });
@@ -141,7 +123,7 @@ export function RegistrationAddress({
         </span>
       ) : null}
       <div className={styles.type_wrapper}>
-        Тип:
+        Тип*:
         <BaseCheckbox
           name={`${EFieldsNames.typeShipping}_${index}`}
           value={index.toString()}
@@ -159,11 +141,13 @@ export function RegistrationAddress({
       </div>
       <div className={styles.country_wrapper}>
         <BaseInputField
+          isRequired={true}
           type="hidden"
           name={`${EFieldsNames.country}_${index}`}
-          value={formData[`${EFieldsNames.country}_${index}`]}
+          value={formData[`${EFieldsNames.country}_${index}`] || ''}
           placeholder="Страна*"
           onChange={handleChange}
+          error={formError[`${EFieldsNames.country}_${index}`]}
         />
         <BaseSelect selectedValue={selectedCountry}>
           <ul className={styles.list}>
@@ -179,8 +163,9 @@ export function RegistrationAddress({
           </ul>
         </BaseSelect>
         <BaseInputField
+          isRequired={true}
           name={`${EFieldsNames.postalCode}_${index}`}
-          value={formData[`${EFieldsNames.postalCode}_${index}`]}
+          value={formData[`${EFieldsNames.postalCode}_${index}`] || ''}
           placeholder="Почтовый индекс*"
           onChange={handleChange}
           onBlur={handleBlurRequired}
@@ -189,24 +174,27 @@ export function RegistrationAddress({
         />
       </div>
       <BaseInputField
+        isRequired={true}
         name={`${EFieldsNames.region}_${index}`}
-        value={formData[`${EFieldsNames.region}_${index}`]}
+        value={formData[`${EFieldsNames.region}_${index}`] || ''}
         placeholder="Регион*"
         onChange={handleChange}
         onBlur={handleBlurRequired}
         error={formError[`${EFieldsNames.region}_${index}`]}
       />
       <BaseInputField
+        isRequired={true}
         name={`${EFieldsNames.city}_${index}`}
-        value={formData[`${EFieldsNames.city}_${index}`]}
+        value={formData[`${EFieldsNames.city}_${index}`] || ''}
         placeholder="Населенный пункт*"
         onChange={handleChange}
         onBlur={handleBlurRequired}
         error={formError[`${EFieldsNames.city}_${index}`]}
       />
       <BaseInputField
+        isRequired={true}
         name={`${EFieldsNames.streetName}_${index}`}
-        value={formData[`${EFieldsNames.streetName}_${index}`]}
+        value={formData[`${EFieldsNames.streetName}_${index}`] || ''}
         placeholder="Улица*"
         onChange={handleChange}
         onBlur={handleBlurRequired}
@@ -216,9 +204,9 @@ export function RegistrationAddress({
         <BaseInputField
           name={`${EFieldsNames.building}_${index}`}
           value={formData[`${EFieldsNames.building}_${index}`]}
-          placeholder="Дом*"
+          placeholder="Дом"
           onChange={handleChange}
-          onBlur={handleBlurRequired}
+          onBlur={handleBlur}
           error={formError[`${EFieldsNames.building}_${index}`]}
         />
         <BaseInputField
@@ -234,7 +222,7 @@ export function RegistrationAddress({
       <BaseCheckbox
         type="radio"
         name="defaultShipping"
-        value={EFieldsNames.isDefaultShipping}
+        value={`${index}`}
         onChange={handleChangeCheckbox}
         isChecked={checkboxData.isDefaultShipping}
         label="Сделать адресом для доставки по умолчанию"
@@ -242,7 +230,7 @@ export function RegistrationAddress({
       <BaseCheckbox
         type="radio"
         name="defaultBilling"
-        value={EFieldsNames.isDefaultBilling}
+        value={`${index}`}
         onChange={handleChangeCheckbox}
         isChecked={checkboxData.isDefaultBilling}
         label="Сделать адресом для счетов по умолчанию"

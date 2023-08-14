@@ -14,6 +14,7 @@ interface IBaseInputFieldProps {
   onBlur?: (event: FormEvent<HTMLInputElement>) => void;
   isDisabled?: boolean;
   maxLength?: number;
+  isRequired?: boolean;
 }
 
 const NOOP = () => {};
@@ -28,6 +29,7 @@ export function BaseInputField({
   error = '',
   type = 'text',
   isDisabled = false,
+  isRequired = false,
   maxLength = 524288
 }: IBaseInputFieldProps) {
   const inputClassName = classNames({
@@ -41,6 +43,7 @@ export function BaseInputField({
       {error && <span className={styles.error}>{error}</span>}
       {type !== 'tel' ? (
         <input
+          data-required={isRequired ? 'true' : ''}
           className={inputClassName}
           type={type}
           name={name}
