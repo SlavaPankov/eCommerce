@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import styles from './registrationForm.scss';
 import { BaseButton } from '../BaseButton';
@@ -8,6 +8,10 @@ import { BaseInputField } from '../BaseInputField';
 import { EErrorText } from '../../types/enums/EErrorText';
 import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRegex';
 import { RegistrationAddress } from './RagistrationAddress';
+import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
+import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
+import { userSignUpRequestAsync } from '../../store/user/userSlice';
+import { setCartData } from '../../store/cart/cartSlice';
 
 interface IFormData {
   [k: string]: string;
@@ -22,39 +26,40 @@ enum EFieldsNames {
   passwordConfirmed = 'passwordConfirmed'
 }
 
-interface IBaseAddress {
-  country: string;
-  postalCode: string;
-  region: string;
-  city: string;
-  streetName: string;
-  building: string;
-  apartment: string;
-  isTypeShipping?: boolean;
-  isTypeBilling?: boolean;
-  isDefaultShipping?: boolean;
-  isDefaultBilling?: boolean;
-}
-
-interface ICustomerDraft {
-  email: string;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  password: string;
-  addresses: Array<IBaseAddress>;
-  shippingAddresses: Array<number>;
-  billingAddresses: Array<number>;
-  defaultShippingAddress?: number;
-  defaultBillingAddress?: number;
-}
-
 export function RegistrationForm() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
   const [addressCount, setAddressCount] = useState<number>(1);
   const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
   const [globalFormError, setGlobalFormError] = useState<string>('');
+  const { id: cartId } = useAppSelector((state) => state.cart.cart);
+  const { token } = useAppSelector((state) => state.token.payload);
+  const { loading, error } = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+
+    if (error === 'DuplicateField') {
+      setGlobalFormError('Пользователь с таким Email уже существует');
+      return;
+    }
+
+    setGlobalFormError('Что-то пошло не так, попробуйте обновить страницу');
+  }, [error]);
+
+  useEffect(() => {
+    const isAuth = localStorage.getItem('user');
+
+    if (!isAuth) {
+      return;
+    }
+
+    navigate('/');
+  }, []);
 
   function isFormValid() {
     let flag = true;
@@ -193,7 +198,11 @@ export function RegistrationForm() {
       password: dataObject.password.toString(),
       addresses: [],
       shippingAddresses: [],
-      billingAddresses: []
+      billingAddresses: [],
+      anonymousCart: {
+        id: cartId,
+        typeId: 'cart'
+      }
     };
 
     for (let i = 0; i < tempAddresses.length; i += 1) {
@@ -246,6 +255,17 @@ export function RegistrationForm() {
     });
 
     console.log(customerDraft);
+
+    dispatch(userSignUpRequestAsync({ token, data: customerDraft })).then(({ payload }) => {
+      if (payload.cart) {
+        dispatch(setCartData(payload.cart));
+      }
+
+      if (payload.customer) {
+        localStorage.setItem('user', JSON.stringify(payload.customer.id));
+        navigate('/');
+      }
+    });
   };
 
   const handleClickAddAddress = () => {
@@ -349,7 +369,7 @@ export function RegistrationForm() {
           </div>
         ) : null}
         {globalFormError ? <span className={styles.error}>{globalFormError}</span> : null}
-        <BaseButton textContent="Зарегистрироваться" />
+        <BaseButton textContent="Зарегистрироваться" isDisabled={loading} />
       </form>
     </section>
   );

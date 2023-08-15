@@ -5,6 +5,7 @@ import { CrossIcon } from '../../Icons';
 import { EErrorText } from '../../../types/enums/EErrorText';
 import { BaseCheckbox } from '../../BaseCheckbox';
 import { BaseSelect } from '../../BaseSelect';
+import { textRegex } from '../../../utils/validationRegex';
 
 enum EFieldsNames {
   country = 'country',
@@ -65,9 +66,15 @@ export function RegistrationAddress({
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({ ...formError, [event.target.name]: '' });
 
-    if (event.target.name === EFieldsNames.postalCode) {
+    if (event.target.name === `${EFieldsNames.postalCode}_${index}`) {
       if (!/[0-9]{6}/g.test(event.target.value)) {
         setFormError({ ...formError, [event.target.name]: EErrorText.postalCode });
+      }
+    }
+
+    if (event.target.name === `${EFieldsNames.city}_${index}`) {
+      if (!textRegex.test(event.target.value)) {
+        setFormError({ ...formError, [event.target.name]: EErrorText.textFormat });
       }
     }
 
