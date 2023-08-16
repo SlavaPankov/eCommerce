@@ -15,17 +15,13 @@ import { EBaseButtonMode } from '../../types/enums/EBaseButtonMode';
 export function MainSlider() {
   const dispatch = useAppDispatch();
   const { discountCode } = useAppSelector((state) => state);
-  const { token } = useAppSelector((state) => state.token.payload);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleClickDiscount = () => {
-    if (!token) {
-      return;
+    if (!discountCode.discountCode) {
+      dispatch(getDiscountCodeRequestAsync());
     }
 
-    if (!discountCode.discountCode) {
-      dispatch(getDiscountCodeRequestAsync(token));
-    }
     setIsModalOpen(true);
   };
 

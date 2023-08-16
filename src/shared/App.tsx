@@ -6,54 +6,19 @@ import { MainFooter } from './MainFooter';
 import { NotFound } from '../pages/NotFound';
 import { MainPage } from '../pages/MainPage';
 import { LoginPage } from '../pages/LoginPage';
-import { useAppDispatch, useAppSelector } from '../hooks/storeHooks';
-import {
-  refreshTokenRequestAsync,
-  saveToken,
-  anonymousTokenRequestAsync
-} from '../store/token/tokenSlice';
+import { useAppDispatch } from '../hooks/storeHooks';
 import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart/cartSlice';
 
 export function App() {
   const dispatch = useAppDispatch();
-  const token = useAppSelector<string>((state) => state.token.payload.token);
-  const tokenTimeCreate = useAppSelector<number>((state) => state.token.payload.created_at);
-  const expiresIn = useAppSelector<number>((state) => state.token.payload.expires_in);
-  const refreshToken = useAppSelector<string>((state) => state.token.payload.refresh_token);
 
   useEffect(() => {
-    const tokenLS = localStorage.getItem('token');
-    if (!tokenLS) {
-      dispatch(anonymousTokenRequestAsync());
-    } else {
-      dispatch(saveToken());
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!expiresIn || !refreshToken) {
-      return;
-    }
-
-    const currDate = new Date(Date.now()).getTime();
-    const tokenExpires = new Date(tokenTimeCreate + expiresIn).getTime();
-
-    if (currDate >= tokenExpires) {
-      dispatch(refreshTokenRequestAsync(refreshToken));
-    }
-  }, [expiresIn, refreshToken]);
-
-  useEffect(() => {
-    if (!token) {
-      return;
-    }
-
-    dispatch(getActiveCartRequestAsync(token)).then((action) => {
-      if (action.type.includes('rejected')) {
-        dispatch(createCartRequestAsync(token));
+    dispatch(getActiveCartRequestAsync()).then(({ type }) => {
+      if (type.includes('rejected')) {
+        dispatch(createCartRequestAsync());
       }
     });
-  }, [token]);
+  }, []);
 
   return (
     <BrowserRouter>

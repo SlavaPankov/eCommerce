@@ -9,7 +9,6 @@ import { EErrorText } from '../../types/enums/EErrorText';
 import { passwordRegex } from '../../utils/validationRegex';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { userSignInRequestAsync } from '../../store/user/userSlice';
-import { setCartData } from '../../store/cart/cartSlice';
 
 enum EFormFieldsNames {
   email = 'email',
@@ -37,7 +36,6 @@ export function LoginForm() {
   const [isEyeClicked, setIsEyeClicked] = useState(false);
   const [globalFormError, setGlobalFormError] = useState<string>('');
   const { id: cartId } = useAppSelector((state) => state.cart.cart);
-  const token = useAppSelector<string>((state) => state.token.payload.token);
   const { loading } = useAppSelector((state) => state.user);
 
   const containerClassName = classNames('container', {
@@ -164,15 +162,13 @@ export function LoginForm() {
       }
     };
 
-    dispatch(userSignInRequestAsync({ token, data: userData })).then(({ payload }) => {
-      if (payload.cart) {
-        dispatch(setCartData(payload.cart));
+    dispatch(userSignInRequestAsync(userData)).then(({ type }) => {
+      if (type.includes('rejected')) {
+        return;
       }
 
-      if (payload.customer) {
-        localStorage.setItem('user', JSON.stringify(payload.customer.id));
-        navigate('/');
-      }
+      localStorage.setItem('isAuth', '1');
+      navigate('/');
     });
   };
 

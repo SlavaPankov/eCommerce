@@ -10,8 +10,7 @@ import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRege
 import { RegistrationAddress } from './RagistrationAddress';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
-import { userSignUpRequestAsync } from '../../store/user/userSlice';
-import { setCartData } from '../../store/cart/cartSlice';
+import { userSignInRequestAsync, userSignUpRequestAsync } from '../../store/user/userSlice';
 
 interface IFormData {
   [k: string]: string;
@@ -35,7 +34,6 @@ export function RegistrationForm() {
   const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
   const [globalFormError, setGlobalFormError] = useState<string>('');
   const { id: cartId } = useAppSelector((state) => state.cart.cart);
-  const { token } = useAppSelector((state) => state.token.payload);
   const { loading, error } = useAppSelector((state) => state.user);
 
   useEffect(() => {
@@ -265,17 +263,28 @@ export function RegistrationForm() {
       }
     });
 
-    console.log(customerDraft);
-
-    dispatch(userSignUpRequestAsync({ token, data: customerDraft })).then(({ payload }) => {
-      if (payload.cart) {
-        dispatch(setCartData(payload.cart));
+    dispatch(userSignUpRequestAsync(customerDraft)).then(({ type }) => {
+      if (type.includes('rejected')) {
+        return;
       }
 
-      if (payload.customer) {
-        localStorage.setItem('user', JSON.stringify(payload.customer.id));
+      dispatch(
+        userSignInRequestAsync({
+          email: customerDraft.email,
+          password: customerDraft.password,
+          anonymousCart: {
+            typeId: 'cart',
+            id: cartId
+          }
+        })
+      ).then(({ type: signInType }) => {
+        if (signInType.includes('rejected')) {
+          return;
+        }
+
+        localStorage.setItem('isAuth', '1');
         navigate('/');
-      }
+      });
     });
   };
 

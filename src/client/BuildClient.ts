@@ -10,7 +10,7 @@ import {
 import { createApiBuilderFromCtpClient } from '@commercetools/platform-sdk';
 import { apiConfig } from '../cfg/apiConfig';
 
-class MyTokenCache implements TokenCache {
+export class MyTokenCache implements TokenCache {
   private tokenStore: TokenStore = {
     token: '',
     expirationTime: 0,
@@ -28,13 +28,12 @@ class MyTokenCache implements TokenCache {
   }
 
   set(cache: TokenStore): void {
-    console.log(cache);
     localStorage.setItem('tokenCache', JSON.stringify(cache));
     this.tokenStore = cache;
   }
 }
 
-const tokenCache = new MyTokenCache();
+export const tokenCache = new MyTokenCache();
 
 const anonymousAuthMiddlewareOptions: AuthMiddlewareOptions = {
   host: apiConfig.authUrl,
@@ -62,20 +61,20 @@ export const ctpAnonymousClient = new ClientBuilder()
 
 export const ctpExistingFlow = new ClientBuilder()
   .withProjectKey(apiConfig.projectKey)
-  .withExistingTokenFlow(tokenCache.get().token, { force: true })
+  .withExistingTokenFlow(`Bearer ${tokenCache.get().token}`, { force: true })
   .withHttpMiddleware(httpMiddlewareOptions)
   .withLoggerMiddleware()
   .build();
 
 export const getApiRoot = () => {
-  const tokenLS = localStorage.getItem('test');
+  const isAuth = localStorage.getItem('isAuth');
 
-  if (tokenLS && !process.env.USERNAME && !process.env.PASSWORD) {
+  if (isAuth && !process.env.USERNAME && !process.env.PASSWORD) {
+    console.log('this');
     return createApiBuilderFromCtpClient(ctpExistingFlow);
   }
 
   if (process.env.USERNAME && process.env.PASSWORD) {
-    console.log('this');
     const passwordAuthMiddlewareOptions: PasswordAuthMiddlewareOptions = {
       host: apiConfig.authUrl,
       projectKey: apiConfig.projectKey,

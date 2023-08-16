@@ -7,7 +7,7 @@ import { PersonEnter } from './PersonEnter';
 import { useAppSelector } from '../../../../../hooks/storeHooks';
 
 export function Person() {
-  const [isAuth, setIsAuth] = useState(localStorage.getItem('user'));
+  const [isAuth, setIsAuth] = useState(localStorage.getItem('isAuth'));
   const { id: userId } = useAppSelector((state) => state.user.user);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ export function Person() {
       return;
     }
 
-    setIsAuth(userId);
+    setIsAuth('1');
   }, [userId]);
 
   return (

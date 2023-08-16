@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import axios, { AxiosError } from 'axios';
-import { Category } from '@commercetools/platform-sdk';
+import { Category, ErrorResponse } from '@commercetools/platform-sdk';
 import { ICategory } from '../../types/interfaces/ICategory';
 import { getCategoriesImages } from '../../utils/getCategoriesImages';
 import noImage from '../../assets/images/noPhoto.png';
 import { ISubcategory } from '../../types/interfaces/ISubcategory';
 import { apiConfig } from '../../cfg/apiConfig';
+import { getApiRoot } from '../../client/BuildClient';
 
 interface ICategoriesState {
   loading: boolean;
@@ -22,15 +22,14 @@ const initialState: ICategoriesState = {
 
 export const categoriesAsyncRequest = createAsyncThunk(
   'categories/getCategories',
-  async (token: string) => {
-    return axios
-      .get(`${apiConfig.baseUrl}/${apiConfig.projectKey}/categories`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then(({ data }): Array<ICategory> => {
-        const categories: Array<ICategory> = data.results
+  async (arg, { rejectWithValue }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .categories()
+      .get()
+      .execute()
+      .then(({ body: { results } }): Array<ICategory> => {
+        const categories: Array<ICategory> = results
           .filter((item: Category) => !item.parent)
           .map((category: Category, index: number) => ({
             id: category.id,
@@ -40,7 +39,7 @@ export const categoriesAsyncRequest = createAsyncThunk(
             imageSrc: getCategoriesImages()[index] || noImage,
             subcategories: []
           }));
-        const subcategories: Array<ISubcategory> = data.results
+        const subcategories: Array<ISubcategory> = results
           .filter((item: Category) => item.parent)
           .map((category: Category) => ({
             id: category.id,
@@ -60,7 +59,9 @@ export const categoriesAsyncRequest = createAsyncThunk(
 
         return categories;
       })
-      .catch((error: AxiosError) => error);
+      .catch((error: ErrorResponse) => {
+        return rejectWithValue(error.message);
+      });
   }
 );
 
@@ -89,16 +90,14 @@ export const categoriesSlice = createSlice({
 
     builder.addCase(categoriesAsyncRequest.fulfilled, (state, action) => {
       state.loading = false;
-      if (Array.isArray(action.payload)) {
+      if (typeof action.payload === 'object') {
         state.categories = action.payload;
       }
     });
 
     builder.addCase(categoriesAsyncRequest.rejected, (state, action) => {
       state.loading = false;
-      if (action.payload instanceof AxiosError) {
-        state.error = action.payload.message;
-      }
+      state.error = `${action.payload}`;
     });
   }
 });

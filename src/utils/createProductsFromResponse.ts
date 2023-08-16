@@ -1,13 +1,11 @@
-import { ProductProjectionPagedQueryResponse } from '@commercetools/platform-sdk';
+import { ProductProjection } from '@commercetools/platform-sdk';
 import { EImages } from '../types/enums/EImages';
 import { IProduct } from '../types/interfaces/IProduct';
 import { getFormattedPrice } from './getFormattedPrice';
 import { getRandomRating } from './getRandomRating';
 
-export function createProductsFromResponse(
-  body: ProductProjectionPagedQueryResponse
-): Array<IProduct> {
-  return body.results.map((item) => ({
+export function createProductsFromResponse(results: Array<ProductProjection>): Array<IProduct> {
+  return results.map((item) => ({
     id: item.id,
     name: item.name.ru,
     key: item.key || '',

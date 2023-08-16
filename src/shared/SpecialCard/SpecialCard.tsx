@@ -30,7 +30,6 @@ export function SpecialCard({
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state) => state.cart);
   const { cart } = useAppSelector((state) => state.cart);
-  const token = useAppSelector<string>((state) => state.token.payload.token);
   const discount: string = (
     Number(price.replace(/\s/g, '')) - Number(discountedPrice.replace(/\s/g, ''))
   ).toLocaleString();
@@ -44,7 +43,6 @@ export function SpecialCard({
 
     dispatch(
       addLineItemRequestAsync({
-        token,
         cartId: cart.id,
         addAction,
         version: cart.version

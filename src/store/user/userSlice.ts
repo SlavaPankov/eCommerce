@@ -1,10 +1,15 @@
 /* eslint-disable no-param-reassign */
-import { BaseAddress } from '@commercetools/platform-sdk';
+import {
+  BaseAddress,
+  ClientResponse,
+  CustomerSignInResult,
+  ErrorResponse
+} from '@commercetools/platform-sdk';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios, { AxiosError } from 'axios';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
 import { apiConfig } from '../../cfg/apiConfig';
 import { ILoginData } from '../../types/interfaces/ILoginData';
+import { getApiRoot, tokenCache } from '../../client/BuildClient';
 
 interface IUser {
   id: string;
@@ -32,70 +37,66 @@ const initialState: IUserState = {
   }
 };
 
-interface IUserSignUpRequestAsync {
-  token: string;
-  data: ICustomerDraft;
-}
-
-interface IUserSignInRequestAsync {
-  token: string;
-  data: ILoginData;
-}
-
 export const userSignUpRequestAsync = createAsyncThunk(
   'me/Signup',
-  async (payload: IUserSignUpRequestAsync, thunkAPI) => {
-    return axios
-      .post(
-        `${apiConfig.baseUrl}/${apiConfig.projectKey}/customers`,
-        {
-          ...payload.data
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${payload.token}`,
-            'Content-Type': 'application/json'
-          }
+  async (payload: ICustomerDraft, thunkAPI) => {
+    const response = await getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .customers()
+      .post({
+        body: {
+          ...payload
         }
-      )
-      .then((response) => {
-        if (response.status === 201 || response.status === 200) {
-          return response.data;
-        }
-
-        return thunkAPI.rejectWithValue(initialState.user);
       })
-      .catch((error: AxiosError) => {
-        return thunkAPI.rejectWithValue(error);
+      .execute()
+      .then(({ body: { customer, cart } }): CustomerSignInResult => {
+        return {
+          customer,
+          cart
+        };
+      })
+      .catch((error: ErrorResponse) => {
+        return thunkAPI.rejectWithValue(error.message);
       });
+
+    tokenCache.set({
+      token: '',
+      expirationTime: 0
+    });
+
+    return response;
   }
 );
 
 export const userSignInRequestAsync = createAsyncThunk(
   'me/SignIn',
-  async (payload: IUserSignInRequestAsync, thunkAPI) => {
-    return axios
-      .post(
-        `${apiConfig.baseUrl}/${apiConfig.projectKey}/login`,
-        {
-          ...payload.data
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${payload.token}`,
-            'Content-Type': 'application/json'
-          }
+  async (payload: ILoginData, thunkAPI) => {
+    tokenCache.set({ token: '', expirationTime: 0 });
+    process.env.USERNAME = payload.email;
+    process.env.PASSWORD = payload.password;
+
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .me()
+      .login()
+      .post({
+        body: {
+          ...payload
+        }
+      })
+      .execute()
+      .then(
+        ({
+          body: { customer, cart }
+        }: ClientResponse<CustomerSignInResult>): CustomerSignInResult => {
+          return {
+            customer,
+            cart
+          };
         }
       )
-      .then((response) => {
-        if (response.status === 200) {
-          return response.data;
-        }
-
-        return thunkAPI.rejectWithValue(initialState.user);
-      })
-      .catch((error: AxiosError) => {
-        return thunkAPI.rejectWithValue(error);
+      .catch((error: ErrorResponse) => {
+        return thunkAPI.rejectWithValue(error.message);
       });
   }
 );
@@ -111,20 +112,16 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignUpRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      if (!(action.payload instanceof AxiosError)) {
-        state.user.id = action.payload.customer.id;
-        state.user.firstName = action.payload.customer.firstName;
-        state.user.lastName = action.payload.customer.lastName;
-        state.user.email = action.payload.customer.email;
-        state.user.addresses = action.payload.customer.addresses;
-      }
+      state.user.id = action.payload.customer.id;
+      state.user.firstName = action.payload.customer.firstName || '';
+      state.user.lastName = action.payload.customer.lastName || '';
+      state.user.email = action.payload.customer.email;
+      state.user.addresses = action.payload.customer.addresses;
     });
 
     builder.addCase(userSignUpRequestAsync.rejected, (state, action) => {
       state.loading = false;
-      if (action.payload instanceof AxiosError) {
-        state.error = action.payload.response?.data.errors[0].code;
-      }
+      state.error = `${action.payload}`;
     });
 
     builder.addCase(userSignInRequestAsync.pending, (state) => {
@@ -133,20 +130,16 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignInRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      if (!(action.payload instanceof AxiosError)) {
-        state.user.id = action.payload.customer.id;
-        state.user.firstName = action.payload.customer.firstName;
-        state.user.lastName = action.payload.customer.lastName;
-        state.user.email = action.payload.customer.email;
-        state.user.addresses = action.payload.customer.addresses;
-      }
+      state.user.id = action.payload.customer.id;
+      state.user.firstName = action.payload.customer.firstName || '';
+      state.user.lastName = action.payload.customer.lastName || '';
+      state.user.email = action.payload.customer.email;
+      state.user.addresses = action.payload.customer.addresses;
     });
 
     builder.addCase(userSignInRequestAsync.rejected, (state, action) => {
       state.loading = false;
-      if (action.payload instanceof AxiosError) {
-        state.error = action.payload.response?.data.errors[0].code;
-      }
+      state.error = `${action.payload}`;
     });
   }
 });

@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { IProduct } from '../../types/interfaces/IProduct';
 import { createProductsFromResponse } from '../../utils/createProductsFromResponse';
 import { apiConfig } from '../../cfg/apiConfig';
+import { getApiRoot } from '../../client/BuildClient';
 
 interface IProductsState {
   loading: boolean;
@@ -21,24 +21,24 @@ const initialState: IProductsState = {
 
 interface IProductsRequestProps {
   offset: number;
-  token: string;
 }
 
 export const productsRequestAsync = createAsyncThunk(
   'products/getProducts',
-  async ({ offset, token }: IProductsRequestProps) => {
-    return axios
-      .get(`${apiConfig.baseUrl}/${apiConfig.projectKey}/product-projections`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        params: {
-          limit: 24,
+  async ({ offset }: IProductsRequestProps, { rejectWithValue }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .productProjections()
+      .get({
+        queryArgs: {
           offset
         }
       })
-      .then(({ data }): Array<IProduct> => createProductsFromResponse(data))
-      .catch((error: Error) => error);
+      .execute()
+      .then(({ body: { results } }): Array<IProduct> => createProductsFromResponse(results))
+      .catch((error: Error) => {
+        return rejectWithValue(error.message);
+      });
   }
 );
 
@@ -73,15 +73,13 @@ export const productsSlice = createSlice({
     builder.addCase(productsRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
       if (Array.isArray(action.payload)) {
-        state.products.push(...action.payload);
+        state.products = action.payload;
       }
     });
 
     builder.addCase(productsRequestAsync.rejected, (state, action) => {
       state.loading = false;
-      if (action.payload instanceof Error) {
-        state.error = action.payload.message;
-      }
+      state.error = `${action.payload}`;
     });
   }
 });

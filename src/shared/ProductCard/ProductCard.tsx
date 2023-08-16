@@ -20,7 +20,6 @@ interface IProductCardProps {
 export function ProductCard({ rating, imageSrc, title, price, id, variantId }: IProductCardProps) {
   const dispatch = useAppDispatch();
   const { cart } = useAppSelector((state) => state.cart);
-  const token = useAppSelector<string>((state) => state.token.payload.token);
 
   const handleClick = () => {
     const addAction: ICartAction = {
@@ -31,7 +30,6 @@ export function ProductCard({ rating, imageSrc, title, price, id, variantId }: I
 
     dispatch(
       addLineItemRequestAsync({
-        token,
         cartId: cart.id,
         addAction,
         version: cart.version

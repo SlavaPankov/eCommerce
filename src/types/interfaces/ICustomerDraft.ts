@@ -6,9 +6,9 @@ export interface ICustomerDraft {
   lastName: string;
   dateOfBirth: string;
   password: string;
-  anonymousCart?: {
-    id: string;
-    typeId: string;
+  anonymousCart: {
+    id?: string;
+    typeId: 'cart';
   };
   addresses: Array<IBaseAddress>;
   shippingAddresses: Array<number>;
