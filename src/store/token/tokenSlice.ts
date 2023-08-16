@@ -27,7 +27,7 @@ const initialState: ITokenState = {
   }
 };
 
-export const tokenRequestAsync = createAsyncThunk('token/getToken', async () => {
+export const anonymousTokenRequestAsync = createAsyncThunk('token/getAnonymousToken', async () => {
   return axios
     .post(
       `${apiConfig.authUrl}/oauth/${apiConfig.projectKey}/anonymous/token`,
@@ -55,6 +55,11 @@ export const tokenRequestAsync = createAsyncThunk('token/getToken', async () => 
     })
     .catch((error: AxiosError) => error.message);
 });
+
+export const passwordFlowTokenRequestAsync = createAsyncThunk(
+  'token/getPasswordToken',
+  async () => {}
+);
 
 export const refreshTokenRequestAsync = createAsyncThunk(
   'token/refreshToken',
@@ -114,11 +119,11 @@ export const tokenSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(tokenRequestAsync.pending, (state) => {
+    builder.addCase(anonymousTokenRequestAsync.pending, (state) => {
       state.loading = true;
     });
 
-    builder.addCase(tokenRequestAsync.fulfilled, (state, action) => {
+    builder.addCase(anonymousTokenRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
       if (typeof action.payload === 'object') {
         state.payload = action.payload;
@@ -129,7 +134,7 @@ export const tokenSlice = createSlice({
       }
     });
 
-    builder.addCase(tokenRequestAsync.rejected, (state, action) => {
+    builder.addCase(anonymousTokenRequestAsync.rejected, (state, action) => {
       state.loading = false;
       if (action.payload instanceof AxiosError) {
         state.error = action.payload.message;

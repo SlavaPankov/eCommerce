@@ -7,7 +7,11 @@ import { NotFound } from '../pages/NotFound';
 import { MainPage } from '../pages/MainPage';
 import { LoginPage } from '../pages/LoginPage';
 import { useAppDispatch, useAppSelector } from '../hooks/storeHooks';
-import { refreshTokenRequestAsync, saveToken, tokenRequestAsync } from '../store/token/tokenSlice';
+import {
+  refreshTokenRequestAsync,
+  saveToken,
+  anonymousTokenRequestAsync
+} from '../store/token/tokenSlice';
 import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart/cartSlice';
 
 export function App() {
@@ -20,7 +24,7 @@ export function App() {
   useEffect(() => {
     const tokenLS = localStorage.getItem('token');
     if (!tokenLS) {
-      dispatch(tokenRequestAsync());
+      dispatch(anonymousTokenRequestAsync());
     } else {
       dispatch(saveToken());
     }
