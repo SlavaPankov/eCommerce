@@ -1,21 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { PersonIcon } from '../../../../Icons';
 import styles from './person.scss';
 import { BaseDropdown } from '../../../../BaseDropdown';
 import { PersonEnter } from './PersonEnter';
+import { useAppSelector } from '../../../../../hooks/storeHooks';
 
 export function Person() {
+  const [isAuth, setIsAuth] = useState(localStorage.getItem('user'));
+  const { id: userId } = useAppSelector((state) => state.user.user);
+
+  useEffect(() => {
+    if (!userId) {
+      return;
+    }
+
+    setIsAuth(userId);
+  }, [userId]);
+
   return (
-    <BaseDropdown
-      className={styles.dropdown}
-      button={
-        <div className={styles.link}>
+    <>
+      {isAuth ? (
+        <Link className={styles.link} to="/person">
           <span>
             <PersonIcon />
           </span>
-        </div>
-      }>
-      <PersonEnter />
-    </BaseDropdown>
+        </Link>
+      ) : (
+        <BaseDropdown
+          className={styles.dropdown}
+          button={
+            <div className={styles.link}>
+              <span>
+                <PersonIcon />
+              </span>
+            </div>
+          }>
+          <PersonEnter />
+        </BaseDropdown>
+      )}
+    </>
   );
 }
