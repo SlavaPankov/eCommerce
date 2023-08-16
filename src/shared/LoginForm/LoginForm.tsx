@@ -1,20 +1,47 @@
-import { Link } from 'react-router-dom';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, FormEvent } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import styles from './loginForm.scss';
 import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import EyeIcon from '../Icons/EyeIcon/EyeIcon';
+import { EErrorText } from '../../types/enums/EErrorText';
+import { passwordRegex } from '../../utils/validationRegex';
+import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
+import { userSignInRequestAsync } from '../../store/user/userSlice';
+import { setCartData } from '../../store/cart/cartSlice';
+
+enum EFormFieldsNames {
+  email = 'email',
+  password = 'password'
+}
+
+interface IFormData {
+  [k: string]: string;
+}
+
+interface ICustomerSignIn {
+  email: string;
+  password: string;
+  anonymousCart: {
+    typeId: string;
+    id: string;
+  };
+}
 
 export function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<IFormData>({});
+  const [formError, setFormError] = useState<IFormData>({});
   const [isEyeClicked, setIsEyeClicked] = useState(false);
+  const [globalFormError, setGlobalFormError] = useState<string>('');
+  const { id: cartId } = useAppSelector((state) => state.cart.cart);
+  const token = useAppSelector<string>((state) => state.token.payload.token);
+  const { loading } = useAppSelector((state) => state.user);
 
   const containerClassName = classNames('container', {
-    [`${styles.form}`]: true
+    [`${styles.container}`]: true
   });
 
   const eyeIconClassName = classNames({
@@ -22,87 +49,173 @@ export function LoginForm() {
     [`${styles.eye_icon_active}`]: isEyeClicked
   });
 
-  const validateEmail = (input: string) => {
-    const emailTrimmed = input.trim();
+  const isFormValid = () => {
+    let flag = true;
+
+    for (
+      let i = 0;
+      i < document.querySelectorAll<HTMLInputElement>('[data-required="true"]').length;
+      i += 1
+    ) {
+      const item = document.querySelectorAll<HTMLInputElement>('[data-required="true"]')[i];
+      flag = item.value !== '';
+
+      if (!flag) {
+        return flag;
+      }
+    }
+
+    Object.values(formError).forEach((error) => {
+      flag = !error;
+      return flag;
+    });
+
+    return flag;
+  };
+
+  const validateEmail = (input: string): string => {
     const emailRegex = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
-    if (!emailTrimmed) {
-      setEmailError('Введите e-mail');
-    } else if (!emailRegex.test(emailTrimmed)) {
-      setEmailError('Недопустимый формат!');
-    } else {
-      setEmailError('');
+
+    if (!emailRegex.test(input)) {
+      return EErrorText.emailFormat;
     }
+
+    return '';
   };
 
-  const validatePassword = (input: string) => {
-    const passwordTrimmed = input.trim();
-    const pwdRegex = /^(?=\S*?[A-ZА-Я])(?=\S*?[a-zа-я])(?=\S*?\d)(?=\S*?[!@#$%^&*])\S{8,30}$/;
-    if (!passwordTrimmed) {
-      setPasswordError('Введите пароль');
-    } else if (passwordTrimmed.length < 8) {
-      setPasswordError('Недопустимый формат! Ваш пароль короче 8 символов');
-    } else if (passwordTrimmed.length > 30) {
-      setPasswordError('Недопустимый формат! Ваш пароль превышает 30 символов');
-    } else if (passwordTrimmed.includes(' ')) {
-      setPasswordError('Недопустимый формат! Ваш пароль содержит пробел');
-    } else if (!pwdRegex.test(passwordTrimmed)) {
-      setPasswordError(`Недопустимый формат! Пароль должен 
-      иметь хотя бы одну заглавную и строчную буквы, один номер и один спец. символ`);
-    } else {
-      setPasswordError('');
+  const validatePassword = (input: string): string => {
+    if (input.length < 8) {
+      return EErrorText.passwordMinLength;
     }
+
+    if (!passwordRegex.test(input)) {
+      return EErrorText.passwordFormat;
+    }
+
+    return '';
   };
 
-  const handleChangeEmail = (event: ChangeEvent<HTMLInputElement>) => {
-    setEmail(event.target.value);
-    validateEmail(event.target.value);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFormError({
+      ...formError,
+      [event.target.name]: ''
+    });
+
+    if (event.target.name === EFormFieldsNames.email) {
+      setFormError({
+        ...formError,
+        [event.target.name]: validateEmail(event.target.value)
+      });
+    }
+
+    if (event.target.name === EFormFieldsNames.password) {
+      setFormError({
+        ...formError,
+        [event.target.name]: validatePassword(event.target.value)
+      });
+    }
+
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value
+    });
   };
 
-  const handleChangePassword = (event: ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value);
-    validatePassword(event.target.value);
+  const handleBlur = (event: FormEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value === '') {
+      setFormError({
+        ...formError,
+        [event.currentTarget.name]: EErrorText.requiredField
+      });
+    }
   };
 
   const handleEyeClick = () => {
     setIsEyeClicked(!isEyeClicked);
   };
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!isFormValid()) {
+      const tempError: IFormData = {};
+      document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
+        if (item.value === '') {
+          tempError[item.name] = EErrorText.requiredField;
+        }
+      });
+      setFormError({
+        ...formError,
+        ...tempError
+      });
+      setGlobalFormError('Заполните все обязательные поля или устаните ошибки');
+      return;
+    }
+
+    const data = new FormData(event.currentTarget);
+    const dataObject: { [k: string]: FormDataEntryValue } = Object.fromEntries(data.entries());
+
+    const userData: ICustomerSignIn = {
+      email: dataObject[EFormFieldsNames.email].toString(),
+      password: dataObject[EFormFieldsNames.password].toString(),
+      anonymousCart: {
+        typeId: 'cart',
+        id: cartId
+      }
+    };
+
+    dispatch(userSignInRequestAsync({ token, data: userData })).then(({ payload }) => {
+      if (payload.cart) {
+        dispatch(setCartData(payload.cart));
+      }
+
+      if (payload.customer) {
+        localStorage.setItem('user', JSON.stringify(payload.customer.id));
+        navigate('/');
+      }
+    });
+  };
+
   return (
-    <form className={containerClassName}>
-      <div className={styles.form__header_wrapper}>
+    <section className={containerClassName}>
+      <form className={styles.form} onSubmit={handleSubmit}>
         <h1 className={styles.form__header_login}>Вход</h1>
-      </div>
-      <div className={styles.form__input_wrapper}>
-        <BaseInputField
-          name="e-mail"
-          value={email}
-          type="email"
-          placeholder="Ваш e-mail*"
-          onChange={handleChangeEmail}
-          error={emailError}
-        />
-        <div className={styles.form__password_wrapper}>
+        <div className={styles.form__input_wrapper}>
           <BaseInputField
-            name="password"
-            value={password}
-            type={isEyeClicked ? 'text' : 'password'}
-            placeholder="Ваш пароль*"
-            onChange={handleChangePassword}
-            error={passwordError}
+            name={EFormFieldsNames.email}
+            value={formData[EFormFieldsNames.email] || ''}
+            type="email"
+            placeholder="Ваш e-mail*"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={formError[EFormFieldsNames.email]}
+            isRequired={true}
           />
-          <div className={eyeIconClassName} onClick={handleEyeClick}>
-            <EyeIcon />
+          <div className={styles.form__password_wrapper}>
+            <BaseInputField
+              name={EFormFieldsNames.password}
+              value={formData[EFormFieldsNames.password] || ''}
+              type={isEyeClicked ? 'text' : 'password'}
+              placeholder="Ваш пароль*"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={formError[EFormFieldsNames.password]}
+              isRequired={true}
+            />
+            <div className={eyeIconClassName} onClick={handleEyeClick}>
+              <EyeIcon />
+            </div>
           </div>
         </div>
-      </div>
-
-      <BaseButton textContent="Войти" />
+        {globalFormError ? <span className={styles.error}>{globalFormError}</span> : null}
+        <BaseButton textContent="Войти" isDisabled={loading} />
+      </form>
       <div className={styles.form__register_wrapper}>
         <h1 className={styles.form__header_register}>Не регистрировались?</h1>
         <Link to="/registrate">
           <BaseButton textContent="Регистрация" />
         </Link>
       </div>
-    </form>
+    </section>
   );
 }

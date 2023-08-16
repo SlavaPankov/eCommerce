@@ -64,10 +64,21 @@ export function RegistrationForm() {
   function isFormValid() {
     let flag = true;
 
-    document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
-      if (item.value === '') {
-        flag = false;
+    for (
+      let i = 0;
+      i < document.querySelectorAll<HTMLInputElement>('[data-required="true"]').length;
+      i += 1
+    ) {
+      const item = document.querySelectorAll<HTMLInputElement>('[data-required="true"]')[i];
+      flag = item.value !== '';
+
+      if (!flag) {
+        return flag;
       }
+    }
+
+    Object.values(formError).forEach((errorValue) => {
+      flag = !errorValue;
     });
 
     return flag;
