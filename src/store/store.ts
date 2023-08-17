@@ -4,7 +4,8 @@ import categoriesReducer from './categories/categoriesSlice';
 import specialsReducer from './specials/specialSlice';
 import tokenReducer from './token/tokenSlice';
 import cartReducer from './cart/cartSlice';
-import dicountCodeReducer from './discountCode/discountCodeSlice';
+import discountCodeReducer from './discountCode/discountCodeSlice';
+import userReducer from './user/userSlice';
 
 const reducerState = combineReducers({
   token: tokenReducer,
@@ -12,7 +13,8 @@ const reducerState = combineReducers({
   categories: categoriesReducer,
   specials: specialsReducer,
   cart: cartReducer,
-  discountCode: dicountCodeReducer
+  discountCode: discountCodeReducer,
+  user: userReducer
 });
 
 const store = configureStore({

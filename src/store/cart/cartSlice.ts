@@ -54,7 +54,7 @@ export const createCartRequestAsync = createAsyncThunk('me/createCart', async (t
 
 export const getActiveCartRequestAsync = createAsyncThunk(
   'me/getActiveCart',
-  async (token: string) => {
+  async (token: string, { rejectWithValue }) => {
     return axios
       .get(`${apiConfig.baseUrl}/${apiConfig.projectKey}/me/active-cart`, {
         headers: {
@@ -67,9 +67,11 @@ export const getActiveCartRequestAsync = createAsyncThunk(
           return createCartFromResponse(data);
         }
 
-        return response.data;
+        throw new AxiosError();
       })
-      .catch((error: AxiosError) => error);
+      .catch((error: AxiosError) => {
+        return rejectWithValue(error);
+      });
   }
 );
 
@@ -121,7 +123,18 @@ export const addLineItemRequestAsync = createAsyncThunk(
 export const cartSlice = createSlice({
   name: 'cartSlice',
   initialState,
-  reducers: {},
+  reducers: {
+    setCartData: (state, action) => {
+      state.cart.id = action.payload.id;
+      state.cart.billingAddress = action.payload.billingAddress;
+      state.cart.customerId = action.payload.customerId;
+      state.cart.lineItems = action.payload.lineItems;
+      state.cart.totalPrice = action.payload.totalPrice;
+      state.cart.shippingAddress = action.payload.shippingAddress;
+      state.cart.discountCodes = action.payload.discountCode;
+      state.cart.version = action.payload.version;
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(createCartRequestAsync.pending, (state) => {
       state.loading = true;
@@ -184,5 +197,7 @@ export const cartSlice = createSlice({
     });
   }
 });
+
+export const { setCartData } = cartSlice.actions;
 
 export default cartSlice.reducer;

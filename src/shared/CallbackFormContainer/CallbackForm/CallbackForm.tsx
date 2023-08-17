@@ -159,7 +159,6 @@ export function CallbackForm() {
         value="agree"
         onChange={() => {}}
         isChecked={true}
-        id="checkbox"
         label="Принимаю пользовательское соглашение"
       />
     </form>

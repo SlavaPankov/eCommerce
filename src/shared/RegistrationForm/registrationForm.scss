@@ -1,34 +1,99 @@
-@import '../../styles/vars.scss';
+@import '../../styles/mixins/breakpoints';
 
 .form {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
-  gap: 1rem;
+  gap: 20px;
   max-width: 620px;
   margin: 0 auto;
+  padding-bottom: 70px !important;
+
+  @include small-tablet {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 
   &__header {
     color: var(--black, #333);
     font-size: 2rem;
     font-weight: 400;
-    padding: 0rem;
+    padding: 0;
+    margin: 0;
   }
 
   &__text {
     color: var(--black, #333);
-    font-size: 1rem;
+    font-size: 14px;
     font-weight: 400;
+    margin-bottom: 15px;
+
+    & a {
+      color: $primary;
+      text-decoration: underline;
+      transition: color 0.3s ease-in-out;
+
+      &:hover {
+        color: $primary_light;
+      }
+
+      &:active {
+        color: $primary_shade;
+      }
+    }
   }
 
   & label {
-    width: 100%;
+    width: 66%;
+  }
+
+  & button {
+    margin-top: 30px;
   }
 }
 
-@media (max-width: 720px) {
-  .form {
-    padding-left: 1rem;
-    padding-right: 1rem;
+.addAddress {
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $primary;
+  transition: color 0.3s ease-in-out;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    color: $primary_light;
   }
+
+  &:active {
+    color: $primary_shade;
+  }
+}
+
+.address_title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+}
+
+.address {
+  position: relative;
+  width: 100%;
+  max-width: 66%;
+}
+
+.cross {
+  position: absolute;
+  top: 0;
+  right: -30px;
+  cursor: pointer;
+}
+
+.error {
+  font-size: 14px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $red_input;
 }

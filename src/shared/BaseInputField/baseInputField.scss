@@ -26,7 +26,11 @@
     color: $grey;
   }
 
-  &:hover {
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
     background-color: $md_grey;
   }
 

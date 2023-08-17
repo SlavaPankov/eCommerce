@@ -9,3 +9,4 @@ export * from './InstagramIcon/InstagramIcon';
 export * from './VkIcon/VkIcon';
 export * from './ElephantIcon/ElephantIcon';
 export * from './RatingIcon/RatingIcon';
+export * from './CrossIcon/CrossIcon';

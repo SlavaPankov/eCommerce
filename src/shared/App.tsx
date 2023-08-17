@@ -16,7 +16,6 @@ export function App() {
   const tokenTimeCreate = useAppSelector<number>((state) => state.token.payload.created_at);
   const expiresIn = useAppSelector<number>((state) => state.token.payload.expires_in);
   const refreshToken = useAppSelector<string>((state) => state.token.payload.refresh_token);
-  const { error: cartError } = useAppSelector((state) => state.cart);
 
   useEffect(() => {
     const tokenLS = localStorage.getItem('token');
@@ -45,13 +44,12 @@ export function App() {
       return;
     }
 
-    if (cartError) {
-      dispatch(createCartRequestAsync(token));
-      return;
-    }
-
-    dispatch(getActiveCartRequestAsync(token));
-  }, [token, cartError]);
+    dispatch(getActiveCartRequestAsync(token)).then((action) => {
+      if (action.type.includes('rejected')) {
+        dispatch(createCartRequestAsync(token));
+      }
+    });
+  }, [token]);
 
   return (
     <BrowserRouter>
