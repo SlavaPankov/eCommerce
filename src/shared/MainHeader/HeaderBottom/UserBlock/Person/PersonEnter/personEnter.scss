@@ -11,9 +11,12 @@
   color: $black;
   padding: 15px 15px 7.5px;
   text-align: center;
+  white-space: nowrap;
 
   &_bottom {
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 5px;
     padding: 7.5px 15px 15px;
     color: $white;

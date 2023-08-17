@@ -14,11 +14,11 @@ import { EBaseButtonMode } from '../../types/enums/EBaseButtonMode';
 
 export function MainSlider() {
   const dispatch = useAppDispatch();
-  const { discountCode } = useAppSelector((state) => state);
+  const { discountCode, loading } = useAppSelector((state) => state.discountCode);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleClickDiscount = () => {
-    if (!discountCode.discountCode) {
+    if (!discountCode) {
       dispatch(getDiscountCodeRequestAsync());
     }
 
@@ -26,7 +26,7 @@ export function MainSlider() {
   };
 
   const handleCopyClick = () => {
-    navigator.clipboard.writeText(discountCode.discountCode).then(() => console.log('copied'));
+    navigator.clipboard.writeText(discountCode).then(() => console.log('copied'));
   };
 
   const containerClassName = classNames('container', {
@@ -47,12 +47,12 @@ export function MainSlider() {
           <div className={containerClassName}>
             <h2 className={styles.heading}>Скидка 15% на первую покупку</h2>
             <BaseButton textContent="Получить" onClick={handleClickDiscount} />
-            {isModalOpen && !discountCode.loading && (
+            {isModalOpen && !loading && (
               <Modal onClose={() => setIsModalOpen(false)}>
                 <div className={styles.modal}>
                   <ElephantIcon />
                   <h4 className={styles.modal_title}>Ваш промокод:</h4>
-                  <div className={styles.modal_content}>{discountCode.discountCode}</div>
+                  <div className={styles.modal_content}>{discountCode}</div>
                   <BaseButton
                     textContent="Копировать"
                     onClick={handleCopyClick}

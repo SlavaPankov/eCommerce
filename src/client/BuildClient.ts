@@ -70,7 +70,6 @@ export const getApiRoot = () => {
   const isAuth = localStorage.getItem('isAuth');
 
   if (isAuth && !process.env.USERNAME && !process.env.PASSWORD) {
-    console.log('this');
     return createApiBuilderFromCtpClient(ctpExistingFlow);
   }
 

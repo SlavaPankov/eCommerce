@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, FormEvent } from 'react';
+import React, { ChangeEvent, useState, FormEvent, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import styles from './loginForm.scss';
@@ -9,6 +9,7 @@ import { EErrorText } from '../../types/enums/EErrorText';
 import { passwordRegex } from '../../utils/validationRegex';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { userSignInRequestAsync } from '../../store/user/userSlice';
+import { setCartData } from '../../store/cart/cartSlice';
 
 enum EFormFieldsNames {
   email = 'email',
@@ -36,7 +37,7 @@ export function LoginForm() {
   const [isEyeClicked, setIsEyeClicked] = useState(false);
   const [globalFormError, setGlobalFormError] = useState<string>('');
   const { id: cartId } = useAppSelector((state) => state.cart.cart);
-  const { loading } = useAppSelector((state) => state.user);
+  const { loading, error: authError } = useAppSelector((state) => state.user);
 
   const containerClassName = classNames('container', {
     [`${styles.container}`]: true
@@ -46,6 +47,18 @@ export function LoginForm() {
     [`${styles.eye_icon}`]: true,
     [`${styles.eye_icon_active}`]: isEyeClicked
   });
+
+  useEffect(() => {
+    if (!authError) {
+      return;
+    }
+
+    setGlobalFormError('Неверный логин или пароль');
+  }, [authError]);
+
+  useEffect(() => {
+    setGlobalFormError('');
+  }, []);
 
   const isFormValid = () => {
     let flag = true;
@@ -162,14 +175,22 @@ export function LoginForm() {
       }
     };
 
-    dispatch(userSignInRequestAsync(userData)).then(({ type }) => {
-      if (type.includes('rejected')) {
-        return;
-      }
+    dispatch(userSignInRequestAsync(userData))
+      .unwrap()
+      .then((action) => {
+        console.log(action);
+        console.log(authError);
+        if (!action.customer) {
+          return;
+        }
 
-      localStorage.setItem('isAuth', '1');
-      navigate('/');
-    });
+        if (action.cart) {
+          dispatch(setCartData(action.cart));
+        }
+
+        localStorage.setItem('isAuth', '1');
+        navigate('/');
+      });
   };
 
   return (

@@ -10,6 +10,10 @@ export function useSpecialsData() {
   const error = useAppSelector<string>((state) => state.specials.error);
 
   useEffect(() => {
+    if (specials.length) {
+      return;
+    }
+
     dispatch(specialsRequestAsync());
   }, []);
 

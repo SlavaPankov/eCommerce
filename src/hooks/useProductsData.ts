@@ -11,6 +11,10 @@ export function useProductsData() {
   const offset = useAppSelector<number>((state) => state.products.offset);
 
   useEffect(() => {
+    if (products.length) {
+      return;
+    }
+
     dispatch(productsRequestAsync({ offset }));
   }, [offset]);
 

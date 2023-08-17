@@ -11,6 +11,7 @@ import { RegistrationAddress } from './RagistrationAddress';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
 import { userSignInRequestAsync, userSignUpRequestAsync } from '../../store/user/userSlice';
+import { setCartData } from '../../store/cart/cartSlice';
 
 interface IFormData {
   [k: string]: string;
@@ -51,6 +52,7 @@ export function RegistrationForm() {
 
   useEffect(() => {
     const isAuth = localStorage.getItem('user');
+    setGlobalFormError('');
 
     if (!isAuth) {
       return;
@@ -277,14 +279,20 @@ export function RegistrationForm() {
             id: cartId
           }
         })
-      ).then(({ type: signInType }) => {
-        if (signInType.includes('rejected')) {
-          return;
-        }
+      )
+        .unwrap()
+        .then((action) => {
+          if (!action.customer) {
+            return;
+          }
 
-        localStorage.setItem('isAuth', '1');
-        navigate('/');
-      });
+          if (action.cart) {
+            dispatch(setCartData(action.cart));
+          }
+
+          localStorage.setItem('isAuth', '1');
+          navigate('/');
+        });
     });
   };
 

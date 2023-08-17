@@ -9,6 +9,10 @@ export function useCategoriesData() {
   const error = useAppSelector((state) => state.categories.error);
 
   useEffect(() => {
+    if (categories.length) {
+      return;
+    }
+
     dispatch(categoriesAsyncRequest());
   }, []);
 
