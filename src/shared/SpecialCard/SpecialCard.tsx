@@ -7,10 +7,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICartAction } from '../../types/interfaces/ICartAction';
 import { EActionTypes } from '../../types/enums/EActionTypes';
 import { addLineItemRequestAsync } from '../../store/cart/cartSlice';
+import { IImage } from '../../utils/IImage';
 
 interface ISpecialCardProps {
   id: string;
-  imageSrc: string;
+  imagePreview: IImage;
   title: string;
   price: string;
   discountedPrice: string;
@@ -19,7 +20,7 @@ interface ISpecialCardProps {
 }
 
 export function SpecialCard({
-  imageSrc,
+  imagePreview,
   title,
   price,
   discountedPrice,
@@ -53,7 +54,13 @@ export function SpecialCard({
   return (
     <article className={styles.card}>
       <span className={styles.discount}>- {discount}</span>
-      <img className={styles.image} src={imageSrc} alt={title} />
+      <img
+        className={styles.image}
+        src={imagePreview.url}
+        width={imagePreview.dimensions?.w}
+        height={imagePreview.dimensions?.h}
+        alt={title}
+      />
       <Link to="#" data-key={productKey}>
         <h2 className={styles.title}>
           {title

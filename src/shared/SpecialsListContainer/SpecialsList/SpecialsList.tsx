@@ -2,13 +2,18 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import { IProduct } from '../../../types/interfaces/IProduct';
-
-import 'swiper/css';
 import { SpecialCard } from '../../SpecialCard';
+import { IImage } from '../../../utils/IImage';
+import 'swiper/css';
 
 interface ISpecialsListProps {
   list: Array<IProduct>;
+  loading?: boolean;
 }
+
+const imageEmpty: IImage = {
+  url: ''
+};
 
 export function SpecialsList({ list }: ISpecialsListProps) {
   const breakpoints = {
@@ -17,12 +22,12 @@ export function SpecialsList({ list }: ISpecialsListProps) {
       slidesPerGroup: 1
     },
 
-    600: {
-      slidesPerView: 1,
-      slidesPerGroup: 1
+    850: {
+      slidesPerView: 2,
+      slidesPerGroup: 2
     },
 
-    850: {
+    1024: {
       slidesPerView: 3,
       slidesPerGroup: 3
     }
@@ -44,7 +49,7 @@ export function SpecialsList({ list }: ISpecialsListProps) {
           <SpecialCard
             id={item.id}
             variantId={item.variantId}
-            imageSrc={item.images?.preview || ''}
+            imagePreview={item.images?.preview || imageEmpty}
             title={item.name}
             price={item.price}
             discountedPrice={item.discountedPrice}

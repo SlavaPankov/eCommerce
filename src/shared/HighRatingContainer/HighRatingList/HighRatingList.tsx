@@ -3,10 +3,16 @@ import classNames from 'classnames';
 import { IProduct } from '../../../types/interfaces/IProduct';
 import { ProductCard } from '../../ProductCard';
 import styles from './highRatingList.scss';
+import { IImage } from '../../../utils/IImage';
 
 interface IHighRatingList {
   list: Array<IProduct>;
 }
+
+const imageEmpty: IImage = {
+  url: ''
+};
+
 export function HighRatingList({ list }: IHighRatingList) {
   const className = classNames('list-reset', {
     [`${styles.list}`]: true
@@ -18,7 +24,7 @@ export function HighRatingList({ list }: IHighRatingList) {
         <li key={item.id}>
           <ProductCard
             rating={item.rating}
-            imageSrc={item.images?.preview || ''}
+            imagePreview={item.images?.preview || imageEmpty}
             title={item.name}
             price={item.price}
             id={item.id}

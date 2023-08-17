@@ -1,4 +1,5 @@
 import { Attribute, CategoryReference } from '@commercetools/platform-sdk';
+import { IImage } from '../../utils/IImage';
 
 export interface IProduct {
   id: string;
@@ -6,8 +7,8 @@ export interface IProduct {
   key: string;
   variantId: number;
   images?: {
-    preview: string;
-    slider: Array<string>;
+    preview: IImage;
+    slider: Array<IImage>;
   };
   categories: Array<CategoryReference>;
   attributes: Array<Attribute>;
