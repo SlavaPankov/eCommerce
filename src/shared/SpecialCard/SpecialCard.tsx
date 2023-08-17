@@ -7,10 +7,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICartAction } from '../../types/interfaces/ICartAction';
 import { EActionTypes } from '../../types/enums/EActionTypes';
 import { addLineItemRequestAsync } from '../../store/cart/cartSlice';
+import { IImage } from '../../utils/IImage';
 
 interface ISpecialCardProps {
   id: string;
-  imageSrc: string;
+  imagePreview: IImage;
   title: string;
   price: string;
   discountedPrice: string;
@@ -19,7 +20,7 @@ interface ISpecialCardProps {
 }
 
 export function SpecialCard({
-  imageSrc,
+  imagePreview,
   title,
   price,
   discountedPrice,
@@ -30,7 +31,6 @@ export function SpecialCard({
   const dispatch = useAppDispatch();
   const { loading } = useAppSelector((state) => state.cart);
   const { cart } = useAppSelector((state) => state.cart);
-  const token = useAppSelector<string>((state) => state.token.payload.token);
   const discount: string = (
     Number(price.replace(/\s/g, '')) - Number(discountedPrice.replace(/\s/g, ''))
   ).toLocaleString();
@@ -44,7 +44,6 @@ export function SpecialCard({
 
     dispatch(
       addLineItemRequestAsync({
-        token,
         cartId: cart.id,
         addAction,
         version: cart.version
@@ -55,7 +54,13 @@ export function SpecialCard({
   return (
     <article className={styles.card}>
       <span className={styles.discount}>- {discount}</span>
-      <img className={styles.image} src={imageSrc} alt={title} />
+      <img
+        className={styles.image}
+        src={imagePreview.url}
+        width={imagePreview.dimensions?.w}
+        height={imagePreview.dimensions?.h}
+        alt={title}
+      />
       <Link to="#" data-key={productKey}>
         <h2 className={styles.title}>
           {title

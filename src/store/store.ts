@@ -2,13 +2,11 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import productsReducer from './products/productsSlice';
 import categoriesReducer from './categories/categoriesSlice';
 import specialsReducer from './specials/specialSlice';
-import tokenReducer from './token/tokenSlice';
 import cartReducer from './cart/cartSlice';
 import discountCodeReducer from './discountCode/discountCodeSlice';
 import userReducer from './user/userSlice';
 
 const reducerState = combineReducers({
-  token: tokenReducer,
   products: productsReducer,
   categories: categoriesReducer,
   specials: specialsReducer,

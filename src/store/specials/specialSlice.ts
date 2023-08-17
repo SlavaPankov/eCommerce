@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { ErrorResponse } from '@commercetools/platform-sdk';
 import { IProduct } from '../../types/interfaces/IProduct';
 import { createProductsFromResponse } from '../../utils/createProductsFromResponse';
 import { apiConfig } from '../../cfg/apiConfig';
+import { getApiRoot } from '../../client/BuildClient';
 
 interface ISpecialsState {
   loading: boolean;
@@ -19,19 +20,21 @@ const initialState: ISpecialsState = {
 
 export const specialsRequestAsync = createAsyncThunk(
   'specials/getSpecials',
-  async (token: string) => {
-    return axios
-      .get(`${apiConfig.baseUrl}/${apiConfig.projectKey}/product-projections`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        params: {
+  async (arg, { rejectWithValue }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .productProjections()
+      .get({
+        queryArgs: {
           where:
             'masterVariant(prices(discounted(discount(id="4b0c7a74-004a-499a-b884-d00a12b8a93a"))))'
         }
       })
-      .then(({ data }): Array<IProduct> => createProductsFromResponse(data))
-      .catch((error: Error) => error);
+      .execute()
+      .then(({ body: { results } }): Array<IProduct> => createProductsFromResponse(results))
+      .catch((error: ErrorResponse) => {
+        return rejectWithValue(error.message);
+      });
   }
 );
 
@@ -53,9 +56,7 @@ export const specialsSlice = createSlice({
 
     builder.addCase(specialsRequestAsync.rejected, (state, action) => {
       state.loading = false;
-      if (action.payload instanceof Error) {
-        state.error = action.payload.message;
-      }
+      state.error = `${action.payload}`;
     });
   }
 });

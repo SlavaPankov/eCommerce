@@ -6,64 +6,34 @@ import { MainFooter } from './MainFooter';
 import { NotFound } from '../pages/NotFound';
 import { MainPage } from '../pages/MainPage';
 import { LoginPage } from '../pages/LoginPage';
-import { useAppDispatch, useAppSelector } from '../hooks/storeHooks';
-import { refreshTokenRequestAsync, saveToken, tokenRequestAsync } from '../store/token/tokenSlice';
+import { useAppDispatch } from '../hooks/storeHooks';
 import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart/cartSlice';
+import { ERoutes } from '../types/enums/ERoutes';
 
 export function App() {
   const dispatch = useAppDispatch();
-  const token = useAppSelector<string>((state) => state.token.payload.token);
-  const tokenTimeCreate = useAppSelector<number>((state) => state.token.payload.created_at);
-  const expiresIn = useAppSelector<number>((state) => state.token.payload.expires_in);
-  const refreshToken = useAppSelector<string>((state) => state.token.payload.refresh_token);
 
   useEffect(() => {
-    const tokenLS = localStorage.getItem('token');
-    if (!tokenLS) {
-      dispatch(tokenRequestAsync());
-    } else {
-      dispatch(saveToken());
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!expiresIn || !refreshToken) {
-      return;
-    }
-
-    const currDate = new Date(Date.now()).getTime();
-    const tokenExpires = new Date(tokenTimeCreate + expiresIn).getTime();
-
-    if (currDate >= tokenExpires) {
-      dispatch(refreshTokenRequestAsync(refreshToken));
-    }
-  }, [expiresIn, refreshToken]);
-
-  useEffect(() => {
-    if (!token) {
-      return;
-    }
-
-    dispatch(getActiveCartRequestAsync(token)).then((action) => {
-      if (action.type.includes('rejected')) {
-        dispatch(createCartRequestAsync(token));
+    dispatch(getActiveCartRequestAsync()).then(({ type }) => {
+      if (type.includes('rejected')) {
+        dispatch(createCartRequestAsync());
       }
     });
-  }, [token]);
+  }, []);
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="*" element={<MainHeader />} />
+        <Route path={ERoutes.all} element={<MainHeader />} />
       </Routes>
       <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/registrate" element={<RegistrationPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path={ERoutes.main} element={<MainPage />} />
+        <Route path={ERoutes.registration} element={<RegistrationPage />} />
+        <Route path={ERoutes.login} element={<LoginPage />} />
+        <Route path={ERoutes.all} element={<NotFound />} />
       </Routes>
       <Routes>
-        <Route path="*" element={<MainFooter />} />
+        <Route path={ERoutes.all} element={<MainFooter />} />
       </Routes>
     </BrowserRouter>
   );

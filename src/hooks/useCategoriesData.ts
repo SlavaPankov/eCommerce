@@ -7,15 +7,14 @@ export function useCategoriesData() {
   const categories = useAppSelector((state) => state.categories.categories);
   const loading = useAppSelector((state) => state.categories.loading);
   const error = useAppSelector((state) => state.categories.error);
-  const token = useAppSelector((state) => state.token.payload.token);
 
   useEffect(() => {
-    if (!token) {
+    if (categories.length) {
       return;
     }
 
-    dispatch(categoriesAsyncRequest(token));
-  }, [token]);
+    dispatch(categoriesAsyncRequest());
+  }, []);
 
   return {
     categories,

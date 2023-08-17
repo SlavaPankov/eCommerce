@@ -144,6 +144,9 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.CLIENT_ID': JSON.stringify(process.env.CLIENT_ID),
       'process.env.SECRET': JSON.stringify(process.env.SECRET)
+    }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser'
     })
   ]
 };

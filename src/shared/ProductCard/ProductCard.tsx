@@ -7,20 +7,27 @@ import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICartAction } from '../../types/interfaces/ICartAction';
 import { EActionTypes } from '../../types/enums/EActionTypes';
 import { addLineItemRequestAsync } from '../../store/cart/cartSlice';
+import { IImage } from '../../utils/IImage';
 
 interface IProductCardProps {
   rating: number;
-  imageSrc: string;
+  imagePreview: IImage;
   title: string;
   price: string;
   id: string;
   variantId: number;
 }
 
-export function ProductCard({ rating, imageSrc, title, price, id, variantId }: IProductCardProps) {
+export function ProductCard({
+  rating,
+  imagePreview,
+  title,
+  price,
+  id,
+  variantId
+}: IProductCardProps) {
   const dispatch = useAppDispatch();
   const { cart } = useAppSelector((state) => state.cart);
-  const token = useAppSelector<string>((state) => state.token.payload.token);
 
   const handleClick = () => {
     const addAction: ICartAction = {
@@ -31,7 +38,6 @@ export function ProductCard({ rating, imageSrc, title, price, id, variantId }: I
 
     dispatch(
       addLineItemRequestAsync({
-        token,
         cartId: cart.id,
         addAction,
         version: cart.version
@@ -44,7 +50,13 @@ export function ProductCard({ rating, imageSrc, title, price, id, variantId }: I
       <div className={styles.rating}>
         <RatingIcon /> {rating}
       </div>
-      <img className={styles.image} src={imageSrc} alt={title} />
+      <img
+        className={styles.image}
+        src={imagePreview.url}
+        width={imagePreview.dimensions?.w}
+        height={imagePreview.dimensions?.h}
+        alt={title}
+      />
       <div className={styles.content}>
         <h2 className={styles.title}>{title}</h2>
         <div className={styles.price}>{price} руб</div>

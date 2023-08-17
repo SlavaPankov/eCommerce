@@ -21,3 +21,86 @@
   justify-content: flex-end;
   flex-basis: 50%;
 }
+
+.skeletonList {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  list-style: none;
+}
+
+.item {
+  position: relative;
+  background-color: $grey_light;
+  border-radius: 10px;
+  width: 100%;
+  height: 474px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &_preview {
+    position: relative;
+    width: 100%;
+    height: 224px;
+    background-color: $grey_shade;
+    opacity: 0.1;
+    margin: 0 auto;
+  }
+
+  &_title {
+    max-width: 100%;
+    width: 100%;
+    height: 31px;
+  }
+
+  &_price {
+    max-width: 50%;
+    width: 100%;
+    height: 24px;
+  }
+
+  &_button {
+    max-width: 130px;
+    width: 100%;
+    height: 54px;
+  }
+
+  &_preview,
+  &_title,
+  &_price,
+  &_button {
+    background-color: $grey_shade;
+    opacity: 0.1;
+    border-radius: 10px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-99%);
+      background-image: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0,
+        rgba(255, 255, 255, 0.3) 20%,
+        rgba(255, 255, 255, 0.4) 60%,
+        rgba(255, 255, 255, 0)
+      );
+      animation: shimmer 2s infinite;
+    }
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(50%);
+  }
+}

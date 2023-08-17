@@ -10,7 +10,7 @@ import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRege
 import { RegistrationAddress } from './RagistrationAddress';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
-import { userSignUpRequestAsync } from '../../store/user/userSlice';
+import { userSignInRequestAsync, userSignUpRequestAsync } from '../../store/user/userSlice';
 import { setCartData } from '../../store/cart/cartSlice';
 
 interface IFormData {
@@ -35,7 +35,6 @@ export function RegistrationForm() {
   const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
   const [globalFormError, setGlobalFormError] = useState<string>('');
   const { id: cartId } = useAppSelector((state) => state.cart.cart);
-  const { token } = useAppSelector((state) => state.token.payload);
   const { loading, error } = useAppSelector((state) => state.user);
 
   useEffect(() => {
@@ -51,23 +50,24 @@ export function RegistrationForm() {
     setGlobalFormError('Что-то пошло не так, попробуйте обновить страницу');
   }, [error]);
 
-  useEffect(() => {
-    const isAuth = localStorage.getItem('user');
-
-    if (!isAuth) {
-      return;
-    }
-
-    navigate('/');
-  }, []);
-
   function isFormValid() {
     let flag = true;
 
-    document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
-      if (item.value === '') {
-        flag = false;
+    for (
+      let i = 0;
+      i < document.querySelectorAll<HTMLInputElement>('[data-required="true"]').length;
+      i += 1
+    ) {
+      const item = document.querySelectorAll<HTMLInputElement>('[data-required="true"]')[i];
+      flag = item.value !== '';
+
+      if (!flag) {
+        return flag;
       }
+    }
+
+    Object.values(formError).forEach((errorValue) => {
+      flag = !errorValue;
     });
 
     return flag;
@@ -254,17 +254,34 @@ export function RegistrationForm() {
       }
     });
 
-    console.log(customerDraft);
-
-    dispatch(userSignUpRequestAsync({ token, data: customerDraft })).then(({ payload }) => {
-      if (payload.cart) {
-        dispatch(setCartData(payload.cart));
+    dispatch(userSignUpRequestAsync(customerDraft)).then(({ type }) => {
+      if (type.includes('rejected')) {
+        return;
       }
 
-      if (payload.customer) {
-        localStorage.setItem('user', JSON.stringify(payload.customer.id));
-        navigate('/');
-      }
+      dispatch(
+        userSignInRequestAsync({
+          email: customerDraft.email,
+          password: customerDraft.password,
+          anonymousCart: {
+            typeId: 'cart',
+            id: cartId
+          }
+        })
+      )
+        .unwrap()
+        .then((action) => {
+          if (!action.customer) {
+            return;
+          }
+
+          if (action.cart) {
+            dispatch(setCartData(action.cart));
+          }
+
+          localStorage.setItem('isAuth', '1');
+          navigate('/');
+        });
     });
   };
 

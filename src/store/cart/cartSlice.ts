@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios, { AxiosError } from 'axios';
+import { Cart, ErrorResponse } from '@commercetools/platform-sdk';
 import { apiConfig } from '../../cfg/apiConfig';
 import { ICart } from '../../types/interfaces/ICart';
 import { ICartAction } from '../../types/interfaces/ICartAction';
 import { createCartFromResponse } from '../../utils/createCartFromResponse';
+import { getApiRoot } from '../../client/BuildClient';
 
 interface ICartState {
   loading: boolean;
@@ -27,71 +28,67 @@ const initialState: ICartState = {
   }
 };
 
-export const createCartRequestAsync = createAsyncThunk('me/createCart', async (token: string) => {
-  return axios
-    .post(
-      `${apiConfig.baseUrl}/${apiConfig.projectKey}/me/carts`,
-      {
-        currency: 'RUB'
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+export const createCartRequestAsync = createAsyncThunk(
+  'me/createCart',
+  async (arg, { rejectWithValue }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .me()
+      .carts()
+      .post({
+        body: {
+          currency: 'RUB'
         }
-      }
-    )
-    .then((response) => {
-      if (response.status === 200 || response.status === 201) {
-        const { data } = response;
-        return createCartFromResponse(data);
-      }
-
-      return response.data;
-    })
-    .catch((error: AxiosError) => error);
-});
+      })
+      .execute()
+      .then(({ body }): Cart => {
+        return body;
+      })
+      .catch((error: ErrorResponse) => {
+        return rejectWithValue(error.message);
+      });
+  }
+);
 
 export const getActiveCartRequestAsync = createAsyncThunk(
   'me/getActiveCart',
-  async (token: string, { rejectWithValue }) => {
-    return axios
-      .get(`${apiConfig.baseUrl}/${apiConfig.projectKey}/me/active-cart`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+  async (arg, { rejectWithValue }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .me()
+      .activeCart()
+      .get()
+      .execute()
+      .then(({ body }): Cart => {
+        return body;
       })
-      .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-          const { data } = response;
-          return createCartFromResponse(data);
-        }
-
-        throw new AxiosError();
-      })
-      .catch((error: AxiosError) => {
-        return rejectWithValue(error);
+      .catch((error: ErrorResponse) => {
+        return rejectWithValue(error.message);
       });
   }
 );
 
 export const addLineItemRequestAsync = createAsyncThunk(
   'me/addLineItem',
-  async ({
-    token,
-    cartId,
-    version,
-    addAction
-  }: {
-    token: string;
-    cartId: string;
-    version: number;
-    addAction: ICartAction;
-  }) => {
-    return axios
-      .post(
-        `${apiConfig.baseUrl}/${apiConfig.projectKey}/me/carts/${cartId}`,
-        {
+  async (
+    {
+      cartId,
+      version,
+      addAction
+    }: {
+      cartId: string;
+      version: number;
+      addAction: ICartAction;
+    },
+    { rejectWithValue }
+  ) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .post({
+        body: {
           version,
           actions: [
             {
@@ -101,22 +98,15 @@ export const addLineItemRequestAsync = createAsyncThunk(
               quantity: addAction.quantity || 1
             }
           ]
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
         }
-      )
-      .then((response) => {
-        if (response.status === 200 || response.status === 201) {
-          const { data } = response;
-          return createCartFromResponse(data);
-        }
-
-        return response.data;
       })
-      .catch((error: AxiosError) => error);
+      .execute()
+      .then(({ body }) => {
+        return createCartFromResponse(body);
+      })
+      .catch((error: ErrorResponse) => {
+        return rejectWithValue(error.message);
+      });
   }
 );
 
@@ -142,18 +132,19 @@ export const cartSlice = createSlice({
 
     builder.addCase(createCartRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      if (!(action.payload instanceof AxiosError)) {
-        state.cart = action.payload;
-      } else {
-        state.error = action.payload.message;
-      }
+      state.cart.id = action.payload.id;
+      state.cart.version = action.payload.version;
+      state.cart.customerId = action.payload.customerId;
+      state.cart.lineItems = action.payload.lineItems;
+      state.cart.totalPrice = action.payload.totalPrice.centAmount.toString();
+      state.cart.billingAddress = action.payload.billingAddress;
+      state.cart.shippingAddress = action.payload.shippingAddress;
+      state.cart.discountCodes = action.payload.discountCodes;
     });
 
     builder.addCase(createCartRequestAsync.rejected, (state, action) => {
       state.loading = false;
-      if (action.payload instanceof AxiosError) {
-        state.error = action.payload.message;
-      }
+      state.error = `${action.payload}`;
     });
 
     builder.addCase(getActiveCartRequestAsync.pending, (state) => {
@@ -162,18 +153,19 @@ export const cartSlice = createSlice({
 
     builder.addCase(getActiveCartRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      if (!(action.payload instanceof AxiosError)) {
-        state.cart = action.payload;
-      } else {
-        state.error = action.payload.message;
-      }
+      state.cart.id = action.payload.id;
+      state.cart.version = action.payload.version;
+      state.cart.customerId = action.payload.customerId;
+      state.cart.lineItems = action.payload.lineItems;
+      state.cart.totalPrice = action.payload.totalPrice.centAmount.toString();
+      state.cart.billingAddress = action.payload.billingAddress;
+      state.cart.shippingAddress = action.payload.shippingAddress;
+      state.cart.discountCodes = action.payload.discountCodes;
     });
 
     builder.addCase(getActiveCartRequestAsync.rejected, (state, action) => {
       state.loading = false;
-      if (action.payload instanceof AxiosError) {
-        state.error = action.payload.message;
-      }
+      state.error = `${action.payload}`;
     });
 
     builder.addCase(addLineItemRequestAsync.pending, (state) => {
@@ -182,18 +174,12 @@ export const cartSlice = createSlice({
 
     builder.addCase(addLineItemRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      if (!(action.payload instanceof AxiosError)) {
-        state.cart = action.payload;
-      } else {
-        state.error = action.payload.message;
-      }
+      state.cart = action.payload;
     });
 
     builder.addCase(addLineItemRequestAsync.rejected, (state, action) => {
       state.loading = false;
-      if (action.payload instanceof AxiosError) {
-        state.error = action.payload.message;
-      }
+      state.error = `${action.payload}`;
     });
   }
 });
