@@ -8,6 +8,7 @@ import { MainPage } from '../pages/MainPage';
 import { LoginPage } from '../pages/LoginPage';
 import { useAppDispatch } from '../hooks/storeHooks';
 import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart/cartSlice';
+import { ERoutes } from '../types/enums/ERoutes';
 
 export function App() {
   const dispatch = useAppDispatch();
@@ -23,16 +24,16 @@ export function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="*" element={<MainHeader />} />
+        <Route path={ERoutes.all} element={<MainHeader />} />
       </Routes>
       <Routes>
-        <Route path="/" element={<MainPage />} />
-        <Route path="/registrate" element={<RegistrationPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path={ERoutes.main} element={<MainPage />} />
+        <Route path={ERoutes.registration} element={<RegistrationPage />} />
+        <Route path={ERoutes.login} element={<LoginPage />} />
+        <Route path={ERoutes.all} element={<NotFound />} />
       </Routes>
       <Routes>
-        <Route path="*" element={<MainFooter />} />
+        <Route path={ERoutes.all} element={<MainFooter />} />
       </Routes>
     </BrowserRouter>
   );

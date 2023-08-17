@@ -50,17 +50,6 @@ export function RegistrationForm() {
     setGlobalFormError('Что-то пошло не так, попробуйте обновить страницу');
   }, [error]);
 
-  useEffect(() => {
-    const isAuth = localStorage.getItem('user');
-    setGlobalFormError('');
-
-    if (!isAuth) {
-      return;
-    }
-
-    navigate('/');
-  }, []);
-
   function isFormValid() {
     let flag = true;
 

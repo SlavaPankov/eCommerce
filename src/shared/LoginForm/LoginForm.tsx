@@ -6,7 +6,7 @@ import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import EyeIcon from '../Icons/EyeIcon/EyeIcon';
 import { EErrorText } from '../../types/enums/EErrorText';
-import { passwordRegex } from '../../utils/validationRegex';
+import { emailRegex, passwordRegex } from '../../utils/validationRegex';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { userSignInRequestAsync } from '../../store/user/userSlice';
 import { setCartData } from '../../store/cart/cartSlice';
@@ -85,8 +85,6 @@ export function LoginForm() {
   };
 
   const validateEmail = (input: string): string => {
-    const emailRegex = /^[a-zA-Z0-9]+@(?:[a-zA-Z0-9]+\.)+[A-Za-z]+$/;
-
     if (!emailRegex.test(input)) {
       return EErrorText.emailFormat;
     }
