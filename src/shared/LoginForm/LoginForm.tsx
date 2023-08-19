@@ -227,7 +227,7 @@ export function LoginForm() {
       </form>
       <div className={styles.form__register_wrapper}>
         <h1 className={styles.form__header_register}>Не регистрировались?</h1>
-        <Link to="/registrate">
+        <Link to="/registration">
           <BaseButton textContent="Регистрация" />
         </Link>
       </div>

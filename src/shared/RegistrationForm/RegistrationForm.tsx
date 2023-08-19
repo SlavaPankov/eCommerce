@@ -7,7 +7,7 @@ import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import { EErrorText } from '../../types/enums/EErrorText';
 import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRegex';
-import { RegistrationAddress } from './RagistrationAddress';
+import { RegistrationAddress } from './RegistrationAddress';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
 import { userSignInRequestAsync, userSignUpRequestAsync } from '../../store/user/userSlice';
@@ -84,8 +84,8 @@ export function RegistrationForm() {
       if (event.target.value.length > 15) {
         setFormError({ ...formError, [event.target.name]: EErrorText.maxLength15 });
       }
-      if (event.target.value.length < 2) {
-        setFormError({ ...formError, [event.target.name]: EErrorText.minLength2 });
+      if (event.target.value.length < 1) {
+        setFormError({ ...formError, [event.target.name]: EErrorText.minLength1 });
       }
       if (event.target.value && !textRegex.test(event.target.value)) {
         setFormError({ ...formError, [event.target.name]: EErrorText.textFormat });
