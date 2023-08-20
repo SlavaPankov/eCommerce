@@ -9,11 +9,6 @@
   margin: 0 auto;
   padding-bottom: 70px !important;
 
-  @include small-tablet {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
   &__header {
     color: var(--black, #333);
     font-size: 2rem;
@@ -45,6 +40,10 @@
 
   & label {
     width: 66%;
+
+    @include small-tablet {
+      width: 100%;
+    }
   }
 
   & button {
@@ -96,4 +95,23 @@
   line-height: 130%;
   font-weight: 400;
   color: $red_input;
+}
+
+.modal {
+  padding: 50px 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 10px;
+  background-color: $white;
+
+  &_heading {
+    margin: 0;
+    font-size: 24px;
+    line-height: 130%;
+    font-weight: 400;
+    color: $black;
+  }
 }

@@ -9,12 +9,12 @@ interface IModalProps {
 
 export function Modal({ children, onClose = () => {} }: IModalProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const backgoundRef = useRef<HTMLDivElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
   const node = document.getElementById('modal_root');
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {
-      if (event.target instanceof Node && event.target === backgoundRef.current) {
+      if (event.target instanceof Node && event.target === backgroundRef.current) {
         onClose();
       }
     }
@@ -32,7 +32,7 @@ export function Modal({ children, onClose = () => {} }: IModalProps) {
 
   return createPortal(
     <div className={styles.wrapper} ref={ref}>
-      <div className={styles.wrapper_container} ref={backgoundRef}></div>
+      <div className={styles.wrapper_container} ref={backgroundRef}></div>
       <div className={styles.content}>{children}</div>
     </div>,
     node
