@@ -10,6 +10,7 @@ import { emailRegex, passwordRegex } from '../../utils/validationRegex';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { userSignInRequestAsync } from '../../store/user/userSlice';
 import { setCartData } from '../../store/cart/cartSlice';
+import { ERoutes } from '../../types/enums/ERoutes';
 
 enum EFormFieldsNames {
   email = 'email',
@@ -227,7 +228,7 @@ export function LoginForm() {
       </form>
       <div className={styles.form__register_wrapper}>
         <h1 className={styles.form__header_register}>Не регистрировались?</h1>
-        <Link to="/registrate">
+        <Link to={ERoutes.registration}>
           <BaseButton textContent="Регистрация" />
         </Link>
       </div>
