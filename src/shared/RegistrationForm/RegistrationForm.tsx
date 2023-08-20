@@ -12,6 +12,8 @@ import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
 import { userSignInRequestAsync, userSignUpRequestAsync } from '../../store/user/userSlice';
 import { setCartData } from '../../store/cart/cartSlice';
+import { Modal } from '../Modal';
+import { ElephantIcon } from '../Icons';
 
 interface IFormData {
   [k: string]: string;
@@ -34,6 +36,7 @@ export function RegistrationForm() {
   const [addressCount, setAddressCount] = useState<number>(1);
   const [renderAddress, setRenderAddress] = useState<Array<number>>([1]);
   const [globalFormError, setGlobalFormError] = useState<string>('');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const { id: cartId } = useAppSelector((state) => state.cart.cart);
   const { loading, error } = useAppSelector((state) => state.user);
 
@@ -279,8 +282,13 @@ export function RegistrationForm() {
             dispatch(setCartData(action.cart));
           }
 
+          setIsModalOpen(true);
           localStorage.setItem('isAuth', '1');
-          navigate('/');
+
+          setTimeout(() => {
+            setIsModalOpen(false);
+            navigate('/');
+          }, 1500);
         });
     });
   };
@@ -388,6 +396,14 @@ export function RegistrationForm() {
         {globalFormError ? <span className={styles.error}>{globalFormError}</span> : null}
         <BaseButton textContent="Зарегистрироваться" isDisabled={loading} />
       </form>
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <article className={styles.modal}>
+            <ElephantIcon />
+            <h4 className={styles.modal_heading}>Спасибо за регистрацию!</h4>
+          </article>
+        </Modal>
+      )}
     </section>
   );
 }
