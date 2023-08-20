@@ -17,6 +17,15 @@ export function PersonLeave() {
         <Link to={ERoutes.person}>Личный кабинет</Link>
       </div>
       <div className={styles.line_bottom}>
+        <div>
+          <Link className={styles.link} to={ERoutes.login}>
+            Войти
+          </Link>
+          или
+          <Link className={styles.link} to={ERoutes.registration}>
+            Зарегистрироваться
+          </Link>
+        </div>
         <Link onClick={handleClick} className={styles.link} to="/logout">
           Выйти
         </Link>

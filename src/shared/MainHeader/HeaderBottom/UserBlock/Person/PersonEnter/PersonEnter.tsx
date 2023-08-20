@@ -8,13 +8,15 @@ export function PersonEnter() {
     <div className={styles.content}>
       <div className={styles.line}>Личный кабинет в SitDownPls</div>
       <div className={styles.line_bottom}>
-        <Link className={styles.link} to={ERoutes.login}>
-          Войти
-        </Link>
-        или
-        <Link className={styles.link} to={ERoutes.registration}>
-          Зарегистрироваться
-        </Link>
+        <div>
+          <Link className={styles.link} to={ERoutes.login}>
+            Войти
+          </Link>
+          или
+          <Link className={styles.link} to={ERoutes.registration}>
+            Зарегистрироваться
+          </Link>
+        </div>
       </div>
     </div>
   );

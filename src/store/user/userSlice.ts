@@ -1,10 +1,5 @@
 /* eslint-disable no-param-reassign */
-import {
-  BaseAddress,
-  ClientResponse,
-  CustomerSignInResult,
-  ErrorResponse
-} from '@commercetools/platform-sdk';
+import { BaseAddress, ClientResponse, CustomerSignInResult } from '@commercetools/platform-sdk';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
 import { apiConfig } from '../../cfg/apiConfig';
@@ -55,8 +50,8 @@ export const userSignUpRequestAsync = createAsyncThunk(
           cart
         };
       })
-      .catch((error: ErrorResponse) => {
-        return thunkAPI.rejectWithValue(error.message);
+      .catch(({ body }) => {
+        return thunkAPI.rejectWithValue(body.errors?.[0].code);
       });
 
     tokenCache.set({
@@ -95,8 +90,8 @@ export const userSignInRequestAsync = createAsyncThunk(
           };
         }
       )
-      .catch((error: ErrorResponse) => {
-        return thunkAPI.rejectWithValue(error.message);
+      .catch(({ body }) => {
+        return thunkAPI.rejectWithValue(body.errors?.[0].code);
       });
   }
 );
