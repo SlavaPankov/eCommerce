@@ -56,14 +56,12 @@ export const ctpAnonymousClient = new ClientBuilder()
   .withProjectKey(apiConfig.projectKey)
   .withAnonymousSessionFlow(anonymousAuthMiddlewareOptions)
   .withHttpMiddleware(httpMiddlewareOptions)
-  .withLoggerMiddleware()
   .build();
 
 export const ctpExistingFlow = new ClientBuilder()
   .withProjectKey(apiConfig.projectKey)
   .withExistingTokenFlow(`Bearer ${tokenCache.get().token}`, { force: true })
   .withHttpMiddleware(httpMiddlewareOptions)
-  .withLoggerMiddleware()
   .build();
 
 export const getApiRoot = () => {
@@ -94,7 +92,6 @@ export const getApiRoot = () => {
       .withProjectKey(apiConfig.projectKey)
       .withPasswordFlow(passwordAuthMiddlewareOptions)
       .withHttpMiddleware(httpMiddlewareOptions)
-      .withLoggerMiddleware()
       .build();
 
     return createApiBuilderFromCtpClient(ctpPasswordClient);
