@@ -7,7 +7,7 @@ import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import { EErrorText } from '../../types/enums/EErrorText';
 import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRegex';
-import { RegistrationAddress } from './RegistrationAddress';
+import { RegistrationAddress } from './RagistrationAddress';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
 import { userSignInRequestAsync, userSignUpRequestAsync } from '../../store/user/userSlice';
