@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICartAction } from '../../types/interfaces/ICartAction';
 import { EActionTypes } from '../../types/enums/EActionTypes';
 import { addLineItemRequestAsync } from '../../store/cart/cartSlice';
-import { IImage } from '../../utils/IImage';
+import { IImage } from '../../types/interfaces/IImage';
 
 interface ISpecialCardProps {
   id: string;

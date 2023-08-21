@@ -14,6 +14,7 @@ import { userSignInRequestAsync, userSignUpRequestAsync } from '../../store/user
 import { setCartData } from '../../store/cart/cartSlice';
 import { Modal } from '../Modal';
 import { ElephantIcon } from '../Icons';
+import { calculateAge } from '../../utils/calculateAge';
 
 interface IFormData {
   [k: string]: string;
@@ -140,7 +141,7 @@ export function RegistrationForm() {
         });
       }
 
-      if (currentDate.getFullYear() - birthDate.getFullYear() < 13) {
+      if (calculateAge(event.currentTarget.value) < 13) {
         setFormError({
           ...formError,
           [event.currentTarget.name]: EErrorText.dateToYoung
@@ -349,7 +350,7 @@ export function RegistrationForm() {
           isRequired={true}
           name={EFieldsNames.email}
           value={formData[EFieldsNames.email] || ''}
-          type="email"
+          type="text"
           placeholder="Ваш e-mail*"
           onChange={handleChange}
           onBlur={handleBlurRequired}

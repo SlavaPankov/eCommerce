@@ -1,5 +1,5 @@
 import { Attribute, CategoryReference } from '@commercetools/platform-sdk';
-import { IImage } from '../../utils/IImage';
+import { IImage } from './IImage';
 
 export interface IProduct {
   id: string;

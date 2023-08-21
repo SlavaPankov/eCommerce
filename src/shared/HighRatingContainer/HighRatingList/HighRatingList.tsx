@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { IProduct } from '../../../types/interfaces/IProduct';
 import { ProductCard } from '../../ProductCard';
 import styles from './highRatingList.scss';
-import { IImage } from '../../../utils/IImage';
+import { IImage } from '../../../types/interfaces/IImage';
 
 interface IHighRatingList {
   list: Array<IProduct>;
