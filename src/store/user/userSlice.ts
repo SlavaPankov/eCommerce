@@ -32,36 +32,32 @@ const initialState: IUserState = {
   }
 };
 
-export const userSignUpRequestAsync = createAsyncThunk(
-  'me/Signup',
-  async (payload: ICustomerDraft, thunkAPI) => {
-    const response = await getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .customers()
-      .post({
-        body: {
-          ...payload
-        }
-      })
-      .execute()
-      .then(({ body: { customer, cart } }): CustomerSignInResult => {
-        return {
-          customer,
-          cart
-        };
-      })
-      .catch(({ body }) => {
-        return thunkAPI.rejectWithValue(body.errors?.[0].code);
-      });
-
-    tokenCache.set({
-      token: '',
-      expirationTime: 0
+export const userSignUpRequestAsync = createAsyncThunk<
+  CustomerSignInResult,
+  ICustomerDraft,
+  { rejectValue: string }
+>('me/Signup', async (payload: ICustomerDraft, thunkAPI) => {
+  const response = await getApiRoot()
+    .withProjectKey({ projectKey: apiConfig.projectKey })
+    .customers()
+    .post({
+      body: {
+        ...payload
+      }
+    })
+    .execute()
+    .then(({ body: { customer, cart } }): CustomerSignInResult => {
+      return {
+        customer,
+        cart
+      };
+    })
+    .catch(({ body }) => {
+      return thunkAPI.rejectWithValue(body.errors?.[0].code);
     });
 
-    return response;
-  }
-);
+  return response;
+});
 
 export const userSignInRequestAsync = createAsyncThunk(
   'me/SignIn',
@@ -112,6 +108,11 @@ export const userSlice = createSlice({
       state.user.lastName = action.payload.customer.lastName || '';
       state.user.email = action.payload.customer.email;
       state.user.addresses = action.payload.customer.addresses;
+
+      tokenCache.set({
+        token: '',
+        expirationTime: 0
+      });
     });
 
     builder.addCase(userSignUpRequestAsync.rejected, (state, action) => {
