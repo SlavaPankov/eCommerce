@@ -2,6 +2,10 @@ export function calculateAge(date: string): number {
   const currentDate = new Date();
   const birthDate = new Date(date);
 
+  if (Number.isNaN(birthDate.getTime())) {
+    throw new Error('invalid Date');
+  }
+
   let age = currentDate.getFullYear() - birthDate.getFullYear();
 
   if (
