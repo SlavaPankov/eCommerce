@@ -4,6 +4,7 @@ export enum ERoutes {
   registration = '/registration',
   person = '/person',
   catalog = '/catalog',
+  category = '/catalog/:id',
   cart = '/cart',
   all = '*'
 }

@@ -1,0 +1,18 @@
+.filters {
+  max-width: 296px;
+  width: 100%;
+
+  & ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+.heading {
+  font-size: 18px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+  margin: 0 0 20px;
+}
