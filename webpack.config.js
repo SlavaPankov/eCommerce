@@ -3,12 +3,30 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const EslintWebpackPlugin = require('eslint-webpack-plugin');
 const webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 const IS_PROD = !IS_DEV;
 const GLOBAL_SCSS_REGEXP = /\.global\.scss$/;
 
 const filename = (ext) => (IS_DEV ? `[name].${ext}` : `[name].[contenthash].${ext}`);
+
+const optimization = () => {
+  const configObj = {
+    splitChunks: {
+      chunks: 'all',
+      minSize: 20000,
+      minRemainingSize: 0,
+      minChunks: 1
+    }
+  };
+
+  if (IS_PROD) {
+    configObj.minimizer = [new TerserPlugin()];
+  }
+  return configObj;
+};
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
@@ -44,7 +62,7 @@ module.exports = {
       {
         test: /\.scss$/i,
         use: [
-          'style-loader',
+          IS_PROD ? MiniCssExtractPlugin.loader : 'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -73,7 +91,7 @@ module.exports = {
       {
         test: GLOBAL_SCSS_REGEXP,
         use: [
-          'style-loader',
+          IS_PROD ? MiniCssExtractPlugin.loader : 'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -97,7 +115,7 @@ module.exports = {
       {
         test: /\.css$/i,
         use: [
-          'style-loader',
+          IS_PROD ? MiniCssExtractPlugin.loader : 'style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -147,6 +165,8 @@ module.exports = {
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser'
-    })
-  ]
+    }),
+    new MiniCssExtractPlugin()
+  ],
+  optimization: optimization()
 };
