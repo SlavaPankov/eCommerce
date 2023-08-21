@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import { IProduct } from '../../../types/interfaces/IProduct';
 import { SpecialCard } from '../../SpecialCard';
-import { IImage } from '../../../utils/IImage';
+import { IImage } from '../../../types/interfaces/IImage';
 import 'swiper/css';
 
 interface ISpecialsListProps {

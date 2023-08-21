@@ -78,6 +78,18 @@ export function RegistrationAddress({
       }
     }
 
+    if (event.target.name === `${EFieldsNames.region}_${index}`) {
+      if (!cityRegex.test(event.target.value)) {
+        setFormError({ ...formError, [event.target.name]: EErrorText.cityFormat });
+      }
+    }
+
+    if (event.target.name === `${EFieldsNames.streetName}_${index}`) {
+      if (!cityRegex.test(event.target.value)) {
+        setFormError({ ...formError, [event.target.name]: EErrorText.cityFormat });
+      }
+    }
+
     setFormData({
       ...formData,
       [event.target.name]: event.target.value

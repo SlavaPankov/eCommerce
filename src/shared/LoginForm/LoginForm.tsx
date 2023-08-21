@@ -94,12 +94,12 @@ export function LoginForm() {
   };
 
   const validatePassword = (input: string): string => {
-    if (input.length < 8) {
-      return EErrorText.passwordMinLength;
-    }
-
     if (!passwordRegex.test(input)) {
       return EErrorText.passwordFormat;
+    }
+
+    if (input.length < 8) {
+      return EErrorText.passwordMinLength;
     }
 
     return '';
@@ -177,8 +177,6 @@ export function LoginForm() {
     dispatch(userSignInRequestAsync(userData))
       .unwrap()
       .then((action) => {
-        console.log(action);
-        console.log(authError);
         if (!action.customer) {
           return;
         }
@@ -200,7 +198,7 @@ export function LoginForm() {
           <BaseInputField
             name={EFormFieldsNames.email}
             value={formData[EFormFieldsNames.email] || ''}
-            type="email"
+            type="text"
             placeholder="Ваш e-mail*"
             onChange={handleChange}
             onBlur={handleBlur}

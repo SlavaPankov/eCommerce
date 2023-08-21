@@ -3,7 +3,7 @@ import { EImages } from '../types/enums/EImages';
 import { IProduct } from '../types/interfaces/IProduct';
 import { getFormattedPrice } from './getFormattedPrice';
 import { getRandomRating } from './getRandomRating';
-import { IImage } from './IImage';
+import { IImage } from '../types/interfaces/IImage';
 
 export function createProductsFromResponse(results: Array<ProductProjection>): Array<IProduct> {
   const imageEmpty: IImage = {
