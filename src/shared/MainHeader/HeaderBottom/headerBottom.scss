@@ -1,0 +1,15 @@
+@import '../../../styles/mixins/breakpoints';
+
+.container {
+  padding-bottom: 32px !important;
+  display: flex;
+}
+
+.user_wrapper {
+  display: flex;
+  align-items: center;
+
+  @include big-desktop {
+    display: none;
+  }
+}

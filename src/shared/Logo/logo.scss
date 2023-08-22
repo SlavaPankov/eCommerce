@@ -1,0 +1,9 @@
+@import '../../styles/mixins/breakpoints';
+
+.logo {
+  margin-right: 30px;
+
+  @include small-tablet {
+    margin-right: 0;
+  }
+}

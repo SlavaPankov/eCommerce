@@ -1,0 +1,99 @@
+@import '../../../../styles/mixins/breakpoints';
+
+.nav {
+  margin-left: auto;
+
+  @include big-desktop {
+    max-width: 701px;
+    width: 100%;
+  }
+
+  @include small-tablet {
+    position: relative;
+    margin-left: 0;
+    max-width: 100%;
+    padding: 92px 72px 60px;
+    background-color: $white;
+    z-index: 3;
+  }
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: 91px;
+
+  @include big-desktop {
+    max-width: 701px;
+    width: 100%;
+    gap: 0;
+    justify-content: space-between;
+  }
+
+  @include small-tablet {
+    position: relative;
+    max-width: fit-content;
+    column-gap: 64px;
+    max-height: 148px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    z-index: 3;
+
+    & li:not(:nth-child(3n + 3)) {
+      margin-bottom: 41px;
+    }
+  }
+
+  @include mobile {
+    max-height: fit-content;
+
+    & li:not(:last-child) {
+      margin-bottom: 41px;
+    }
+  }
+}
+
+.link {
+  position: relative;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  color: $black;
+  transition: color 0.3s ease-in-out;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -2px;
+    width: calc(100% + 4px);
+    height: 100%;
+    background-color: transparent;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  & span {
+    position: relative;
+    z-index: 2;
+  }
+
+  &:hover {
+    color: $primary;
+  }
+
+  &:active {
+    color: $primary_shade;
+  }
+
+  &:focus {
+    outline: none;
+    color: $primary_shade;
+
+    &::after {
+      background-color: $pink_violet;
+    }
+  }
+}

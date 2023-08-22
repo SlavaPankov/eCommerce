@@ -1,20 +1,39 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useProductsData } from '../hooks/useProductsData';
+import { MainHeader } from './MainHeader';
+import { RegistrationPage } from '../pages/RegistrationPage';
+import { MainFooter } from './MainFooter';
+import { NotFound } from '../pages/NotFound';
+import { MainPage } from '../pages/MainPage';
+import { LoginPage } from '../pages/LoginPage';
+import { useAppDispatch } from '../hooks/storeHooks';
+import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart/cartSlice';
+import { ERoutes } from '../types/enums/ERoutes';
 
 export function App() {
-  const { products } = useProductsData();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (products.length) {
-      console.log(products);
-    }
-  }, [products]);
+    dispatch(getActiveCartRequestAsync()).then(({ type }) => {
+      if (type.includes('rejected')) {
+        dispatch(createCartRequestAsync());
+      }
+    });
+  }, []);
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<h1>eCommerce App with Router & Store</h1>} />
+        <Route path={ERoutes.all} element={<MainHeader />} />
+      </Routes>
+      <Routes>
+        <Route path={ERoutes.main} element={<MainPage />} />
+        <Route path={ERoutes.registration} element={<RegistrationPage />} />
+        <Route path={ERoutes.login} element={<LoginPage />} />
+        <Route path={ERoutes.all} element={<NotFound />} />
+      </Routes>
+      <Routes>
+        <Route path={ERoutes.all} element={<MainFooter />} />
       </Routes>
     </BrowserRouter>
   );
