@@ -10,3 +10,4 @@ export * from './VkIcon/VkIcon';
 export * from './ElephantIcon/ElephantIcon';
 export * from './RatingIcon/RatingIcon';
 export * from './CrossIcon/CrossIcon';
+export * from './ThumbIcon/ThumbIcon';

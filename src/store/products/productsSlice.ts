@@ -36,8 +36,36 @@ export const productsRequestAsync = createAsyncThunk(
       })
       .execute()
       .then(({ body: { results } }): Array<IProduct> => createProductsFromResponse(results))
-      .catch((error: Error) => {
-        return rejectWithValue(error.message);
+      .catch(({ body }) => {
+        return rejectWithValue(body.errors?.[0].code);
+      });
+  }
+);
+
+interface IProductsFiltersRequestAsync {
+  filter: Array<string>;
+  limit?: number;
+  offset?: number;
+}
+
+export const productsFiltersRequestAsync = createAsyncThunk(
+  'products/getFilteredProducts',
+  async ({ filter, limit = 9, offset = 0 }: IProductsFiltersRequestAsync, { rejectWithValue }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          filter,
+          limit,
+          offset
+        }
+      })
+      .execute()
+      .then(({ body: { results } }): Array<IProduct> => createProductsFromResponse(results))
+      .catch(({ body }) => {
+        return rejectWithValue(body.errors?.[0].code);
       });
   }
 );
@@ -78,6 +106,22 @@ export const productsSlice = createSlice({
     });
 
     builder.addCase(productsRequestAsync.rejected, (state, action) => {
+      state.loading = false;
+      state.error = `${action.payload}`;
+    });
+
+    builder.addCase(productsFiltersRequestAsync.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(productsFiltersRequestAsync.fulfilled, (state, action) => {
+      state.loading = false;
+      if (Array.isArray(action.payload)) {
+        state.products = action.payload;
+      }
+    });
+
+    builder.addCase(productsFiltersRequestAsync.rejected, (state, action) => {
       state.loading = false;
       state.error = `${action.payload}`;
     });

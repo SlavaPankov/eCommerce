@@ -1,0 +1,8 @@
+.products {
+  max-width: 100%;
+  width: 100%;
+
+  & > h2 {
+    margin-bottom: 26px;
+  }
+}

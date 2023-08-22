@@ -1,11 +1,24 @@
 .filters {
   max-width: 296px;
   width: 100%;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 26px;
 
-  & ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  & h3 {
+    margin: 0 0 9px;
+    font-size: 16px;
+    line-height: 130%;
+    font-weight: 600;
+    color: $grey_shade;
+  }
+
+  & label {
+    font-size: 16px;
+    line-height: 130%;
+    font-weight: 400;
+    color: $grey_shade;
   }
 }
 
@@ -14,5 +27,43 @@
   line-height: 130%;
   font-weight: 400;
   color: $black;
-  margin: 0 0 20px;
+  margin: 0;
+}
+
+.checkboxes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.labels {
+  display: flex;
+  align-items: center;
+  gap: 69px;
+
+  & label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    line-height: 130%;
+    font-weight: 400;
+    color: $grey_shade;
+  }
+}
+
+.price_input {
+  padding: 5px 13px;
+  max-width: 86px;
+  width: 100%;
+  border: 1px solid $grey;
+  border-radius: 2px;
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $grey_shade;
 }
