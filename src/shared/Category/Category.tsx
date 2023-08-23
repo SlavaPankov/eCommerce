@@ -41,6 +41,7 @@ export function Category() {
           offset={offset}
         />
         <ProductsContainer
+          countPerPage={limit}
           heading={currentCategory[0]?.name || 'Каталог'}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}

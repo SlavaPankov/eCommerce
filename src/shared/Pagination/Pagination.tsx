@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent } from 'react';
+import React, { useState, MouseEvent, useEffect } from 'react';
 import styles from './pagination.scss';
 
 interface IPaginationProps {
@@ -13,7 +13,11 @@ export function Pagination({
   currentPage,
   setCurrentPage
 }: IPaginationProps) {
-  const [countPage] = useState<number>(Math.ceil(totalCount / countPerPage));
+  const [countPage, setCountPage] = useState<number>(Math.ceil(totalCount / countPerPage));
+
+  useEffect(() => {
+    setCountPage(Math.ceil(totalCount / countPerPage));
+  }, [totalCount]);
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     const page = event.currentTarget.textContent;
@@ -27,21 +31,25 @@ export function Pagination({
   };
 
   return (
-    <div className={styles.pagination}>
-      {Array(countPage)
-        .fill(1)
-        .map((item, index) => (
-          <button
-            onClick={handleClick}
-            className={
-              index + 1 === currentPage
-                ? `${styles.button} ${styles.button_active}`
-                : `${styles.button}`
-            }
-            key={index}>
-            {index + 1}
-          </button>
-        ))}
-    </div>
+    <>
+      {countPage > 1 ? (
+        <div className={styles.pagination}>
+          {Array(countPage)
+            .fill(1)
+            .map((item, index) => (
+              <button
+                onClick={handleClick}
+                className={
+                  index + 1 === currentPage
+                    ? `${styles.button} ${styles.button_active}`
+                    : `${styles.button}`
+                }
+                key={index}>
+                {index + 1}
+              </button>
+            ))}
+        </div>
+      ) : null}
+    </>
   );
 }
