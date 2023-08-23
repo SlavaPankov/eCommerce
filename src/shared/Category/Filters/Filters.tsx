@@ -25,6 +25,7 @@ interface IFiltersProps {
   categories: Array<ICategory>;
   currentCategory: Array<ICategory>;
   id?: string;
+  offset: number;
 }
 
 const colors: Array<IColor> = [
@@ -83,7 +84,7 @@ const discounts: Array<{ label: string; value: string }> = [
 
 const initialPrice = [0, 100000];
 
-export function Filters({ categories, currentCategory, id }: IFiltersProps) {
+export function Filters({ categories, currentCategory, id, offset }: IFiltersProps) {
   const dispatch = useAppDispatch();
   const [subcategories, setSubcategories] = useState<Array<ISubcategory>>([]);
   const [checkboxValues, setCheckboxValues] = useState<ICheckboxValue>({});
@@ -129,9 +130,9 @@ export function Filters({ categories, currentCategory, id }: IFiltersProps) {
     const tempFilter = Object.entries(filter).map(([key, value]) => `${key} ${value}`);
 
     if (tempFilter.length > 0) {
-      dispatch(productsFiltersRequestAsync({ filter: tempFilter }));
+      dispatch(productsFiltersRequestAsync({ filter: tempFilter, offset }));
     }
-  }, [filter]);
+  }, [filter, offset]);
 
   const handleChange = (event: FormEvent<HTMLInputElement>) => {
     if (event.currentTarget.name.includes('subcategory')) {

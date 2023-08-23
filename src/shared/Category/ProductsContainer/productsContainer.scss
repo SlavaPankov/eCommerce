@@ -5,4 +5,8 @@
   & > h2 {
     margin-bottom: 26px;
   }
+
+  & ul {
+    grid-template-columns: repeat(3, minmax(296px, 1fr));
+  }
 }

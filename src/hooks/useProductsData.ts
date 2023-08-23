@@ -9,6 +9,7 @@ export function useProductsData() {
   const loading = useAppSelector<boolean>((state) => state.products.loading);
   const products = useAppSelector<Array<IProduct>>((state) => state.products.products);
   const offset = useAppSelector<number>((state) => state.products.offset);
+  const totalCount = useAppSelector<number>((state) => state.products.totalCount);
 
   useEffect(() => {
     if (products.length) {
@@ -22,6 +23,7 @@ export function useProductsData() {
     error,
     loading,
     products,
-    offset
+    offset,
+    totalCount
   };
 }

@@ -10,13 +10,15 @@ interface IProductsState {
   error: string;
   offset: number;
   products: Array<IProduct>;
+  totalCount: number;
 }
 
 const initialState: IProductsState = {
   offset: 0,
   loading: false,
   error: '',
-  products: []
+  products: [],
+  totalCount: 0
 };
 
 interface IProductsRequestProps {
@@ -48,6 +50,11 @@ interface IProductsFiltersRequestAsync {
   offset?: number;
 }
 
+interface IFilteredResults {
+  products: Array<IProduct>;
+  totalCount: number;
+}
+
 export const productsFiltersRequestAsync = createAsyncThunk(
   'products/getFilteredProducts',
   async ({ filter, limit = 9, offset = 0 }: IProductsFiltersRequestAsync, { rejectWithValue }) => {
@@ -63,7 +70,12 @@ export const productsFiltersRequestAsync = createAsyncThunk(
         }
       })
       .execute()
-      .then(({ body: { results } }): Array<IProduct> => createProductsFromResponse(results))
+      .then(
+        ({ body }): IFilteredResults => ({
+          products: createProductsFromResponse(body.results),
+          totalCount: body.total || body.count
+        })
+      )
       .catch(({ body }) => {
         return rejectWithValue(body.errors?.[0].code);
       });
@@ -71,7 +83,7 @@ export const productsFiltersRequestAsync = createAsyncThunk(
 );
 
 export const productsSlice = createSlice({
-  name: 'tokenSlice',
+  name: 'productSlice',
   initialState,
   reducers: {
     productsLoading: (state) => {
@@ -116,8 +128,9 @@ export const productsSlice = createSlice({
 
     builder.addCase(productsFiltersRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      if (Array.isArray(action.payload)) {
-        state.products = action.payload;
+      if (Array.isArray(action.payload.products)) {
+        state.products = action.payload.products;
+        state.totalCount = action.payload.totalCount;
       }
     });
 

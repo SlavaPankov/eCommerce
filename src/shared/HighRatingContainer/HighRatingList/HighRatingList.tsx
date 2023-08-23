@@ -23,6 +23,8 @@ export function HighRatingList({ list }: IHighRatingList) {
       {list.map((item) => (
         <li key={item.id}>
           <ProductCard
+            productKey={item.key}
+            discountedPrice={item.discountedPrice}
             rating={item.rating}
             imagePreview={item.images?.preview || imageEmpty}
             title={item.name}

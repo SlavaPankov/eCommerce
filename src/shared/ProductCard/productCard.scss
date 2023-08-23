@@ -38,11 +38,34 @@
 }
 
 .title {
-  margin: 0 0 24px;
-  font-size: 24px;
-  line-height: 130%;
-  font-weight: 400;
-  color: $black;
+  & a {
+    margin: 0 0 24px;
+    font-size: 24px;
+    line-height: 130%;
+    font-weight: 400;
+    color: $black;
+    transition: color 0.3s ease-in-out;
+
+    &:hover {
+      color: $primary;
+    }
+
+    &:focus {
+      outline: none;
+      color: $primary;
+    }
+
+    &:active {
+      color: $primary_shade;
+    }
+  }
+}
+
+.prices {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 24px;
 }
 
 .price {
@@ -50,6 +73,14 @@
   font-size: 16px;
   line-height: 130%;
   font-weight: 400;
+  color: $secondary;
+}
+
+.old_price {
+  margin-top: auto;
+  font-size: 14px;
+  line-height: 130%;
+  font-weight: 400;
   color: $grey_shade;
-  margin-bottom: 24px;
+  text-decoration: line-through;
 }
