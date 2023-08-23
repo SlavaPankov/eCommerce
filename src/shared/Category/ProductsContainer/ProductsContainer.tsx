@@ -5,6 +5,7 @@ import styles from './productsContainer.scss';
 import { BaseHeading } from '../../BaseHeading';
 import { Pagination } from '../../Pagination';
 import { SkeletonCard } from '../../SkeletonCard';
+import { NoFilterResults } from './NoFilterResults';
 
 interface IProductsContainerProps {
   heading: string;
@@ -25,8 +26,8 @@ export function ProductsContainer({
   return (
     <div className={styles.products}>
       <BaseHeading textContent={heading} />
-      <div>
-        {!loading && !error && (
+      <div className={styles.wrapper}>
+        {!loading && !error && products.length > 0 && (
           <>
             <HighRatingList list={products} />
           </>
@@ -38,6 +39,7 @@ export function ProductsContainer({
             ))}
           </ul>
         )}
+        {!loading && products.length <= 0 && <NoFilterResults />}
         <Pagination
           countPerPage={9}
           totalCount={totalCount}
