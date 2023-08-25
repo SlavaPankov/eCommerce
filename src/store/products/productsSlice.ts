@@ -48,6 +48,7 @@ interface IProductsFiltersRequestAsync {
   filter: Array<string>;
   limit?: number;
   offset?: number;
+  sort?: Array<string>;
 }
 
 interface IFilteredResults {
@@ -57,7 +58,10 @@ interface IFilteredResults {
 
 export const productsFiltersRequestAsync = createAsyncThunk(
   'products/getFilteredProducts',
-  async ({ filter, limit = 9, offset = 0 }: IProductsFiltersRequestAsync, { rejectWithValue }) => {
+  async (
+    { filter, sort = [''], limit = 9, offset = 0 }: IProductsFiltersRequestAsync,
+    { rejectWithValue }
+  ) => {
     return getApiRoot()
       .withProjectKey({ projectKey: apiConfig.projectKey })
       .productProjections()
@@ -66,7 +70,8 @@ export const productsFiltersRequestAsync = createAsyncThunk(
         queryArgs: {
           filter,
           limit,
-          offset
+          offset,
+          sort
         }
       })
       .execute()

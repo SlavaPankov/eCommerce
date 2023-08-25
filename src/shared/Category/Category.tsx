@@ -14,6 +14,7 @@ export function Category() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [offset, setOffset] = useState<number>(0);
   const [limit] = useState<number>(9);
+  const [sort, setSort] = useState<Array<string>>(['']);
 
   useEffect(() => {
     if (categories.length === 0) {
@@ -39,12 +40,15 @@ export function Category() {
           currentCategory={currentCategory}
           id={id}
           offset={offset}
+          sort={sort}
         />
         <ProductsContainer
           countPerPage={limit}
           heading={currentCategory[0]?.name || 'Каталог'}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
+          sort={sort}
+          setSort={setSort}
         />
       </div>
     </section>

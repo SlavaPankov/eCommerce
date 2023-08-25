@@ -7,8 +7,9 @@ interface IBaseSelectProps {
   children: ReactNode;
   selectedValue?: ReactNode;
   isOpen?: boolean;
+  onClick?: () => void;
 }
-export function BaseSelect({ children, selectedValue, isOpen }: IBaseSelectProps) {
+export function BaseSelect({ children, selectedValue, isOpen, onClick }: IBaseSelectProps) {
   const [isSelectOpen, setIsSelectOpen] = useState(isOpen);
   useEffect(() => setIsSelectOpen(isOpen), [isOpen]);
 
@@ -25,7 +26,7 @@ export function BaseSelect({ children, selectedValue, isOpen }: IBaseSelectProps
 
   return (
     <div className={styles.select}>
-      <div className={styles.selected} onClick={handleClick}>
+      <div className={styles.selected} onClick={onClick || handleClick}>
         {selectedValue || <li>Выберите</li>}
         <div className={arrowClassName}>
           <ArrowIcon />

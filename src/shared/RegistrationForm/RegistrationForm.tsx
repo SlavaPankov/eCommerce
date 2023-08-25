@@ -275,7 +275,7 @@ export function RegistrationForm() {
       )
         .unwrap()
         .then((action) => {
-          if (!action.customer) {
+          if (!action?.customer) {
             return;
           }
 
