@@ -1,0 +1,7 @@
+.container {
+  padding-bottom: 70px !important;
+
+  & ul {
+    grid-template-columns: repeat(4, minmax(296px, 1fr));
+  }
+}

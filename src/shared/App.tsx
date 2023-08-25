@@ -11,6 +11,7 @@ import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart
 import { ERoutes } from '../types/enums/ERoutes';
 import { CatalogPage } from '../pages/CatalogPage';
 import { CategoryPage } from '../pages/CategoryPage';
+import { SearchPage } from '../pages/SearchPage';
 
 export function App() {
   const dispatch = useAppDispatch();
@@ -34,6 +35,7 @@ export function App() {
         <Route path={ERoutes.login} element={<LoginPage />} />
         <Route path={ERoutes.catalog} element={<CatalogPage />} />
         <Route path={ERoutes.category} element={<CategoryPage />} />
+        <Route path={ERoutes.search} element={<SearchPage />} />
         <Route path={ERoutes.all} element={<NotFound />} />
       </Routes>
       <Routes>

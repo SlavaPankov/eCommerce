@@ -6,5 +6,6 @@ export enum ERoutes {
   catalog = '/catalog',
   category = '/catalog/:id',
   cart = '/cart',
+  search = '/search',
   all = '*'
 }
