@@ -26,7 +26,13 @@ export function ProductsContainer({
   sort,
   setSort
 }: IProductsContainerProps) {
-  const { products, loading, error, totalCount } = useAppSelector((state) => state.products);
+  const {
+    payload: {
+      filter: { products, totalCount }
+    },
+    loading,
+    error
+  } = useAppSelector((state) => state.products);
   const [emptyArray] = useState<Array<number>>(Array(countPerPage).fill(1));
   const [isSelectOpen, setIsSelectOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<string>('Самые популярные');

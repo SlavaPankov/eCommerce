@@ -6,6 +6,8 @@ import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { productsFiltersRequestAsync } from '../../store/products/productsSlice';
 import { HighRatingList } from '../HighRatingContainer/HighRatingList';
 import { Pagination } from '../Pagination';
+import { NoSearchResults } from './NoSearchResults';
+import { SkeletonCard } from '../SkeletonCard';
 
 interface IUrlSearchParam {
   [k: string]: string;
@@ -13,9 +15,15 @@ interface IUrlSearchParam {
 export function SearchResults() {
   const params = useParams();
   const dispatch = useAppDispatch();
+  const {
+    payload: {
+      filter: { products, totalCount }
+    },
+    loading
+  } = useAppSelector((state) => state.products);
   const [urlSearchParams, setUrlSearchParams] = useState<IUrlSearchParam>({});
-  const { products, totalCount } = useAppSelector((state) => state.products);
   const [limit] = useState<number>(12);
+  const [emptyArray] = useState<Array<number>>(Array(limit).fill(1));
   const [offset, setOffset] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -50,13 +58,25 @@ export function SearchResults() {
   return (
     <div className={className}>
       <h1>Результат поиска: {urlSearchParams.search}</h1>
-      <HighRatingList list={products} />
-      <Pagination
-        countPerPage={12}
-        totalCount={totalCount}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
+      {products.length > 0 && !loading && (
+        <>
+          <HighRatingList list={products} />
+          <Pagination
+            countPerPage={limit}
+            totalCount={totalCount}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+          />
+        </>
+      )}
+      {!loading && products.length === 0 && <NoSearchResults />}
+      {loading && (
+        <ul className={styles.list}>
+          {emptyArray.map((item, index) => (
+            <SkeletonCard key={index} />
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

@@ -161,10 +161,17 @@ export function Filters({ categories, currentCategory, id, offset, sort }: IFilt
   };
 
   const handleChangeCommitted = () => {
-    setFilter({
-      ...filter,
-      'variants.price.centAmount:range': `(${priceValue.join(' to ')}00)`
-    });
+    if (priceValue[0] !== 0) {
+      setFilter({
+        ...filter,
+        'variants.price.centAmount:range': `(${priceValue.join('00 to ')}00)`
+      });
+    } else {
+      setFilter({
+        ...filter,
+        'variants.price.centAmount:range': `(${priceValue.join(' to ')}00)`
+      });
+    }
   };
 
   const handleChangeSlider = (event: Event, newValue: number | number[]) => {

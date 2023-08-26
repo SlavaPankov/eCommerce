@@ -5,20 +5,37 @@ import { createProductsFromResponse } from '../../utils/createProductsFromRespon
 import { apiConfig } from '../../cfg/apiConfig';
 import { getApiRoot } from '../../client/BuildClient';
 
+interface IPayloadItem {
+  products: Array<IProduct>;
+  totalCount: number;
+}
+
+interface IPayload {
+  products: IPayloadItem;
+  filter: IPayloadItem;
+}
+
 interface IProductsState {
   loading: boolean;
   error: string;
   offset: number;
-  products: Array<IProduct>;
-  totalCount: number;
+  payload: IPayload;
 }
 
 const initialState: IProductsState = {
   offset: 0,
   loading: false,
   error: '',
-  products: [],
-  totalCount: 0
+  payload: {
+    products: {
+      products: [],
+      totalCount: 0
+    },
+    filter: {
+      products: [],
+      totalCount: 0
+    }
+  }
 };
 
 interface IProductsRequestProps {
@@ -110,7 +127,7 @@ export const productsSlice = createSlice({
     productsLoadingSuccess: (state, action: PayloadAction<Array<IProduct>>) => {
       console.log(action.payload);
       state.loading = false;
-      state.products = action.payload;
+      state.payload.products.products = action.payload;
     },
 
     productsLoadingError: (state, action: PayloadAction<string>) => {
@@ -130,7 +147,7 @@ export const productsSlice = createSlice({
     builder.addCase(productsRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
       if (Array.isArray(action.payload)) {
-        state.products = action.payload;
+        state.payload.products.products = action.payload;
       }
     });
 
@@ -146,8 +163,8 @@ export const productsSlice = createSlice({
     builder.addCase(productsFiltersRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
       if (Array.isArray(action.payload.products)) {
-        state.products = action.payload.products;
-        state.totalCount = action.payload.totalCount;
+        state.payload.filter.products = action.payload.products;
+        state.payload.filter.totalCount = action.payload.totalCount;
       }
     });
 
