@@ -1,6 +1,6 @@
 import React from 'react';
 import { SliderThumb } from '@mui/material';
-import { ThumbIcon } from '../../../Icons';
+import { ThumbIcon } from '../../../../Icons';
 
 interface AirbnbThumbComponentProps extends React.HTMLAttributes<unknown> {}
 export function CustomThumb(props: AirbnbThumbComponentProps) {

@@ -1,5 +1,16 @@
+@import '../../styles/mixins/breakpoints';
+
 .container {
   padding-bottom: 70px !important;
   display: flex;
   gap: 32px;
+
+  @include big-desktop {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  @include small-tablet {
+    gap: 26px;
+  }
 }

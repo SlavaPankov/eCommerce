@@ -1,17 +1,12 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
-import { Slider } from '@mui/material';
 import styles from './filters.scss';
 import { ISubcategory } from '../../../types/interfaces/ISubcategory';
-import { BaseCheckbox } from '../../BaseCheckbox';
-import { CustomThumb } from './CustomThumb';
 import { useAppDispatch } from '../../../hooks/storeHooks';
 import { productsFiltersRequestAsync } from '../../../store/products/productsSlice';
 import { ICategory } from '../../../types/interfaces/ICategory';
-
-interface IColor {
-  label: string;
-  key: string;
-}
+import { CheckboxFilter } from './CheckboxFilter';
+import { IColor } from '../../../types/interfaces/IColor';
+import { PriceFilter } from './PriceFilter';
 
 interface ICheckboxValue {
   [k: string]: boolean;
@@ -27,65 +22,67 @@ interface IFiltersProps {
   id?: string;
   offset: number;
   sort: Array<string>;
+  isDesktop?: boolean;
 }
 
 const colors: Array<IColor> = [
   {
-    label: 'Коричневый',
-    key: 'brown'
+    id: 'brown',
+    name: 'Коричневый',
+    slug: 'brown'
   },
   {
-    label: 'Черный',
-    key: 'black'
+    id: 'black',
+    name: 'Черный',
+    slug: 'black'
   },
   {
-    label: 'Бежевый',
-    key: 'beige'
+    id: 'beige',
+    name: 'Бежевый',
+    slug: 'beige'
   },
   {
-    label: 'Серый',
-    key: 'grey'
+    id: 'grey',
+    name: 'Серый',
+    slug: 'grey'
   },
   {
-    label: 'Белый',
-    key: 'white'
+    id: 'white',
+    name: 'Белый',
+    slug: 'white'
   },
   {
-    label: 'Синий',
-    key: 'blue'
+    id: 'blue',
+    name: 'Синий',
+    slug: 'blue'
   },
   {
-    label: 'Оранжевый',
-    key: 'orange'
+    id: 'orange',
+    name: 'Оранжевый',
+    slug: 'orange'
   },
   {
-    label: 'Желтый',
-    key: 'yellow'
+    id: 'yellow',
+    name: 'Желтый',
+    slug: 'yellow'
   },
   {
-    label: 'Зеленый',
-    key: 'green'
-  }
-];
-
-const discounts: Array<{ label: string; value: string }> = [
-  {
-    label: 'Менее 5000',
-    value: '-5000'
-  },
-  {
-    label: 'Более 5000',
-    value: '5000'
-  },
-  {
-    label: 'Не важно',
-    value: '0'
+    id: 'green',
+    name: 'Зеленый',
+    slug: 'green'
   }
 ];
 
 const initialPrice = [0, 100000];
 
-export function Filters({ categories, currentCategory, id, offset, sort }: IFiltersProps) {
+export function Filters({
+  categories,
+  currentCategory,
+  id,
+  offset,
+  sort,
+  isDesktop = true
+}: IFiltersProps) {
   const dispatch = useAppDispatch();
   const [subcategories, setSubcategories] = useState<Array<ISubcategory>>([]);
   const [checkboxValues, setCheckboxValues] = useState<ICheckboxValue>({});
@@ -113,19 +110,28 @@ export function Filters({ categories, currentCategory, id, offset, sort }: IFilt
         'categories.id:': `"${checkedSubcategories.join('", "')}"`
       });
     } else if (currentCategory.length > 0) {
+      console.log(currentCategory[0].id);
       setFilter({
         ...filter,
         'categories.id:': `"${currentCategory[0].id}"`
       });
     }
+  }, [checkedSubcategories, currentCategory]);
 
+  useEffect(() => {
     if (checkedColors.length > 0) {
       setFilter({
         ...filter,
         'variants.attributes.color.key:': `"${checkedColors.join('", "')}"`
       });
+    } else if (filter['variants.attributes.color.key:']) {
+      const temp = { ...filter };
+      delete temp['variants.attributes.color.key:'];
+      setFilter({
+        ...temp
+      });
     }
-  }, [checkedSubcategories, checkedColors, currentCategory]);
+  }, [checkedColors]);
 
   useEffect(() => {
     const tempFilter = Object.entries(filter).map(([key, value]) => `${key} ${value}`);
@@ -196,90 +202,31 @@ export function Filters({ categories, currentCategory, id, offset, sort }: IFilt
 
   return (
     <div className={styles.filters}>
-      <h2 className={styles.heading}>Фильтровать по:</h2>
-      <div>
-        <h3>Категории:</h3>
-        <ul className={styles.checkboxes}>
-          {subcategories.map((subcategory) => (
-            <li key={subcategory.slug}>
-              <BaseCheckbox
-                name={`subcategory_${subcategory.slug}`}
-                value={subcategory.id}
-                onChange={handleChange}
-                isChecked={checkboxValues[`subcategory_${subcategory.slug}`] || false}
-                label={subcategory.name}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h3>Цена:</h3>
-        <div className={styles.labels}>
-          <label htmlFor="min">
-            <span>от</span>
-            <input
-              className={styles.price_input}
-              id="min"
-              type="number"
-              name="minPrice"
-              value={priceValue[0]}
-              onChange={handleInputChange}
-            />
-          </label>
-          <label htmlFor="max">
-            <span>до</span>
-            <input
-              className={styles.price_input}
-              id="max"
-              type="number"
-              name="maxPrice"
-              value={priceValue[1]}
-              onChange={handleInputChange}
-            />
-          </label>
-        </div>
-        <Slider
-          value={priceValue}
-          slots={{ thumb: CustomThumb }}
-          onChange={handleChangeSlider}
-          max={100000}
-          step={1000}
-          onChangeCommitted={handleChangeCommitted}
+      <h2 className={styles.heading}>{isDesktop ? 'Фильтровать по:' : 'Фильтры'}</h2>
+      <div className={styles.wrapper}>
+        <CheckboxFilter
+          title="Категория"
+          list={subcategories}
+          prefix="subcategory"
+          onChange={handleChange}
+          checkboxValues={checkboxValues}
+          isDesktop={isDesktop}
         />
-      </div>
-      <div>
-        <h3>Скидка:</h3>
-        <ul className={styles.checkboxes}>
-          {discounts.map((discount) => (
-            <li key={discount.value}>
-              <BaseCheckbox
-                name={`discount`}
-                type="radio"
-                value={discount.value}
-                onChange={handleChange}
-                isChecked={checkboxValues.discount || true}
-                label={discount.label}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h3>Цвет:</h3>
-        <ul className={styles.checkboxes}>
-          {colors.map((color) => (
-            <li key={color.key}>
-              <BaseCheckbox
-                name={`color_${color.key}`}
-                value={color.key}
-                onChange={handleChange}
-                isChecked={checkboxValues[`color_${color.key}`] || false}
-                label={color.label}
-              />
-            </li>
-          ))}
-        </ul>
+        <PriceFilter
+          priceValue={priceValue}
+          onChange={handleInputChange}
+          onChangeSlider={handleChangeSlider}
+          onChangeCommitted={handleChangeCommitted}
+          isDesktop={isDesktop}
+        />
+        <CheckboxFilter
+          title="Цвет"
+          list={colors}
+          prefix="color"
+          onChange={handleChange}
+          checkboxValues={checkboxValues}
+          isDesktop={isDesktop}
+        />
       </div>
     </div>
   );

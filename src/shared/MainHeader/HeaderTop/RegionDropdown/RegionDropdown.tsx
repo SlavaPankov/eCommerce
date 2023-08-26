@@ -65,6 +65,7 @@ export function RegionDropdown() {
     <div className={styles.container}>
       <span className={styles.text}>Ваш регион:</span>
       <BaseDropdown
+        withArrow={false}
         button={
           <div className={selectedClassName} tabIndex={0}>
             <span>{buttonText}</span>

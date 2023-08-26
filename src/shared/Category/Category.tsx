@@ -6,6 +6,7 @@ import { Filters } from './Filters';
 import { ProductsContainer } from './ProductsContainer';
 import { useCategoriesData } from '../../hooks/useCategoriesData';
 import { ICategory } from '../../types/interfaces/ICategory';
+import { CategoryHead } from './CategoryHead';
 
 export function Category() {
   const { categories } = useCategoriesData();
@@ -15,6 +16,27 @@ export function Category() {
   const [offset, setOffset] = useState<number>(0);
   const [limit] = useState<number>(9);
   const [sort, setSort] = useState<Array<string>>(['']);
+  const [isDesktop, setIsDesktop] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (window.innerWidth <= 1180) {
+      setIsDesktop(false);
+    }
+
+    const checkWidth = () => {
+      if (window.innerWidth <= 1180) {
+        setIsDesktop(false);
+      } else {
+        setIsDesktop(true);
+      }
+    };
+
+    window.addEventListener('resize', checkWidth);
+
+    return () => {
+      window.removeEventListener('resize', checkWidth);
+    };
+  }, []);
 
   useEffect(() => {
     if (categories.length === 0) {
@@ -35,12 +57,20 @@ export function Category() {
   return (
     <section>
       <div className={className}>
+        {!isDesktop && (
+          <CategoryHead
+            heading={currentCategory[0]?.name || 'Каталог'}
+            sort={sort}
+            setSort={setSort}
+          />
+        )}
         <Filters
           categories={categories}
           currentCategory={currentCategory}
           id={id}
           offset={offset}
           sort={sort}
+          isDesktop={isDesktop}
         />
         <ProductsContainer
           countPerPage={limit}

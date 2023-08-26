@@ -17,16 +17,24 @@
 .item {
   grid-column: span 4;
 
-  @include tablet {
+  @include big-desktop {
     grid-column: span 3;
   }
 
   &:nth-child(5n + 1) {
     grid-column: span 6;
+
+    @include big-desktop {
+      grid-column: span 6;
+    }
   }
 
   &:nth-child(5n + 2) {
     grid-column: span 6;
+
+    @include big-desktop {
+      grid-column: span 3;
+    }
 
     @include tablet {
       grid-column: span 3;

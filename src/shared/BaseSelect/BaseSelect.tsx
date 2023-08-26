@@ -8,8 +8,15 @@ interface IBaseSelectProps {
   selectedValue?: ReactNode;
   isOpen?: boolean;
   onClick?: () => void;
+  className?: string;
 }
-export function BaseSelect({ children, selectedValue, isOpen, onClick }: IBaseSelectProps) {
+export function BaseSelect({
+  children,
+  selectedValue,
+  isOpen,
+  onClick,
+  className = ''
+}: IBaseSelectProps) {
   const [isSelectOpen, setIsSelectOpen] = useState(isOpen);
   useEffect(() => setIsSelectOpen(isOpen), [isOpen]);
 
@@ -24,6 +31,11 @@ export function BaseSelect({ children, selectedValue, isOpen, onClick }: IBaseSe
     [`${styles.arrowRotate}`]: isSelectOpen
   });
 
+  const listClassName = classNames({
+    [`${styles.list}`]: true,
+    [`${className}`]: className !== ''
+  });
+
   return (
     <div className={styles.select}>
       <div className={styles.selected} onClick={onClick || handleClick}>
@@ -34,7 +46,7 @@ export function BaseSelect({ children, selectedValue, isOpen, onClick }: IBaseSe
       </div>
       {isSelectOpen && (
         <div className={styles.listContainer}>
-          <div className={styles.list} onClick={() => setIsSelectOpen(false)}>
+          <div className={listClassName} onClick={() => setIsSelectOpen(false)}>
             {children}
           </div>
         </div>

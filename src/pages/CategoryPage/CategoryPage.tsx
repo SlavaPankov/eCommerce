@@ -5,7 +5,7 @@ import { Content } from '../../shared/Content';
 export function CategoryPage() {
   return (
     <Content>
-      <Category />;
+      <Category />
     </Content>
   );
 }

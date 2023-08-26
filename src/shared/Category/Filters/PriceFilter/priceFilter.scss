@@ -1,0 +1,108 @@
+@import '../../../../styles/mixins/breakpoints';
+
+.filter {
+  position: relative;
+  max-width: 296px;
+  width: 100%;
+
+  @include big-desktop {
+    max-width: 187px;
+  }
+}
+
+.heading {
+  position: relative;
+  transition:
+    background-color 0.3s ease-in-out,
+    border-color 0.3s ease-in-out;
+  margin: 0 0 9px;
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 600;
+  color: $grey_shade;
+
+  @include big-desktop {
+    margin: 0;
+    padding: 9px 15px;
+    background-color: $grey_light;
+    border-radius: 10px;
+    border: 2px solid $grey_light;
+    z-index: 10;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 400;
+    color: $black;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      width: 8px;
+      height: 8px;
+      transform: translateY(-65%) rotate(45deg);
+      border-bottom: 1px solid #a65cf0;
+      border-right: 1px solid #a65cf0;
+      transition: transform 0.3s ease-in-out;
+      z-index: 11;
+    }
+  }
+}
+
+.labels {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  row-gap: 15px;
+  flex-wrap: wrap;
+
+  & label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    line-height: 130%;
+    font-weight: 400;
+    color: $grey_shade;
+  }
+}
+
+.labels_tablet {
+  @include big-desktop {
+    position: absolute;
+    top: calc(100% - 18px);
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 40px 13px 30px 30px;
+    flex-direction: column;
+    row-gap: 12px;
+    background-color: $white;
+    border: 1px solid $md_grey;
+    border-top: none;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    z-index: 9;
+  }
+}
+
+.price_input {
+  padding: 5px 13px;
+  width: 86px;
+  border: 1px solid $grey;
+  border-radius: 2px;
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $grey_shade;
+}
+
+.open {
+  border-color: $primary;
+  background-color: $white;
+
+  &::after {
+    transform: translateY(-15%) rotate(225deg);
+  }
+}
