@@ -156,8 +156,12 @@ export function Filters({
 
     if (event.currentTarget.name.includes('color')) {
       if (event.currentTarget.checked) {
+        addToQueryString('color', event.currentTarget.value);
+
         setCheckedColors([...checkedColors, event.currentTarget.value]);
       } else {
+        deleteFromQueryString('color', event.currentTarget.value);
+
         setCheckedColors([...checkedColors.filter((value) => value !== event.currentTarget.value)]);
       }
     }
@@ -201,6 +205,33 @@ export function Filters({
       setPriceValue(tempPrice);
     }
   };
+
+  useEffect(() => {
+    const queryColor = queryParams.get('color');
+
+    if (queryColor) {
+      let tempCheckboxValue: { [k: string]: boolean } = {};
+      const tempCheckedColors: Array<string> = [];
+
+      queryColor.split(' ').forEach((color) => {
+        const currentColor = colors.find((item) => item.slug === color);
+
+        if (currentColor) {
+          tempCheckboxValue = {
+            ...tempCheckboxValue,
+            [`color_${currentColor.slug}`]: true
+          };
+          tempCheckedColors.push(currentColor.id);
+        }
+      });
+
+      setCheckboxValues({
+        ...checkboxValues,
+        ...tempCheckboxValue
+      });
+      setCheckedColors([...tempCheckedColors]);
+    }
+  }, []);
 
   useEffect(() => {
     if (categories.length === 0) {
