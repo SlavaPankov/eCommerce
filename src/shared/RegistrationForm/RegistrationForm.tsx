@@ -6,6 +6,7 @@ import styles from './registrationForm.scss';
 import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import { EErrorText } from '../../types/enums/EErrorText';
+import { IFormData } from '../../types/interfaces/IFormData';
 import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRegex';
 import { RegistrationAddress } from './RagistrationAddress';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
@@ -15,10 +16,6 @@ import { setCartData } from '../../store/cart/cartSlice';
 import { Modal } from '../Modal';
 import { ElephantIcon } from '../Icons';
 import { calculateAge } from '../../utils/calculateAge';
-
-interface IFormData {
-  [k: string]: string;
-}
 
 enum EFieldsNames {
   firstName = 'firstName',

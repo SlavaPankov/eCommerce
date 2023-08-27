@@ -6,6 +6,7 @@ import { MainFooter } from './MainFooter';
 import { NotFound } from '../pages/NotFound';
 import { MainPage } from '../pages/MainPage';
 import { LoginPage } from '../pages/LoginPage';
+import { UserProfile } from '../pages/UserProfile';
 import { useAppDispatch } from '../hooks/storeHooks';
 import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart/cartSlice';
 import { ERoutes } from '../types/enums/ERoutes';
@@ -30,6 +31,7 @@ export function App() {
         <Route path={ERoutes.main} element={<MainPage />} />
         <Route path={ERoutes.registration} element={<RegistrationPage />} />
         <Route path={ERoutes.login} element={<LoginPage />} />
+        <Route path={ERoutes.person} element={<UserProfile />} />
         <Route path={ERoutes.all} element={<NotFound />} />
       </Routes>
       <Routes>

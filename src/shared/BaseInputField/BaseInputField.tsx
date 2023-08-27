@@ -15,6 +15,7 @@ interface IBaseInputFieldProps {
   isDisabled?: boolean;
   maxLength?: number;
   isRequired?: boolean;
+  label?: string;
 }
 
 const NOOP = () => {};
@@ -27,10 +28,11 @@ export function BaseInputField({
   onFocus = NOOP,
   onBlur = NOOP,
   error = '',
-  type = 'text',
+  type = 'text' || 'date',
   isDisabled = false,
   isRequired = false,
-  maxLength = 524288
+  maxLength = 524288,
+  label = ''
 }: IBaseInputFieldProps) {
   const inputClassName = classNames({
     [`${styles.input}`]: true,
@@ -40,7 +42,8 @@ export function BaseInputField({
 
   return (
     <label htmlFor={name} className={styles.label}>
-      {error && <span className={styles.error}>{error}</span>}
+      {error && !label && <span className={styles.error}>{error}</span>}
+      {label && <span className={styles.textlabel}>{label}</span>}
       {type !== 'tel' ? (
         <input
           data-required={isRequired ? 'true' : ''}
@@ -71,6 +74,7 @@ export function BaseInputField({
           disabled={isDisabled}
         />
       )}
+      {label && <span className={styles.error}>{error}</span>}
     </label>
   );
 }
