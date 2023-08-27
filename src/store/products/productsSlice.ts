@@ -68,6 +68,7 @@ interface IProductsFiltersRequestAsync {
   sort?: Array<string>;
   text?: string;
   fuzzy?: boolean;
+  fuzzyLevel?: number;
 }
 
 interface IFilteredResults {
@@ -84,7 +85,8 @@ export const productsFiltersRequestAsync = createAsyncThunk(
       limit = 9,
       offset = 0,
       text = '',
-      fuzzy = false
+      fuzzy = false,
+      fuzzyLevel = 0
     }: IProductsFiltersRequestAsync,
     { rejectWithValue }
   ) => {
@@ -98,7 +100,7 @@ export const productsFiltersRequestAsync = createAsyncThunk(
           limit,
           offset,
           fuzzy,
-          fuzzyLevel: 0,
+          fuzzyLevel,
           sort,
           'text.ru': text
         }

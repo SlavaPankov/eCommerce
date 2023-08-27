@@ -35,13 +35,21 @@ export function SearchResults() {
 
   useEffect(() => {
     if (urlSearchParams.search) {
+      let fuzzyLevel = 0;
+      if (urlSearchParams.search.length >= 3 && urlSearchParams.search.length <= 5) {
+        fuzzyLevel = 1;
+      } else if (urlSearchParams.search.length > 5) {
+        fuzzyLevel = 2;
+      }
+
       dispatch(
         productsFiltersRequestAsync({
           filter: urlSearchParams.category ? [`categories.id: "${urlSearchParams.category}"`] : [],
           text: urlSearchParams.search,
           fuzzy: true,
           limit,
-          offset
+          offset,
+          fuzzyLevel
         })
       );
     }

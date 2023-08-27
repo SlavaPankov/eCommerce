@@ -1,4 +1,5 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './filters.scss';
 import { ISubcategory } from '../../../types/interfaces/ISubcategory';
 import { useAppDispatch } from '../../../hooks/storeHooks';
@@ -84,6 +85,9 @@ export function Filters({
   isDesktop = true
 }: IFiltersProps) {
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
   const [subcategories, setSubcategories] = useState<Array<ISubcategory>>([]);
   const [checkboxValues, setCheckboxValues] = useState<ICheckboxValue>({});
   const [checkedSubcategories, setCheckedSubcategories] = useState<Array<string>>([]);
@@ -91,61 +95,59 @@ export function Filters({
   const [priceValue, setPriceValue] = useState<Array<number>>(initialPrice);
   const [filter, setFilter] = useState<IFilterData>({});
 
-  useEffect(() => {
-    if (categories.length === 0) {
-      return;
+  const addToQueryString = (key: string, value: string) => {
+    const queryValue = queryParams.get(key);
+
+    if (queryValue) {
+      queryParams.set(key, `${queryValue} ${value}`);
+    } else {
+      queryParams.set(key, value);
     }
 
-    const temp = categories
-      .filter((category) => category.slug === id)
-      .map((item) => item.subcategories);
+    const newSearch = `?${queryParams.toString()}`;
+    navigate({ search: newSearch });
+  };
 
-    setSubcategories(temp.flat());
-  }, [categories]);
+  const deleteFromQueryString = (key: string, value: string) => {
+    const queryValue = queryParams.get(key);
+    const newValue = queryValue
+      ?.split(' ')
+      .filter((item) => item !== value)
+      .join(' ');
 
-  useEffect(() => {
-    if (checkedSubcategories.length > 0) {
-      setFilter({
-        ...filter,
-        'categories.id:': `"${checkedSubcategories.join('", "')}"`
-      });
-    } else if (currentCategory.length > 0) {
-      console.log(currentCategory[0].id);
-      setFilter({
-        ...filter,
-        'categories.id:': `"${currentCategory[0].id}"`
-      });
+    if (queryValue && newValue) {
+      queryParams.set(
+        key,
+        queryValue
+          ?.split(' ')
+          .filter((item) => item !== value)
+          .join(' ')
+      );
+    } else {
+      queryParams.delete(key);
     }
-  }, [checkedSubcategories, currentCategory]);
 
-  useEffect(() => {
-    if (checkedColors.length > 0) {
-      setFilter({
-        ...filter,
-        'variants.attributes.color.key:': `"${checkedColors.join('", "')}"`
-      });
-    } else if (filter['variants.attributes.color.key:']) {
-      const temp = { ...filter };
-      delete temp['variants.attributes.color.key:'];
-      setFilter({
-        ...temp
-      });
-    }
-  }, [checkedColors]);
-
-  useEffect(() => {
-    const tempFilter = Object.entries(filter).map(([key, value]) => `${key} ${value}`);
-
-    if (tempFilter.length > 0) {
-      dispatch(productsFiltersRequestAsync({ filter: tempFilter, offset, sort }));
-    }
-  }, [filter, offset, sort]);
+    const newSearch = `?${queryParams.toString()}`;
+    navigate({ search: newSearch });
+  };
 
   const handleChange = (event: FormEvent<HTMLInputElement>) => {
     if (event.currentTarget.name.includes('subcategory')) {
+      const checkedCategory = subcategories.find(
+        (subcategory) => subcategory.id === event.currentTarget.value
+      );
+
       if (event.currentTarget.checked) {
+        if (checkedCategory) {
+          addToQueryString('subcategory', checkedCategory.slug);
+        }
+
         setCheckedSubcategories([...checkedSubcategories, event.currentTarget.value]);
       } else {
+        if (checkedCategory) {
+          deleteFromQueryString('subcategory', checkedCategory.slug);
+        }
+
         setCheckedSubcategories([
           ...checkedSubcategories.filter((value) => value !== event.currentTarget.value)
         ]);
@@ -199,6 +201,91 @@ export function Filters({
       setPriceValue(tempPrice);
     }
   };
+
+  useEffect(() => {
+    if (categories.length === 0) {
+      return;
+    }
+
+    const temp = categories
+      .filter((category) => category.slug === id)
+      .map((item) => item.subcategories);
+
+    setSubcategories(temp.flat());
+  }, [categories]);
+
+  useEffect(() => {
+    if (!subcategories.length) {
+      return;
+    }
+
+    const subcategory = queryParams.get('subcategory');
+
+    if (subcategory) {
+      let tempCheckboxValue: { [k: string]: boolean } = {};
+      const tempCheckedSubcategories: Array<string> = [];
+
+      subcategory.split(' ').forEach((item) => {
+        const checkedSubcategory = subcategories.find(
+          (subcategoryItem) => subcategoryItem.slug === item
+        );
+
+        if (checkedSubcategory) {
+          tempCheckboxValue = {
+            ...tempCheckboxValue,
+            [`subcategory_${checkedSubcategory.slug}`]: true
+          };
+          tempCheckedSubcategories.push(checkedSubcategory.id);
+        }
+      });
+
+      setCheckboxValues({
+        ...checkboxValues,
+        ...tempCheckboxValue
+      });
+      setCheckedSubcategories([...tempCheckedSubcategories]);
+    }
+  }, [subcategories]);
+
+  useEffect(() => {
+    if (checkedSubcategories.length > 0) {
+      setFilter({
+        ...filter,
+        'categories.id:': `"${checkedSubcategories.join('", "')}"`
+      });
+    } else if (
+      currentCategory.length > 0 &&
+      Object.entries(Object.fromEntries(queryParams)).length === 0
+    ) {
+      setFilter({
+        ...filter,
+        'categories.id:': `"${currentCategory[0].id}"`
+      });
+    }
+  }, [checkedSubcategories, currentCategory]);
+
+  useEffect(() => {
+    if (checkedColors.length > 0) {
+      setFilter({
+        ...filter,
+        'variants.attributes.color.key:': `"${checkedColors.join('", "')}"`
+      });
+    } else if (filter['variants.attributes.color.key:']) {
+      const temp = { ...filter };
+      delete temp['variants.attributes.color.key:'];
+      setFilter({
+        ...temp
+      });
+    }
+  }, [checkedColors]);
+
+  useEffect(() => {
+    const tempFilter = Object.entries(filter).map(([key, value]) => `${key} ${value}`);
+
+    if (tempFilter.length > 0) {
+      dispatch(productsFiltersRequestAsync({ filter: tempFilter, offset, sort }));
+    }
+  }, [filter, offset, sort]);
 
   return (
     <div className={styles.filters}>
