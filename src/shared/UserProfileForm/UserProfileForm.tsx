@@ -5,13 +5,14 @@ import { BaseInputField } from '../BaseInputField';
 import { IFormData } from '../../types/interfaces/IFormData';
 import { EFieldsNames } from '../../types/enums/EFieldsNames';
 import { EErrorText } from '../../types/enums/EErrorText';
-import { emailRegex, textRegex } from '../../utils/validationRegex';
+import { emailRegex, passwordRegex, textRegex } from '../../utils/validationRegex';
 import { Modal } from '../Modal';
 import { ConfirmIcon, EditIcon, ElephantIcon } from '../Icons';
 import { calculateAge } from '../../utils/calculateAge';
 import { updateUserData } from './APIRequests';
 import { useUserData } from '../../hooks/useUserData';
 import { RegistrationAddress } from '../RegistrationForm/RagistrationAddress';
+import { BaseButton } from '../BaseButton';
 
 interface IEditableInput {
   [k: string]: boolean;
@@ -20,6 +21,7 @@ interface IEditableInput {
 export function UserProfileForm() {
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
+  const [isFormEditable] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
   const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
@@ -113,6 +115,12 @@ export function UserProfileForm() {
         });
       }
     }
+
+    if (element.name === EFieldsNames.password || element.name === EFieldsNames.newPassword) {
+      if (element.value && !passwordRegex.test(element.value)) {
+        setFormError({ ...formError, [element.name]: EErrorText.passwordFormat });
+      }
+    }
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -154,6 +162,7 @@ export function UserProfileForm() {
     <section>
       <form className={formClassName}>
         <h1 className={styles.form__header}>Личный кабинет</h1>
+        <h2 className={styles.form__subtitle}>Информация о пользователе</h2>
         <div className={styles.form__input_wrapper}>
           <BaseInputField
             isRequired={true}
@@ -234,6 +243,27 @@ export function UserProfileForm() {
             )}
           </div>
         </div>
+        <h2 className={styles.form__subtitle}>Смена пароля</h2>
+        <BaseInputField
+          isRequired={true}
+          name={EFieldsNames.password}
+          value={formData[EFieldsNames.password] || ''}
+          type="password"
+          placeholder="Ваш текущий пароль*"
+          onChange={handleChange}
+          error={formError.password}
+        />
+        <BaseInputField
+          isRequired={true}
+          name={EFieldsNames.newPassword}
+          value={formData[EFieldsNames.newPassword] || ''}
+          type="password"
+          placeholder="Новый пароль*"
+          onChange={handleChange}
+          error={formError.newPassword}
+        />
+        <BaseButton textContent="Обновить пароль" />
+        <h2 className={styles.form__subtitle}>Адреса</h2>
         {user.addresses.map((address, index) => {
           return (
             <RegistrationAddress
@@ -249,6 +279,7 @@ export function UserProfileForm() {
               isBilling={user.billingAddressIds.includes(address.id || '')}
               isDefaultShipping={user.defaultShippingAddressId === address.id}
               isDefaultBilling={user.defaultBillingAddressId === address.id}
+              isEditable={isFormEditable}
             />
           );
         })}

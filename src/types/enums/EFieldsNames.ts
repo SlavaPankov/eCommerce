@@ -4,5 +4,5 @@ export enum EFieldsNames {
   birthDate = 'dateOfBirth',
   email = 'email',
   password = 'password',
-  passwordConfirmed = 'passwordConfirmed'
+  newPassword = 'newPassword'
 }

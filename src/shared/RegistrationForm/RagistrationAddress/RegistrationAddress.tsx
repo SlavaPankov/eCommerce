@@ -47,6 +47,7 @@ interface IRegistrationAddressProps {
   isBilling?: boolean;
   isDefaultShipping?: boolean;
   isDefaultBilling?: boolean;
+  isEditable?: boolean;
 }
 
 export function RegistrationAddress({
@@ -60,7 +61,8 @@ export function RegistrationAddress({
   isShipping = false,
   isBilling = false,
   isDefaultShipping = false,
-  isDefaultBilling = false
+  isDefaultBilling = false,
+  isEditable = true
 }: IRegistrationAddressProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [checkboxData, setCheckboxData] = useState({
@@ -210,6 +212,7 @@ export function RegistrationAddress({
           onBlur={handleBlurRequired}
           error={formError[`${EFieldsNames.postalCode}_${index}`]}
           maxLength={6}
+          isDisabled={!isEditable}
         />
       </div>
       <BaseInputField
@@ -220,6 +223,7 @@ export function RegistrationAddress({
         onChange={handleChange}
         onBlur={handleBlurRequired}
         error={formError[`${EFieldsNames.region}_${index}`]}
+        isDisabled={!isEditable}
       />
       <BaseInputField
         isRequired={true}
@@ -229,6 +233,7 @@ export function RegistrationAddress({
         onChange={handleChange}
         onBlur={handleBlurRequired}
         error={formError[`${EFieldsNames.city}_${index}`]}
+        isDisabled={!isEditable}
       />
       <BaseInputField
         isRequired={true}
@@ -238,6 +243,7 @@ export function RegistrationAddress({
         onChange={handleChange}
         onBlur={handleBlurRequired}
         error={formError[`${EFieldsNames.streetName}_${index}`]}
+        isDisabled={!isEditable}
       />
       <div className={styles.wrapper}>
         <BaseInputField
@@ -247,6 +253,7 @@ export function RegistrationAddress({
           onChange={handleChange}
           onBlur={handleBlur}
           error={formError[`${EFieldsNames.building}_${index}`]}
+          isDisabled={!isEditable}
         />
         <BaseInputField
           type="number"
@@ -256,6 +263,7 @@ export function RegistrationAddress({
           onChange={handleChange}
           onBlur={handleBlur}
           error={formError[`${EFieldsNames.apartment}_${index}`]}
+          isDisabled={!isEditable}
         />
       </div>
       <BaseCheckbox
