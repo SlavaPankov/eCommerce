@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import classNames from 'classnames';
 import styles from './userProfileForm.scss';
 import { BaseInputField } from '../BaseInputField';
@@ -9,7 +9,8 @@ import { textRegex, emailRegex } from '../../utils/validationRegex';
 import { Modal } from '../Modal';
 import { ElephantIcon, ConfirmIcon, EditIcon } from '../Icons';
 import { calculateAge } from '../../utils/calculateAge';
-import { getUserData, updateUserData } from './APIRequests';
+import { updateUserData } from './APIRequests';
+import { useUserData } from '../../hooks/useUserData';
 
 interface IEditableInput {
   [k: string]: boolean;
@@ -22,6 +23,9 @@ export function UserProfileForm() {
   const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
   const [isUpdateSuccessfull, setIsUpdateSuccessfull] = useState<boolean>(true);
   const BEARER_TOKEN = JSON.parse(localStorage.getItem('tokenCache') as string).token;
+  const { user } = useUserData();
+
+  console.log(user);
 
   const formClassName = classNames('container', {
     [`${styles.form}`]: true
@@ -31,19 +35,6 @@ export function UserProfileForm() {
     [`${styles.edit_icon}`]: true,
     [`${styles.edit_icon_active}`]: isEditClicked
   });
-
-  useEffect(() => {
-    getUserData(BEARER_TOKEN).then((data) => {
-      setFormData({
-        [EFieldsNames.firstName]: data.firstName,
-        [EFieldsNames.lastName]: data.lastName,
-        [EFieldsNames.birthDate]: data.dateOfBirth,
-        [EFieldsNames.email]: data.email,
-        id: data.id,
-        version: data.version
-      });
-    });
-  }, []);
 
   const validateInput = (element: HTMLInputElement) => {
     setFormError({ ...formError, [element.name]: '' });

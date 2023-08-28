@@ -12,6 +12,11 @@ interface IUser {
   email: string;
   firstName: string;
   lastName: string;
+  defaultShippingAddressId: string;
+  defaultBillingAddressId: string;
+  shippingAddressIds: Array<string>;
+  billingAddressIds: Array<string>;
+  version: number;
 }
 
 interface IUserState {
@@ -28,7 +33,12 @@ const initialState: IUserState = {
     addresses: [],
     email: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    defaultShippingAddressId: '',
+    defaultBillingAddressId: '',
+    shippingAddressIds: [],
+    billingAddressIds: [],
+    version: 0
   }
 };
 
@@ -92,6 +102,19 @@ export const userSignInRequestAsync = createAsyncThunk(
   }
 );
 
+export const getMeRequestAsync = createAsyncThunk(
+  'me/GetUser',
+  async (args, { rejectWithValue }) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .me()
+      .get()
+      .execute()
+      .then(({ body }) => body)
+      .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+  }
+);
+
 export const userSlice = createSlice({
   name: 'userSlice',
   initialState,
@@ -108,6 +131,11 @@ export const userSlice = createSlice({
       state.user.lastName = action.payload.customer.lastName || '';
       state.user.email = action.payload.customer.email;
       state.user.addresses = action.payload.customer.addresses;
+      state.user.defaultShippingAddressId = action.payload.customer.defaultShippingAddressId || '';
+      state.user.defaultBillingAddressId = action.payload.customer.defaultBillingAddressId || '';
+      state.user.shippingAddressIds = action.payload.customer.shippingAddressIds || [];
+      state.user.billingAddressIds = action.payload.customer.billingAddressIds || [];
+      state.user.version = action.payload.customer.version;
 
       tokenCache.set({
         token: '',
@@ -131,9 +159,37 @@ export const userSlice = createSlice({
       state.user.lastName = action.payload.customer.lastName || '';
       state.user.email = action.payload.customer.email;
       state.user.addresses = action.payload.customer.addresses;
+      state.user.defaultShippingAddressId = action.payload.customer.defaultShippingAddressId || '';
+      state.user.defaultBillingAddressId = action.payload.customer.defaultBillingAddressId || '';
+      state.user.shippingAddressIds = action.payload.customer.shippingAddressIds || [];
+      state.user.billingAddressIds = action.payload.customer.billingAddressIds || [];
+      state.user.version = action.payload.customer.version;
     });
 
     builder.addCase(userSignInRequestAsync.rejected, (state, action) => {
+      state.loading = false;
+      state.error = `${action.payload}`;
+    });
+
+    builder.addCase(getMeRequestAsync.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(getMeRequestAsync.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user.id = action.payload.id;
+      state.user.firstName = action.payload.firstName || '';
+      state.user.lastName = action.payload.lastName || '';
+      state.user.email = action.payload.email;
+      state.user.addresses = action.payload.addresses;
+      state.user.defaultShippingAddressId = action.payload.defaultShippingAddressId || '';
+      state.user.defaultBillingAddressId = action.payload.defaultBillingAddressId || '';
+      state.user.shippingAddressIds = action.payload.shippingAddressIds || [];
+      state.user.billingAddressIds = action.payload.billingAddressIds || [];
+      state.user.version = action.payload.version;
+    });
+
+    builder.addCase(getMeRequestAsync.rejected, (state, action) => {
       state.loading = false;
       state.error = `${action.payload}`;
     });
