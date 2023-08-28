@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './productCard.scss';
 import { RatingIcon } from '../Icons';
 import { BaseButton } from '../BaseButton';
@@ -16,6 +17,7 @@ interface IProductCardProps {
   price: string;
   id: string;
   variantId: number;
+  productKey: string;
 }
 
 export function ProductCard({
@@ -24,7 +26,8 @@ export function ProductCard({
   title,
   price,
   id,
-  variantId
+  variantId,
+  productKey
 }: IProductCardProps) {
   const dispatch = useAppDispatch();
   const { cart } = useAppSelector((state) => state.cart);
@@ -58,7 +61,9 @@ export function ProductCard({
         alt={title}
       />
       <div className={styles.content}>
-        <h2 className={styles.title}>{title}</h2>
+        <h2 className={styles.title}>
+          <Link to={`/product/${productKey}`}>{title}</Link>
+        </h2>
         <div className={styles.price}>{price} руб</div>
         <BaseButton onClick={handleClick} textContent="Купить" mode={EBaseButtonMode.secondary} />
       </div>

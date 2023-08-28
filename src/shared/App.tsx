@@ -9,6 +9,7 @@ import { LoginPage } from '../pages/LoginPage';
 import { useAppDispatch } from '../hooks/storeHooks';
 import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart/cartSlice';
 import { ERoutes } from '../types/enums/ERoutes';
+import { ProductPage } from '../pages/ProductPage';
 
 export function App() {
   const dispatch = useAppDispatch();
@@ -30,6 +31,7 @@ export function App() {
         <Route path={ERoutes.main} element={<MainPage />} />
         <Route path={ERoutes.registration} element={<RegistrationPage />} />
         <Route path={ERoutes.login} element={<LoginPage />} />
+        <Route path={ERoutes.product} element={<ProductPage />} />
         <Route path={ERoutes.all} element={<NotFound />} />
       </Routes>
       <Routes>
