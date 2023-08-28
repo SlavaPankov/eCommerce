@@ -191,6 +191,8 @@ export function RegistrationForm() {
       );
     });
 
+    console.log(tempAddresses);
+
     const customerDraft: ICustomerDraft = {
       email: dataObject.email.toString(),
       firstName: dataObject.firstName.toString(),

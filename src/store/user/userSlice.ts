@@ -12,6 +12,7 @@ interface IUser {
   email: string;
   firstName: string;
   lastName: string;
+  dateOfBirth: string;
   defaultShippingAddressId: string;
   defaultBillingAddressId: string;
   shippingAddressIds: Array<string>;
@@ -34,6 +35,7 @@ const initialState: IUserState = {
     email: '',
     firstName: '',
     lastName: '',
+    dateOfBirth: new Date(0).toLocaleDateString(),
     defaultShippingAddressId: '',
     defaultBillingAddressId: '',
     shippingAddressIds: [],
@@ -130,6 +132,8 @@ export const userSlice = createSlice({
       state.user.firstName = action.payload.customer.firstName || '';
       state.user.lastName = action.payload.customer.lastName || '';
       state.user.email = action.payload.customer.email;
+      state.user.dateOfBirth =
+        action.payload.customer.dateOfBirth || new Date(0).toLocaleDateString();
       state.user.addresses = action.payload.customer.addresses;
       state.user.defaultShippingAddressId = action.payload.customer.defaultShippingAddressId || '';
       state.user.defaultBillingAddressId = action.payload.customer.defaultBillingAddressId || '';
@@ -158,6 +162,8 @@ export const userSlice = createSlice({
       state.user.firstName = action.payload.customer.firstName || '';
       state.user.lastName = action.payload.customer.lastName || '';
       state.user.email = action.payload.customer.email;
+      state.user.dateOfBirth =
+        action.payload.customer.dateOfBirth || new Date(0).toLocaleDateString();
       state.user.addresses = action.payload.customer.addresses;
       state.user.defaultShippingAddressId = action.payload.customer.defaultShippingAddressId || '';
       state.user.defaultBillingAddressId = action.payload.customer.defaultBillingAddressId || '';
@@ -181,6 +187,7 @@ export const userSlice = createSlice({
       state.user.firstName = action.payload.firstName || '';
       state.user.lastName = action.payload.lastName || '';
       state.user.email = action.payload.email;
+      state.user.dateOfBirth = action.payload.dateOfBirth || new Date(0).toLocaleDateString();
       state.user.addresses = action.payload.addresses;
       state.user.defaultShippingAddressId = action.payload.defaultShippingAddressId || '';
       state.user.defaultBillingAddressId = action.payload.defaultBillingAddressId || '';

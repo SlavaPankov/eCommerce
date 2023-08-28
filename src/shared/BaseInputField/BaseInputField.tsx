@@ -43,7 +43,7 @@ export function BaseInputField({
   return (
     <label htmlFor={name} className={styles.label}>
       {error && !label && <span className={styles.error}>{error}</span>}
-      {label && <span className={styles.textlabel}>{label}</span>}
+      {label && <span className={styles.textLabel}>{label}</span>}
       {type !== 'tel' ? (
         <input
           data-required={isRequired ? 'true' : ''}
@@ -74,7 +74,7 @@ export function BaseInputField({
           disabled={isDisabled}
         />
       )}
-      {label && <span className={styles.error}>{error}</span>}
+      {label && error && <span className={styles.error}>{error}</span>}
     </label>
   );
 }

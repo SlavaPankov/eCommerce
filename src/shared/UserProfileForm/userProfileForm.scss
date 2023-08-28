@@ -43,12 +43,14 @@
 }
 
 .edit_icon {
+  display: flex;
   position: absolute;
   right: 16px;
-  bottom: 16px;
+  top: 50%;
   opacity: 0.7;
   cursor: pointer;
   transition: opacity 0.2s ease-in-out;
+  transform: translateY(-50%);
 
   & path {
     fill: $primary_light;

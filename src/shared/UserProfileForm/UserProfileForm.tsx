@@ -1,16 +1,17 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import styles from './userProfileForm.scss';
 import { BaseInputField } from '../BaseInputField';
 import { IFormData } from '../../types/interfaces/IFormData';
 import { EFieldsNames } from '../../types/enums/EFieldsNames';
 import { EErrorText } from '../../types/enums/EErrorText';
-import { textRegex, emailRegex } from '../../utils/validationRegex';
+import { emailRegex, textRegex } from '../../utils/validationRegex';
 import { Modal } from '../Modal';
-import { ElephantIcon, ConfirmIcon, EditIcon } from '../Icons';
+import { ConfirmIcon, EditIcon, ElephantIcon } from '../Icons';
 import { calculateAge } from '../../utils/calculateAge';
 import { updateUserData } from './APIRequests';
 import { useUserData } from '../../hooks/useUserData';
+import { RegistrationAddress } from '../RegistrationForm/RagistrationAddress';
 
 interface IEditableInput {
   [k: string]: boolean;
@@ -21,11 +22,34 @@ export function UserProfileForm() {
   const [formError, setFormError] = useState<IFormData>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
-  const [isUpdateSuccessfull, setIsUpdateSuccessfull] = useState<boolean>(true);
+  const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
   const BEARER_TOKEN = JSON.parse(localStorage.getItem('tokenCache') as string).token;
   const { user } = useUserData();
 
-  console.log(user);
+  useEffect(() => {
+    if (!user.id) {
+      return;
+    }
+
+    const addresses = user.addresses
+      .map((address, index) =>
+        Object.entries(address).map(([key, value]) => ({ [`${key}_${index}`]: value }))
+      )
+      .flat();
+
+    const addressObject = addresses.reduce((obj, value) => Object.assign(obj, value), {});
+    const userInfo = Object.fromEntries(
+      Object.entries(user).filter(
+        (item) => typeof item[1] === 'string' || typeof item[1] === 'number'
+      )
+    );
+
+    setFormData({
+      ...formData,
+      ...userInfo,
+      ...addressObject
+    });
+  }, [user]);
 
   const formClassName = classNames('container', {
     [`${styles.form}`]: true
@@ -57,31 +81,35 @@ export function UserProfileForm() {
       }
     }
 
-    if (
-      element.name === EFieldsNames.birthDate &&
-      !Number.isNaN(new Date(element.value).getTime())
-    ) {
-      const birthDate = new Date(element.value);
-      const currentDate = new Date();
+    if (element.name === EFieldsNames.birthDate) {
+      try {
+        const birthDate = new Date(element.value);
+        const currentDate = new Date();
 
-      if (Number.isNaN(birthDate.getTime())) {
+        if (Number.isNaN(birthDate.getTime())) {
+          setFormError({
+            ...formError,
+            [element.name]: EErrorText.dateInvalid
+          });
+        }
+
+        if (calculateAge(element.value) < 13) {
+          setFormError({
+            ...formError,
+            [element.name]: EErrorText.dateToYoung
+          });
+        }
+
+        if (birthDate > currentDate) {
+          setFormError({
+            ...formError,
+            [element.name]: EErrorText.dateOutOfLimit
+          });
+        }
+      } catch {
         setFormError({
           ...formError,
           [element.name]: EErrorText.dateInvalid
-        });
-      }
-
-      if (calculateAge(element.value) < 13) {
-        setFormError({
-          ...formError,
-          [element.name]: EErrorText.dateToYoung
-        });
-      }
-
-      if (birthDate > currentDate) {
-        setFormError({
-          ...formError,
-          [element.name]: EErrorText.dateOutOfLimit
         });
       }
     }
@@ -98,18 +126,18 @@ export function UserProfileForm() {
     } else if (!formError[fieldName]) {
       updateUserData(
         BEARER_TOKEN,
-        formData.id,
+        formData.id as string,
         +formData.version,
         fieldName,
-        formData[fieldName]
+        formData[fieldName] as string
       ).then((res) => {
         if (res.status === 200) {
           res.json().then((data) => {
             setFormData({ ...formData, version: data.version });
-            setIsUpdateSuccessfull(true);
+            setIsUpdateSuccessfully(true);
           });
         } else {
-          setIsUpdateSuccessfull(false);
+          setIsUpdateSuccessfully(false);
         }
       });
       setIsModalOpen(true);
@@ -122,13 +150,9 @@ export function UserProfileForm() {
     }
   };
 
-  const handleSubmit = () => {
-    console.log('Form is submitted');
-  };
-
   return (
     <section>
-      <form className={formClassName} onSubmit={handleSubmit}>
+      <form className={formClassName}>
         <h1 className={styles.form__header}>Личный кабинет</h1>
         <div className={styles.form__input_wrapper}>
           <BaseInputField
@@ -210,12 +234,30 @@ export function UserProfileForm() {
             )}
           </div>
         </div>
+        {user.addresses.map((address, index) => {
+          return (
+            <RegistrationAddress
+              key={address.id}
+              formData={formData}
+              setFormData={setFormData}
+              formError={formError}
+              setFormError={setFormError}
+              addressCount={3}
+              setAddressCount={() => {}}
+              index={index}
+              isShipping={user.shippingAddressIds.includes(address.id || '')}
+              isBilling={user.billingAddressIds.includes(address.id || '')}
+              isDefaultShipping={user.defaultShippingAddressId === address.id}
+              isDefaultBilling={user.defaultBillingAddressId === address.id}
+            />
+          );
+        })}
       </form>
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
           <article className={styles.modal}>
             <ElephantIcon />
-            {isUpdateSuccessfull ? (
+            {isUpdateSuccessfully ? (
               <h4 className={styles.modal_heading}>Ваши данные обновлены</h4>
             ) : (
               <h4 className={styles.modal_heading}>Произошла ошибка. Попробуйте позже</h4>
