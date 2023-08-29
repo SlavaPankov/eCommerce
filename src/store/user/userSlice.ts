@@ -179,6 +179,19 @@ export const userSlice = createSlice({
       state.user.addresses = state.user.addresses.filter(
         (address) => address.id !== action.payload
       );
+    },
+
+    addAddress: (state) => {
+      state.user.addresses.push({
+        id: '',
+        streetName: '',
+        postalCode: '',
+        city: '',
+        region: '',
+        country: '',
+        building: '',
+        apartment: ''
+      });
     }
   },
   extraReducers: (builder) => {
@@ -245,6 +258,6 @@ export const userSlice = createSlice({
   }
 });
 
-export const { removeAddress } = userSlice.actions;
+export const { removeAddress, addAddress } = userSlice.actions;
 
 export default userSlice.reducer;

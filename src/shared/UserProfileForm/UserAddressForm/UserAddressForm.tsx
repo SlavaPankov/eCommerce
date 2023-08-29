@@ -34,9 +34,11 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
     user.billingAddressIds.includes(addressId || '')
   );
   const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
+  const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
 
   useEffect(() => {
     if (!addressId || !user.id) {
+      setIsNewAddress(true);
       return;
     }
 
@@ -55,6 +57,12 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
     setIsShipping(user.shippingAddressIds.includes(addressId || ''));
     setIsBilling(user.billingAddressIds.includes(addressId || ''));
   }, [addressId, user]);
+
+  useEffect(() => {
+    if (isNewAddress) {
+      setIsFormEditable(true);
+    }
+  }, [isNewAddress]);
 
   const handleClickConfirm = () => {
     dispatch(removeAddress(addressId));
@@ -101,78 +109,93 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
       const dataObject = Object.fromEntries(new FormData(event.currentTarget));
       const addressData = createObjectFromFormData(dataObject);
 
-      const actions: Array<MyCustomerUpdateAction> = [
-        {
-          action: EUserActionTypes.changeAddress,
-          addressId,
-          address: createAddressFromForm(addressData)
-        }
-      ];
+      if (!isNewAddress) {
+        const actions: Array<MyCustomerUpdateAction> = [
+          {
+            action: EUserActionTypes.changeAddress,
+            addressId,
+            address: createAddressFromForm(addressData)
+          }
+        ];
 
-      Object.entries(addressData).forEach(([key]) => {
-        switch (key) {
-          case 'typeBilling':
-            actions.push({
-              action: EUserActionTypes.addBillingAddressId,
-              addressId
-            });
-            break;
-          case 'typeShipping':
-            actions.push({
-              action: EUserActionTypes.addShippingAddressId,
-              addressId
-            });
-            break;
-          case 'defaultBilling':
-            actions.push({
-              action: EUserActionTypes.setDefaultBillingAddress,
-              addressId
-            });
-            break;
-          case 'defaultShipping':
-            actions.push({
-              action: EUserActionTypes.setDefaultShippingAddress,
-              addressId
-            });
-            break;
-          default:
-            break;
-        }
-      });
-
-      if (isShipping && !Object.prototype.hasOwnProperty.call(addressData, 'typeShipping')) {
-        actions.push({
-          action: EUserActionTypes.removeShippingAddressId,
-          addressId
+        Object.entries(addressData).forEach(([key]) => {
+          switch (key) {
+            case 'typeBilling':
+              actions.push({
+                action: EUserActionTypes.addBillingAddressId,
+                addressId
+              });
+              break;
+            case 'typeShipping':
+              actions.push({
+                action: EUserActionTypes.addShippingAddressId,
+                addressId
+              });
+              break;
+            case 'defaultBilling':
+              actions.push({
+                action: EUserActionTypes.setDefaultBillingAddress,
+                addressId
+              });
+              break;
+            case 'defaultShipping':
+              actions.push({
+                action: EUserActionTypes.setDefaultShippingAddress,
+                addressId
+              });
+              break;
+            default:
+              break;
+          }
         });
-      }
 
-      if (isBilling && !Object.prototype.hasOwnProperty.call(addressData, 'typeBilling')) {
-        actions.push({
-          action: EUserActionTypes.removeShippingAddressId,
-          addressId
-        });
-      }
-
-      dispatch(
-        updateMeRequestAsync({
-          version: user.version,
-          actions
-        })
-      ).then((payload) => {
-        setIsUpdateModalOpen(true);
-
-        if (payload.type.includes('rejected')) {
-          setIsUpdateSuccessfully(false);
-          return;
+        if (isShipping && !Object.prototype.hasOwnProperty.call(addressData, 'typeShipping')) {
+          actions.push({
+            action: EUserActionTypes.removeShippingAddressId,
+            addressId
+          });
         }
 
-        setIsUpdateSuccessfully(true);
-        setIsFormEditable(false);
-        setTimeout(() => {
-          setIsUpdateModalOpen(false);
-        }, 1500);
-      });
+        if (isBilling && !Object.prototype.hasOwnProperty.call(addressData, 'typeBilling')) {
+          actions.push({
+            action: EUserActionTypes.removeShippingAddressId,
+            addressId
+          });
+        }
+
+        dispatch(
+          updateMeRequestAsync({
+            version: user.version,
+            actions
+          })
+        ).then((payload) => {
+          setIsUpdateModalOpen(true);
+
+          if (payload.type.includes('rejected')) {
+            setIsUpdateSuccessfully(false);
+            return;
+          }
+
+          setIsUpdateSuccessfully(true);
+          setIsFormEditable(false);
+          setTimeout(() => {
+            setIsUpdateModalOpen(false);
+          }, 1500);
+        });
+      } else {
+        console.log('now we save it');
+        dispatch(
+          updateMeRequestAsync({
+            version: user.version,
+            actions: [
+              {
+                action: EUserActionTypes.addAddress,
+                address: createAddressFromForm(addressData)
+              }
+            ]
+          })
+        );
+      }
     }
   };
 

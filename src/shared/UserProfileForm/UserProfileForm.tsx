@@ -12,7 +12,7 @@ import { calculateAge } from '../../utils/calculateAge';
 import { useUserData } from '../../hooks/useUserData';
 import { BaseButton } from '../BaseButton';
 import { useAppDispatch } from '../../hooks/storeHooks';
-import { updateMeRequestAsync } from '../../store/user/userSlice';
+import { addAddress, updateMeRequestAsync } from '../../store/user/userSlice';
 import { EUserActionTypes } from '../../types/enums/EUserActionTypes';
 import { UserAddressForm } from './UserAddressForm';
 
@@ -207,6 +207,10 @@ export function UserProfileForm() {
     }
   };
 
+  const handleClickAddAddress = () => {
+    dispatch(addAddress());
+  };
+
   return (
     <section>
       <div className={containerClassName}>
@@ -320,6 +324,9 @@ export function UserProfileForm() {
         {user.addresses.map((address, index) => {
           return <UserAddressForm key={index} addressId={address.id || ''} user={user} />;
         })}
+        <div className={styles.addAddress} onClick={handleClickAddAddress}>
+          +Добавить адрес
+        </div>
       </div>
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
