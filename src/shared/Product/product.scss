@@ -1,0 +1,27 @@
+@import '../../styles/mixins/breakpoints';
+
+.grid {
+  display: grid;
+  grid-template-columns: 660px 450px;
+}
+
+.product_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  width: min(100% - 0rem, 366px);
+  & button {
+    width: min(100% - 0rem, 255px);
+  }
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.price {
+  font-size: 36px;
+  font-weight: 400;
+}
