@@ -27,7 +27,7 @@ export function UserProfileForm() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
   const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
-  const { user, loading } = useUserData();
+  const { user } = useUserData();
 
   useEffect(() => {
     if (!user.id) {
@@ -67,7 +67,6 @@ export function UserProfileForm() {
     setIsModalOpen(true);
 
     if (payload.type.includes('rejected')) {
-      console.log('here');
       setIsUpdateSuccessfully(false);
       return;
     }
@@ -318,10 +317,9 @@ export function UserProfileForm() {
           <BaseButton textContent="Обновить пароль" />
         </form>
         <h2 className={styles.form__subtitle}>Адреса</h2>
-        {!loading &&
-          user.addresses.map((address, index) => {
-            return <UserAddressForm key={index} addressId={address.id || ''} user={user} />;
-          })}
+        {user.addresses.map((address, index) => {
+          return <UserAddressForm key={index} addressId={address.id || ''} user={user} />;
+        })}
       </div>
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>

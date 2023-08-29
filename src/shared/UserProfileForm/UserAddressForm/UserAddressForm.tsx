@@ -26,12 +26,14 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
   const [formError, setFormError] = useState<IFormData>({});
   const [isFormEditable, setIsFormEditable] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
   const [isShipping, setIsShipping] = useState<boolean>(
     user.shippingAddressIds.includes(addressId || '')
   );
   const [isBilling, setIsBilling] = useState<boolean>(
     user.billingAddressIds.includes(addressId || '')
   );
+  const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
 
   useEffect(() => {
     if (!addressId || !user.id) {
@@ -56,6 +58,30 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
 
   const handleClickConfirm = () => {
     dispatch(removeAddress(addressId));
+    dispatch(
+      updateMeRequestAsync({
+        version: user.version,
+        actions: [
+          {
+            action: EUserActionTypes.removeAddress,
+            addressId
+          }
+        ]
+      })
+    ).then((payload) => {
+      setIsUpdateModalOpen(true);
+
+      if (payload.type.includes('rejected')) {
+        setIsUpdateSuccessfully(false);
+        return;
+      }
+
+      setIsUpdateSuccessfully(true);
+      setIsFormEditable(false);
+      setTimeout(() => {
+        setIsUpdateModalOpen(false);
+      }, 1500);
+    });
     setIsModalOpen(false);
   };
 
@@ -69,7 +95,7 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
 
   const handleClickEdit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsFormEditable(!isFormEditable);
+    setIsFormEditable(true);
 
     if (isFormEditable) {
       const dataObject = Object.fromEntries(new FormData(event.currentTarget));
@@ -133,9 +159,20 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
           version: user.version,
           actions
         })
-      );
-    } else {
-      console.log('edit');
+      ).then((payload) => {
+        setIsUpdateModalOpen(true);
+
+        if (payload.type.includes('rejected')) {
+          setIsUpdateSuccessfully(false);
+          return;
+        }
+
+        setIsUpdateSuccessfully(true);
+        setIsFormEditable(false);
+        setTimeout(() => {
+          setIsUpdateModalOpen(false);
+        }, 1500);
+      });
     }
   };
 
@@ -161,7 +198,7 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
       </fieldset>
       {isModalOpen && (
         <Modal>
-          <div className={styles.modal}>
+          <article className={styles.modal}>
             <ElephantIcon />
             <h6 className={styles.modal_title}>Удалить адрес?</h6>
             <div className={styles.buttons}>
@@ -172,7 +209,20 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
                 onClick={handleClickCancel}
               />
             </div>
-          </div>
+          </article>
+        </Modal>
+      )}
+
+      {isUpdateModalOpen && (
+        <Modal onClose={() => setIsUpdateModalOpen(false)}>
+          <article className={styles.modal}>
+            <ElephantIcon />
+            {isUpdateSuccessfully ? (
+              <h4 className={styles.modal_title}>Ваши данные обновлены</h4>
+            ) : (
+              <h4 className={styles.modal_title}>Произошла ошибка. Попробуйте позже</h4>
+            )}
+          </article>
         </Modal>
       )}
     </form>
