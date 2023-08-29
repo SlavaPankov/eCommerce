@@ -1,6 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
+import { Link } from 'react-router-dom';
 import styles from './middleNavigation.scss';
+import { ERoutes } from '../../../../types/enums/ERoutes';
 
 export function MiddleNavigation() {
   const listClassName = classNames('list-reset', {
@@ -11,9 +13,9 @@ export function MiddleNavigation() {
     <nav className={styles.nav}>
       <ul className={listClassName}>
         <li>
-          <a className={styles.link} href="#">
+          <Link className={styles.link} to={ERoutes.catalog}>
             <span>Каталог</span>
-          </a>
+          </Link>
         </li>
         <li>
           <a className={styles.link} href="#">

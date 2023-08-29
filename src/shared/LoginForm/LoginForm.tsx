@@ -177,7 +177,7 @@ export function LoginForm() {
     dispatch(userSignInRequestAsync(userData))
       .unwrap()
       .then((action) => {
-        if (!action.customer) {
+        if (!action?.customer) {
           return;
         }
 

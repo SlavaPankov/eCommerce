@@ -19,7 +19,12 @@ export function CategoriesList({ handleClick }: ICategoryListProps) {
     <ul className={listClassName}>
       {!loading &&
         categories.map((category) => (
-          <CategoryItem text={category.name} handleClick={handleClick} key={category.id} />
+          <CategoryItem
+            id={category.id}
+            text={category.name}
+            handleClick={handleClick}
+            key={category.id}
+          />
         ))}
     </ul>
   );

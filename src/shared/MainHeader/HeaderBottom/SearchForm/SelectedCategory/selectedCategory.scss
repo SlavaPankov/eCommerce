@@ -1,8 +1,18 @@
 @import '../../../../../styles/mixins/breakpoints';
 
-.selected {
+.label {
   position: relative;
   max-width: 300px;
+  width: 100%;
+  display: block;
+
+  @include small-tablet {
+    max-width: 100%;
+  }
+}
+
+.selected {
+  position: relative;
   width: 100%;
   padding: 17px 32px;
   border: 2px solid $grey_light;
@@ -16,29 +26,12 @@
   transition:
     border-color 0.3s ease-in-out,
     background-color 0.3s ease-in-out;
-  z-index: 10;
-
-  @include small-tablet {
-    max-width: 189px;
-  }
+  z-index: 100;
 
   @include mobile {
     border-bottom-left-radius: 10px;
     border-top-left-radius: 10px;
     max-width: 100%;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: 24px;
-    width: 8px;
-    height: 8px;
-    transform: translateY(-50%) rotate(45deg);
-    border-bottom: 1px solid $primary;
-    border-right: 1px solid $primary;
-    transition: transform 0.3s ease-in-out;
   }
 
   &:hover {
