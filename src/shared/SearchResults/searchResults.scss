@@ -1,0 +1,16 @@
+.container {
+  padding-bottom: 70px !important;
+
+  & > ul {
+    grid-template-columns: repeat(4, minmax(296px, 1fr));
+  }
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 32px;
+  grid-template-columns: repeat(4, minmax(296px, 1fr));
+}

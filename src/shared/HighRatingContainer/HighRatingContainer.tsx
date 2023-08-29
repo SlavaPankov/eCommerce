@@ -9,7 +9,11 @@ import { BaseHeading } from '../BaseHeading';
 
 export function HighRatingContainer() {
   const ref = useRef<HTMLDivElement>(null);
-  const { products } = useProductsData();
+  const {
+    payload: {
+      products: { products }
+    }
+  } = useProductsData();
   const [ratingProducts, setRatingProducts] = useState<Array<IProduct>>([]);
   const [sliceEnd, setSliceEnd] = useState<number>(8);
   const [sliceStart] = useState<number>(0);

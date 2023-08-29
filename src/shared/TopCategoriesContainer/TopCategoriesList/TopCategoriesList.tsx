@@ -21,6 +21,7 @@ export function TopCategoriesList({ categories }: ITopCategoriesListProps) {
             imageSrc={category.imageSrc}
             subcategories={category.subcategories}
             name={category.name}
+            slug={category.slug}
           />
         </li>
       ))}

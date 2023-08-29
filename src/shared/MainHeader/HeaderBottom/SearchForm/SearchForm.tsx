@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useState, FormEvent, MouseEvent } from 'react';
+import { useNavigate, createSearchParams } from 'react-router-dom';
 import { BaseInputField } from '../../../BaseInputField';
 import styles from './searchForm.scss';
 import { SearchIcon } from '../../../Icons';
@@ -8,8 +9,10 @@ import { SelectedCategory } from './SelectedCategory';
 import { CategoriesList } from './CategoriesList';
 
 export function SearchForm() {
+  const navigate = useNavigate();
   const [value, setValue] = useState<string>('');
   const [category, setCategory] = useState('Категория');
+  const [categoryId, setCategoryId] = useState<string>('');
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
@@ -18,11 +21,28 @@ export function SearchForm() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.target as HTMLFormElement);
-    console.log(`Ищем ${[...formData][0][1]} в категории ${category}`);
+    const data = Object.fromEntries([...formData]);
+    const searchParam: { [k: string]: string } = {};
+
+    if (!data.search) {
+      return;
+    }
+
+    searchParam.search = value;
+
+    if (data.category) {
+      searchParam.category = data.category.toString();
+    }
+
+    navigate({
+      pathname: '/search',
+      search: createSearchParams(searchParam).toString()
+    });
   };
 
   const handleClick = (event?: MouseEvent<HTMLLIElement>) => {
     setCategory(event?.currentTarget.textContent || 'Категория');
+    setCategoryId(event?.currentTarget.getAttribute('data-id') || '');
   };
 
   return (
@@ -41,7 +61,7 @@ export function SearchForm() {
       </div>
       <div className={styles.dropdown_wrapper}>
         <BaseDropdown
-          button={<SelectedCategory text={category} />}
+          button={<SelectedCategory value={categoryId} text={category} />}
           className={styles.dropdown_list}>
           <CategoriesList handleClick={handleClick} />
         </BaseDropdown>

@@ -73,34 +73,39 @@ export const userSignUpRequestAsync = createAsyncThunk<
 
 export const userSignInRequestAsync = createAsyncThunk(
   'me/SignIn',
+  // eslint-disable-next-line consistent-return
   async (payload: ILoginData, thunkAPI) => {
     tokenCache.set({ token: '', expirationTime: 0 });
     process.env.USERNAME = payload.email;
     process.env.PASSWORD = payload.password;
 
-    return getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .me()
-      .login()
-      .post({
-        body: {
-          ...payload
-        }
-      })
-      .execute()
-      .then(
-        ({
-          body: { customer, cart }
-        }: ClientResponse<CustomerSignInResult>): CustomerSignInResult => {
-          return {
-            customer,
-            cart
-          };
-        }
-      )
-      .catch(({ body }) => {
-        return thunkAPI.rejectWithValue(body.errors?.[0].code);
-      });
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .me()
+        .login()
+        .post({
+          body: {
+            ...payload
+          }
+        })
+        .execute()
+        .then(
+          ({
+            body: { customer, cart }
+          }: ClientResponse<CustomerSignInResult>): CustomerSignInResult => {
+            return {
+              customer,
+              cart
+            };
+          }
+        )
+        .catch(({ body }) => {
+          return thunkAPI.rejectWithValue(body.errors?.[0].code);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }
 );
 
@@ -158,18 +163,21 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignInRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      state.user.id = action.payload.customer.id;
-      state.user.firstName = action.payload.customer.firstName || '';
-      state.user.lastName = action.payload.customer.lastName || '';
-      state.user.email = action.payload.customer.email;
-      state.user.dateOfBirth =
-        action.payload.customer.dateOfBirth || new Date(0).toLocaleDateString();
-      state.user.addresses = action.payload.customer.addresses;
-      state.user.defaultShippingAddressId = action.payload.customer.defaultShippingAddressId || '';
-      state.user.defaultBillingAddressId = action.payload.customer.defaultBillingAddressId || '';
-      state.user.shippingAddressIds = action.payload.customer.shippingAddressIds || [];
-      state.user.billingAddressIds = action.payload.customer.billingAddressIds || [];
-      state.user.version = action.payload.customer.version;
+      if (action.payload) {
+        state.user.id = action.payload.customer.id;
+        state.user.firstName = action.payload.customer.firstName || '';
+        state.user.lastName = action.payload.customer.lastName || '';
+        state.user.email = action.payload.customer.email;
+        state.user.dateOfBirth =
+          action.payload.customer.dateOfBirth || new Date(0).toLocaleDateString();
+        state.user.addresses = action.payload.customer.addresses;
+        state.user.defaultShippingAddressId =
+          action.payload.customer.defaultShippingAddressId || '';
+        state.user.defaultBillingAddressId = action.payload.customer.defaultBillingAddressId || '';
+        state.user.shippingAddressIds = action.payload.customer.shippingAddressIds || [];
+        state.user.billingAddressIds = action.payload.customer.billingAddressIds || [];
+        state.user.version = action.payload.customer.version;
+      }
     });
 
     builder.addCase(userSignInRequestAsync.rejected, (state, action) => {

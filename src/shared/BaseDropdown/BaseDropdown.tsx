@@ -9,6 +9,7 @@ interface IBaseDropdownProps {
   onOpen?: () => void;
   onClose?: () => void;
   className?: string;
+  withArrow?: boolean;
 }
 
 const NOOP = () => {};
@@ -19,7 +20,8 @@ export function BaseDropdown({
   isOpen = false,
   onOpen = NOOP,
   onClose = NOOP,
-  className = ''
+  className = '',
+  withArrow = true
 }: IBaseDropdownProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(isOpen);
 
@@ -51,7 +53,7 @@ export function BaseDropdown({
 
   return (
     <div className={styles.container}>
-      <div onKeyDown={handleKeyDown} onClick={handleOpen}>
+      <div className={withArrow ? styles.arrow : ''} onKeyDown={handleKeyDown} onClick={handleOpen}>
         {button}
       </div>
       {isDropdownOpen && (
