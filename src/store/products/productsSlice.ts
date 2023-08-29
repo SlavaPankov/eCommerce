@@ -5,18 +5,37 @@ import { createProductsFromResponse } from '../../utils/createProductsFromRespon
 import { apiConfig } from '../../cfg/apiConfig';
 import { getApiRoot } from '../../client/BuildClient';
 
+interface IPayloadItem {
+  products: Array<IProduct>;
+  totalCount: number;
+}
+
+interface IPayload {
+  products: IPayloadItem;
+  filter: IPayloadItem;
+}
+
 interface IProductsState {
   loading: boolean;
   error: string;
   offset: number;
-  products: Array<IProduct>;
+  payload: IPayload;
 }
 
 const initialState: IProductsState = {
   offset: 0,
   loading: false,
   error: '',
-  products: []
+  payload: {
+    products: {
+      products: [],
+      totalCount: 0
+    },
+    filter: {
+      products: [],
+      totalCount: 0
+    }
+  }
 };
 
 interface IProductsRequestProps {
@@ -36,14 +55,71 @@ export const productsRequestAsync = createAsyncThunk(
       })
       .execute()
       .then(({ body: { results } }): Array<IProduct> => createProductsFromResponse(results))
-      .catch((error: Error) => {
-        return rejectWithValue(error.message);
+      .catch(({ body }) => {
+        return rejectWithValue(body.errors?.[0].code);
+      });
+  }
+);
+
+interface IProductsFiltersRequestAsync {
+  filter: Array<string>;
+  limit?: number;
+  offset?: number;
+  sort?: Array<string>;
+  text?: string;
+  fuzzy?: boolean;
+  fuzzyLevel?: number;
+}
+
+interface IFilteredResults {
+  products: Array<IProduct>;
+  totalCount: number;
+}
+
+export const productsFiltersRequestAsync = createAsyncThunk(
+  'products/getFilteredProducts',
+  async (
+    {
+      filter,
+      sort = [''],
+      limit = 9,
+      offset = 0,
+      text = '',
+      fuzzy = false,
+      fuzzyLevel = 0
+    }: IProductsFiltersRequestAsync,
+    { rejectWithValue }
+  ) => {
+    return getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .productProjections()
+      .search()
+      .get({
+        queryArgs: {
+          filter,
+          limit,
+          offset,
+          fuzzy,
+          fuzzyLevel,
+          sort,
+          'text.ru': text
+        }
+      })
+      .execute()
+      .then(
+        ({ body }): IFilteredResults => ({
+          products: createProductsFromResponse(body.results),
+          totalCount: body.total || body.count
+        })
+      )
+      .catch(({ body }) => {
+        return rejectWithValue(body.errors?.[0].code);
       });
   }
 );
 
 export const productsSlice = createSlice({
-  name: 'tokenSlice',
+  name: 'productSlice',
   initialState,
   reducers: {
     productsLoading: (state) => {
@@ -53,7 +129,7 @@ export const productsSlice = createSlice({
     productsLoadingSuccess: (state, action: PayloadAction<Array<IProduct>>) => {
       console.log(action.payload);
       state.loading = false;
-      state.products = action.payload;
+      state.payload.products.products = action.payload;
     },
 
     productsLoadingError: (state, action: PayloadAction<string>) => {
@@ -73,11 +149,28 @@ export const productsSlice = createSlice({
     builder.addCase(productsRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
       if (Array.isArray(action.payload)) {
-        state.products = action.payload;
+        state.payload.products.products = action.payload;
       }
     });
 
     builder.addCase(productsRequestAsync.rejected, (state, action) => {
+      state.loading = false;
+      state.error = `${action.payload}`;
+    });
+
+    builder.addCase(productsFiltersRequestAsync.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(productsFiltersRequestAsync.fulfilled, (state, action) => {
+      state.loading = false;
+      if (Array.isArray(action.payload.products)) {
+        state.payload.filter.products = action.payload.products;
+        state.payload.filter.totalCount = action.payload.totalCount;
+      }
+    });
+
+    builder.addCase(productsFiltersRequestAsync.rejected, (state, action) => {
       state.loading = false;
       state.error = `${action.payload}`;
     });

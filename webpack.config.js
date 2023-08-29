@@ -3,7 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const EslintWebpackPlugin = require('eslint-webpack-plugin');
 const webpack = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
+// const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const IS_DEV = process.env.NODE_ENV === 'development';
@@ -12,21 +12,21 @@ const GLOBAL_SCSS_REGEXP = /\.global\.scss$/;
 
 const filename = (ext) => (IS_DEV ? `[name].${ext}` : `[name].[contenthash].${ext}`);
 
-const optimization = () => {
-  const configObj = {
-    splitChunks: {
-      chunks: 'all',
-      minSize: 20000,
-      minRemainingSize: 0,
-      minChunks: 1
-    }
-  };
-
-  if (IS_PROD) {
-    configObj.minimizer = [new TerserPlugin()];
-  }
-  return configObj;
-};
+// const optimization = () => {
+//   const configObj = {
+//     splitChunks: {
+//       chunks: 'all',
+//       minSize: 20000,
+//       minRemainingSize: 0,
+//       minChunks: 1
+//     }
+//   };
+//
+//   if (IS_PROD) {
+//     configObj.minimizer = [new TerserPlugin()];
+//   }
+//   return configObj;
+// };
 
 module.exports = {
   context: path.resolve(__dirname, 'src'),
@@ -36,10 +36,10 @@ module.exports = {
   mode: IS_DEV ? 'development' : 'production',
   entry: './index.jsx',
   output: {
-    publicPath: '/',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, './dist'),
     filename: `${filename('js')}`,
-    assetModuleFilename: `assets/${filename('[ext]')}`
+    assetModuleFilename: `assets/${filename('[ext]')}`,
+    publicPath: '/'
   },
   devServer: {
     historyApiFallback: true,
@@ -168,6 +168,6 @@ module.exports = {
       process: 'process/browser'
     }),
     new MiniCssExtractPlugin()
-  ],
-  optimization: optimization()
+  ]
+  // optimization: optimization()
 };

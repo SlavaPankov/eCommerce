@@ -20,6 +20,7 @@ export function Person() {
 
   return (
     <BaseDropdown
+      withArrow={false}
       className={styles.dropdown}
       button={
         <div className={styles.link}>

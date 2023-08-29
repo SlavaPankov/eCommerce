@@ -24,6 +24,7 @@ export function HighRatingList({ list }: IHighRatingList) {
         <li key={item.id}>
           <ProductCard
             productKey={item.key}
+            discountedPrice={item.discountedPrice}
             rating={item.rating}
             imagePreview={item.images?.preview || imageEmpty}
             title={item.name}

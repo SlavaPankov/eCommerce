@@ -17,6 +17,7 @@ interface IProductCardProps {
   price: string;
   id: string;
   variantId: number;
+  discountedPrice: string;
   productKey: string;
 }
 
@@ -27,6 +28,7 @@ export function ProductCard({
   price,
   id,
   variantId,
+  discountedPrice,
   productKey
 }: IProductCardProps) {
   const dispatch = useAppDispatch();
@@ -53,18 +55,29 @@ export function ProductCard({
       <div className={styles.rating}>
         <RatingIcon /> {rating}
       </div>
-      <img
-        className={styles.image}
-        src={imagePreview.url}
-        width={imagePreview.dimensions?.w}
-        height={imagePreview.dimensions?.h}
-        alt={title}
-      />
+      <Link to={`/product/${productKey}`}>
+        <img
+          className={styles.image}
+          src={imagePreview.url}
+          width={imagePreview.dimensions?.w}
+          height={imagePreview.dimensions?.h}
+          alt={title}
+        />
+      </Link>
       <div className={styles.content}>
         <h2 className={styles.title}>
           <Link to={`/product/${productKey}`}>{title}</Link>
         </h2>
-        <div className={styles.price}>{price} руб</div>
+        <div className={styles.prices}>
+          {!discountedPrice ? (
+            <div className={styles.price}>{price} руб</div>
+          ) : (
+            <>
+              <div className={styles.price}>{discountedPrice} руб</div>
+              <div className={styles.old_price}>{price} руб</div>
+            </>
+          )}
+        </div>
         <BaseButton onClick={handleClick} textContent="Купить" mode={EBaseButtonMode.secondary} />
       </div>
     </article>
