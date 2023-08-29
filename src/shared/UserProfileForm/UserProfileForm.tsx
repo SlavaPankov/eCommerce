@@ -9,7 +9,6 @@ import { emailRegex, passwordRegex, textRegex } from '../../utils/validationRege
 import { Modal } from '../Modal';
 import { ConfirmIcon, EditIcon, ElephantIcon } from '../Icons';
 import { calculateAge } from '../../utils/calculateAge';
-import { updateUserData } from './APIRequests';
 import { useUserData } from '../../hooks/useUserData';
 import { RegistrationAddress } from '../RegistrationForm/RagistrationAddress';
 import { BaseButton } from '../BaseButton';
@@ -23,9 +22,8 @@ export function UserProfileForm() {
   const [formError, setFormError] = useState<IFormData>({});
   const [isFormEditable] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
-  const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
-  const BEARER_TOKEN = JSON.parse(localStorage.getItem('tokenCache') as string).token;
+  const [isEditClicked] = useState<IEditableInput>({});
+  const [isUpdateSuccessfully] = useState<boolean>(true);
   const { user } = useUserData();
 
   useEffect(() => {
@@ -129,33 +127,7 @@ export function UserProfileForm() {
   };
 
   const handleEditClick = (fieldName: string) => {
-    if (!isEditClicked[fieldName]) {
-      setIsEditClicked({ ...isEditClicked, [fieldName]: true });
-    } else if (!formError[fieldName]) {
-      updateUserData(
-        BEARER_TOKEN,
-        formData.id as string,
-        +formData.version,
-        fieldName,
-        formData[fieldName] as string
-      ).then((res) => {
-        if (res.status === 200) {
-          res.json().then((data) => {
-            setFormData({ ...formData, version: data.version });
-            setIsUpdateSuccessfully(true);
-          });
-        } else {
-          setIsUpdateSuccessfully(false);
-        }
-      });
-      setIsModalOpen(true);
-      setIsEditClicked({ ...isEditClicked, [fieldName]: false });
-      setTimeout(() => {
-        setIsModalOpen(false);
-      }, 1500);
-    } else {
-      console.log('Input is not validated');
-    }
+    console.log(fieldName);
   };
 
   return (

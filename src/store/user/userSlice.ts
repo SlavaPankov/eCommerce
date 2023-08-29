@@ -1,10 +1,16 @@
 /* eslint-disable no-param-reassign */
-import { BaseAddress, ClientResponse, CustomerSignInResult } from '@commercetools/platform-sdk';
+import {
+  BaseAddress,
+  Cart,
+  ClientResponse,
+  CustomerSignInResult
+} from '@commercetools/platform-sdk';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
 import { apiConfig } from '../../cfg/apiConfig';
 import { ILoginData } from '../../types/interfaces/ILoginData';
 import { getApiRoot, tokenCache } from '../../client/BuildClient';
+import { getCustomerFromResponse } from '../../utils/getCustomerFromResponse';
 
 interface IUser {
   id: string;
@@ -44,81 +50,102 @@ const initialState: IUserState = {
   }
 };
 
+interface ISungUpResponse {
+  customer: IUser;
+  cart: Cart | undefined;
+}
+
 export const userSignUpRequestAsync = createAsyncThunk<
-  CustomerSignInResult,
+  ISungUpResponse,
   ICustomerDraft,
   { rejectValue: string }
->('me/Signup', async (payload: ICustomerDraft, thunkAPI) => {
-  const response = await getApiRoot()
-    .withProjectKey({ projectKey: apiConfig.projectKey })
-    .customers()
-    .post({
-      body: {
-        ...payload
-      }
-    })
-    .execute()
-    .then(({ body: { customer, cart } }): CustomerSignInResult => {
-      return {
-        customer,
-        cart
-      };
-    })
-    .catch(({ body }) => {
-      return thunkAPI.rejectWithValue(body.errors?.[0].code);
-    });
-
-  return response;
+>('me/Signup', async (payload: ICustomerDraft, { rejectWithValue }) => {
+  try {
+    return await getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .customers()
+      .post({
+        body: {
+          ...payload
+        }
+      })
+      .execute()
+      .then(({ body: { customer, cart } }): ISungUpResponse => {
+        return {
+          customer: getCustomerFromResponse(customer),
+          cart
+        };
+      })
+      .catch(({ body }) => {
+        return rejectWithValue(body.errors?.[0].code);
+      });
+  } catch (error) {
+    let message = 'Unknown Error';
+    if (error instanceof Error) {
+      message = error.message;
+    }
+    return rejectWithValue(message);
+  }
 });
 
-export const userSignInRequestAsync = createAsyncThunk(
-  'me/SignIn',
-  // eslint-disable-next-line consistent-return
-  async (payload: ILoginData, thunkAPI) => {
-    tokenCache.set({ token: '', expirationTime: 0 });
-    process.env.USERNAME = payload.email;
-    process.env.PASSWORD = payload.password;
+export const userSignInRequestAsync = createAsyncThunk<
+  ISungUpResponse,
+  ILoginData,
+  { rejectValue: string }
+>('me/SignIn', async (payload: ILoginData, { rejectWithValue }) => {
+  tokenCache.set({ token: '', expirationTime: 0 });
+  process.env.USERNAME = payload.email;
+  process.env.PASSWORD = payload.password;
 
-    try {
-      return await getApiRoot()
-        .withProjectKey({ projectKey: apiConfig.projectKey })
-        .me()
-        .login()
-        .post({
-          body: {
-            ...payload
-          }
-        })
-        .execute()
-        .then(
-          ({
-            body: { customer, cart }
-          }: ClientResponse<CustomerSignInResult>): CustomerSignInResult => {
-            return {
-              customer,
-              cart
-            };
-          }
-        )
-        .catch(({ body }) => {
-          return thunkAPI.rejectWithValue(body.errors?.[0].code);
-        });
-    } catch (error) {
-      console.log(error);
+  try {
+    return await getApiRoot()
+      .withProjectKey({ projectKey: apiConfig.projectKey })
+      .me()
+      .login()
+      .post({
+        body: {
+          ...payload
+        }
+      })
+      .execute()
+      .then(
+        ({ body: { customer, cart } }: ClientResponse<CustomerSignInResult>): ISungUpResponse => {
+          return {
+            customer: getCustomerFromResponse(customer),
+            cart
+          };
+        }
+      )
+      .catch(({ body }) => {
+        return rejectWithValue(body.errors?.[0].code);
+      });
+  } catch (error) {
+    let message = 'Unknown Error';
+    if (error instanceof Error) {
+      message = error.message;
     }
+    return rejectWithValue(message);
   }
-);
+});
 
 export const getMeRequestAsync = createAsyncThunk(
   'me/GetUser',
   async (args, { rejectWithValue }) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .me()
-      .get()
-      .execute()
-      .then(({ body }) => body)
-      .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .me()
+        .get()
+        .execute()
+        .then(({ body }) => getCustomerFromResponse(body))
+        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
   }
 );
 
@@ -133,18 +160,7 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignUpRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      state.user.id = action.payload.customer.id;
-      state.user.firstName = action.payload.customer.firstName || '';
-      state.user.lastName = action.payload.customer.lastName || '';
-      state.user.email = action.payload.customer.email;
-      state.user.dateOfBirth =
-        action.payload.customer.dateOfBirth || new Date(0).toLocaleDateString();
-      state.user.addresses = action.payload.customer.addresses;
-      state.user.defaultShippingAddressId = action.payload.customer.defaultShippingAddressId || '';
-      state.user.defaultBillingAddressId = action.payload.customer.defaultBillingAddressId || '';
-      state.user.shippingAddressIds = action.payload.customer.shippingAddressIds || [];
-      state.user.billingAddressIds = action.payload.customer.billingAddressIds || [];
-      state.user.version = action.payload.customer.version;
+      state.user = action.payload.customer;
 
       tokenCache.set({
         token: '',
@@ -163,21 +179,7 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignInRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      if (action.payload) {
-        state.user.id = action.payload.customer.id;
-        state.user.firstName = action.payload.customer.firstName || '';
-        state.user.lastName = action.payload.customer.lastName || '';
-        state.user.email = action.payload.customer.email;
-        state.user.dateOfBirth =
-          action.payload.customer.dateOfBirth || new Date(0).toLocaleDateString();
-        state.user.addresses = action.payload.customer.addresses;
-        state.user.defaultShippingAddressId =
-          action.payload.customer.defaultShippingAddressId || '';
-        state.user.defaultBillingAddressId = action.payload.customer.defaultBillingAddressId || '';
-        state.user.shippingAddressIds = action.payload.customer.shippingAddressIds || [];
-        state.user.billingAddressIds = action.payload.customer.billingAddressIds || [];
-        state.user.version = action.payload.customer.version;
-      }
+      state.user = action.payload.customer;
     });
 
     builder.addCase(userSignInRequestAsync.rejected, (state, action) => {
@@ -191,17 +193,7 @@ export const userSlice = createSlice({
 
     builder.addCase(getMeRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      state.user.id = action.payload.id;
-      state.user.firstName = action.payload.firstName || '';
-      state.user.lastName = action.payload.lastName || '';
-      state.user.email = action.payload.email;
-      state.user.dateOfBirth = action.payload.dateOfBirth || new Date(0).toLocaleDateString();
-      state.user.addresses = action.payload.addresses;
-      state.user.defaultShippingAddressId = action.payload.defaultShippingAddressId || '';
-      state.user.defaultBillingAddressId = action.payload.defaultBillingAddressId || '';
-      state.user.shippingAddressIds = action.payload.shippingAddressIds || [];
-      state.user.billingAddressIds = action.payload.billingAddressIds || [];
-      state.user.version = action.payload.version;
+      state.user = action.payload;
     });
 
     builder.addCase(getMeRequestAsync.rejected, (state, action) => {
