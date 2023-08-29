@@ -3,7 +3,8 @@ import {
   BaseAddress,
   Cart,
   ClientResponse,
-  CustomerSignInResult
+  CustomerSignInResult,
+  MyCustomerUpdate
 } from '@commercetools/platform-sdk';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
@@ -32,6 +33,11 @@ interface IUserState {
   user: IUser;
 }
 
+interface ISungUpResponse {
+  customer: IUser;
+  cart: Cart | undefined;
+}
+
 const initialState: IUserState = {
   loading: false,
   error: '',
@@ -49,11 +55,6 @@ const initialState: IUserState = {
     version: 0
   }
 };
-
-interface ISungUpResponse {
-  customer: IUser;
-  cart: Cart | undefined;
-}
 
 export const userSignUpRequestAsync = createAsyncThunk<
   ISungUpResponse,
@@ -149,6 +150,27 @@ export const getMeRequestAsync = createAsyncThunk(
   }
 );
 
+export const updateMeRequestAsync = createAsyncThunk(
+  'me/UpdateMe',
+  async (payload: MyCustomerUpdate, { rejectWithValue }) => {
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .me()
+        .post({ body: { ...payload } })
+        .execute()
+        .then(({ body }) => getCustomerFromResponse(body))
+        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: 'userSlice',
   initialState,
@@ -197,6 +219,20 @@ export const userSlice = createSlice({
     });
 
     builder.addCase(getMeRequestAsync.rejected, (state, action) => {
+      state.loading = false;
+      state.error = `${action.payload}`;
+    });
+
+    builder.addCase(updateMeRequestAsync.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(updateMeRequestAsync.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+    });
+
+    builder.addCase(updateMeRequestAsync.rejected, (state, action) => {
       state.loading = false;
       state.error = `${action.payload}`;
     });

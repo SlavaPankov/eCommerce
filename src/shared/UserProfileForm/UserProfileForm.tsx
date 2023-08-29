@@ -12,18 +12,22 @@ import { calculateAge } from '../../utils/calculateAge';
 import { useUserData } from '../../hooks/useUserData';
 import { RegistrationAddress } from '../RegistrationForm/RagistrationAddress';
 import { BaseButton } from '../BaseButton';
+import { useAppDispatch } from '../../hooks/storeHooks';
+import { updateMeRequestAsync } from '../../store/user/userSlice';
+import { EUserActionTypes } from '../../types/enums/EUserActionTypes';
 
 interface IEditableInput {
   [k: string]: boolean;
 }
 
 export function UserProfileForm() {
+  const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
   const [isFormEditable] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isEditClicked] = useState<IEditableInput>({});
-  const [isUpdateSuccessfully] = useState<boolean>(true);
+  const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
+  const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
   const { user } = useUserData();
 
   useEffect(() => {
@@ -59,6 +63,22 @@ export function UserProfileForm() {
     [`${styles.edit_icon}`]: true,
     [`${styles.edit_icon_active}`]: isEditClicked
   });
+
+  const openModalOnSuccess = (payload: { type: string }, fieldName: string) => {
+    setIsModalOpen(true);
+
+    if (payload.type.includes('rejected')) {
+      console.log('here');
+      setIsUpdateSuccessfully(false);
+      return;
+    }
+
+    setIsUpdateSuccessfully(true);
+    setIsEditClicked({ ...isEditClicked, [fieldName]: false });
+    setTimeout(() => {
+      setIsModalOpen(false);
+    }, 1500);
+  };
 
   const validateInput = (element: HTMLInputElement) => {
     setFormError({ ...formError, [element.name]: '' });
@@ -127,7 +147,66 @@ export function UserProfileForm() {
   };
 
   const handleEditClick = (fieldName: string) => {
-    console.log(fieldName);
+    if (!isEditClicked[fieldName]) {
+      setIsEditClicked({ ...isEditClicked, [fieldName]: true });
+    } else if (!formError[fieldName]) {
+      switch (fieldName) {
+        case EFieldsNames.firstName:
+          dispatch(
+            updateMeRequestAsync({
+              version: user.version,
+              actions: [
+                {
+                  action: EUserActionTypes.setFirstName,
+                  firstName: formData[fieldName]
+                }
+              ]
+            })
+          ).then((payload) => openModalOnSuccess(payload, fieldName));
+          break;
+        case EFieldsNames.lastName:
+          dispatch(
+            updateMeRequestAsync({
+              version: user.version,
+              actions: [
+                {
+                  action: EUserActionTypes.setLastName,
+                  lastName: formData[fieldName]
+                }
+              ]
+            })
+          ).then((payload) => openModalOnSuccess(payload, fieldName));
+          break;
+        case EFieldsNames.birthDate:
+          dispatch(
+            updateMeRequestAsync({
+              version: user.version,
+              actions: [
+                {
+                  action: EUserActionTypes.setDateOfBirth,
+                  dateOfBirth: formData[fieldName]
+                }
+              ]
+            })
+          ).then((payload) => openModalOnSuccess(payload, fieldName));
+          break;
+        case EFieldsNames.email:
+          dispatch(
+            updateMeRequestAsync({
+              version: user.version,
+              actions: [
+                {
+                  action: EUserActionTypes.changeEmail,
+                  email: formData[fieldName]
+                }
+              ]
+            })
+          ).then((payload) => openModalOnSuccess(payload, fieldName));
+          break;
+        default:
+          break;
+      }
+    }
   };
 
   return (
@@ -147,7 +226,9 @@ export function UserProfileForm() {
             isDisabled={!isEditClicked[EFieldsNames.firstName] || false}
             label="Имя"
           />
-          <div className={editIconClassName} onClick={() => handleEditClick('firstName')}>
+          <div
+            className={editIconClassName}
+            onClick={() => handleEditClick(EFieldsNames.firstName)}>
             {isEditClicked[EFieldsNames.firstName] && !formError[EFieldsNames.firstName] ? (
               <ConfirmIcon />
             ) : (
@@ -215,7 +296,7 @@ export function UserProfileForm() {
             )}
           </div>
         </div>
-        <h2 className={styles.form__subtitle}>Смена пароля</h2>
+        <h2 className={styles.form__subtitle}>Сменить пароль</h2>
         <BaseInputField
           isRequired={true}
           name={EFieldsNames.password}
