@@ -6,7 +6,7 @@ import {
   CustomerSignInResult,
   MyCustomerUpdate
 } from '@commercetools/platform-sdk';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
 import { apiConfig } from '../../cfg/apiConfig';
 import { ILoginData } from '../../types/interfaces/ILoginData';
@@ -174,7 +174,13 @@ export const updateMeRequestAsync = createAsyncThunk(
 export const userSlice = createSlice({
   name: 'userSlice',
   initialState,
-  reducers: {},
+  reducers: {
+    removeAddress: (state, action: PayloadAction<string>) => {
+      state.user.addresses = state.user.addresses.filter(
+        (address) => address.id !== action.payload
+      );
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(userSignUpRequestAsync.pending, (state) => {
       state.loading = true;
@@ -238,5 +244,7 @@ export const userSlice = createSlice({
     });
   }
 });
+
+export const { removeAddress } = userSlice.actions;
 
 export default userSlice.reducer;

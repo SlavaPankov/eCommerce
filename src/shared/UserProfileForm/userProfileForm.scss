@@ -1,13 +1,14 @@
 @import '../../styles/mixins/breakpoints';
 
+.container {
+  padding-bottom: 70px !important;
+}
+
 .form {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   gap: 20px;
-  max-width: 620px;
-  margin: 0 auto;
-  padding-bottom: 70px !important;
 
   &__header {
     color: var(--black, #333);
@@ -57,11 +58,11 @@
   top: 50%;
   opacity: 0.7;
   cursor: pointer;
-  transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
   transform: translateY(-50%);
 
   & path {
-    fill: $primary_light;
+    fill: $primary;
   }
 
   &_active path {

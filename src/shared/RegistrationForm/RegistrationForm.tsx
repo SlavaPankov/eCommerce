@@ -16,6 +16,7 @@ import { setCartData } from '../../store/cart/cartSlice';
 import { Modal } from '../Modal';
 import { ElephantIcon } from '../Icons';
 import { calculateAge } from '../../utils/calculateAge';
+import { createObjectFromFormData } from '../../utils/createObjectFromFormData';
 
 enum EFieldsNames {
   firstName = 'firstName',
@@ -177,21 +178,8 @@ export function RegistrationForm() {
     const tempAddresses: Array<{ [k: string]: string }> = [];
 
     renderAddress.forEach((item, index) => {
-      tempAddresses.push(
-        Object.fromEntries(
-          Object.entries(dataObject)
-            .filter(
-              ([key, value]) =>
-                key.includes(index.toString()) ||
-                (key === 'defaultShipping' && Number(value) === index) ||
-                (key === 'defaultBilling' && Number(value) === index)
-            )
-            .map(([key, value]) => [key.split('_')[0], value.toString()])
-        )
-      );
+      tempAddresses.push(createObjectFromFormData(dataObject, index));
     });
-
-    console.log(tempAddresses);
 
     const customerDraft: ICustomerDraft = {
       email: dataObject.email.toString(),

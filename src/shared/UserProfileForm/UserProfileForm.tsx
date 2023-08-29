@@ -10,11 +10,11 @@ import { Modal } from '../Modal';
 import { ConfirmIcon, EditIcon, ElephantIcon } from '../Icons';
 import { calculateAge } from '../../utils/calculateAge';
 import { useUserData } from '../../hooks/useUserData';
-import { RegistrationAddress } from '../RegistrationForm/RagistrationAddress';
 import { BaseButton } from '../BaseButton';
 import { useAppDispatch } from '../../hooks/storeHooks';
 import { updateMeRequestAsync } from '../../store/user/userSlice';
 import { EUserActionTypes } from '../../types/enums/EUserActionTypes';
+import { UserAddressForm } from './UserAddressForm';
 
 interface IEditableInput {
   [k: string]: boolean;
@@ -24,11 +24,10 @@ export function UserProfileForm() {
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
-  const [isFormEditable] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
   const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
-  const { user } = useUserData();
+  const { user, loading } = useUserData();
 
   useEffect(() => {
     if (!user.id) {
@@ -55,8 +54,8 @@ export function UserProfileForm() {
     });
   }, [user]);
 
-  const formClassName = classNames('container', {
-    [`${styles.form}`]: true
+  const containerClassName = classNames('container', {
+    [`${styles.container}`]: true
   });
 
   const editIconClassName = classNames({
@@ -211,132 +210,119 @@ export function UserProfileForm() {
 
   return (
     <section>
-      <form className={formClassName}>
-        <h1 className={styles.form__header}>Личный кабинет</h1>
-        <h2 className={styles.form__subtitle}>Информация о пользователе</h2>
-        <div className={styles.form__input_wrapper}>
-          <BaseInputField
-            isRequired={true}
-            name={EFieldsNames.firstName}
-            value={formData[EFieldsNames.firstName] || ''}
-            type="text"
-            placeholder="Ваше имя*"
-            onChange={handleChange}
-            error={formError.firstName}
-            isDisabled={!isEditClicked[EFieldsNames.firstName] || false}
-            label="Имя"
-          />
-          <div
-            className={editIconClassName}
-            onClick={() => handleEditClick(EFieldsNames.firstName)}>
-            {isEditClicked[EFieldsNames.firstName] && !formError[EFieldsNames.firstName] ? (
-              <ConfirmIcon />
-            ) : (
-              !formError[EFieldsNames.firstName] && <EditIcon />
-            )}
-          </div>
-        </div>
-        <div className={styles.form__input_wrapper}>
-          <BaseInputField
-            isRequired={true}
-            name={EFieldsNames.lastName}
-            value={formData[EFieldsNames.lastName] || ''}
-            type="text"
-            placeholder="Ваша фамилия*"
-            onChange={handleChange}
-            error={formError.lastName}
-            isDisabled={!isEditClicked[EFieldsNames.lastName] || false}
-            label="Фамилия"
-          />
-          <div className={editIconClassName} onClick={() => handleEditClick('lastName')}>
-            {isEditClicked[EFieldsNames.lastName] && !formError[EFieldsNames.lastName] ? (
-              <ConfirmIcon />
-            ) : (
-              !formError[EFieldsNames.lastName] && <EditIcon />
-            )}
-          </div>
-        </div>
-        <div className={styles.form__input_wrapper}>
-          <BaseInputField
-            isRequired={true}
-            name={EFieldsNames.birthDate}
-            value={formData[EFieldsNames.birthDate] || ''}
-            type="date"
-            placeholder="Дата рождения*"
-            onChange={handleChange}
-            error={formError.dateOfBirth}
-            isDisabled={!isEditClicked[EFieldsNames.birthDate] || false}
-            label="Дата рождения"
-          />
-          <div className={editIconClassName} onClick={() => handleEditClick('dateOfBirth')}>
-            {isEditClicked[EFieldsNames.birthDate] && !formError[EFieldsNames.birthDate] ? (
-              <ConfirmIcon />
-            ) : (
-              !formError[EFieldsNames.birthDate] && <EditIcon />
-            )}
-          </div>
-        </div>
-        <div className={styles.form__input_wrapper}>
-          <BaseInputField
-            isRequired={true}
-            name={EFieldsNames.email}
-            value={formData[EFieldsNames.email] || ''}
-            type="text"
-            placeholder="Ваш e-mail*"
-            onChange={handleChange}
-            error={formError.email}
-            isDisabled={!isEditClicked[EFieldsNames.email] || false}
-            label="E-mail"
-          />
-          <div className={editIconClassName} onClick={() => handleEditClick('email')}>
-            {isEditClicked[EFieldsNames.email] && !formError[EFieldsNames.email] ? (
-              <ConfirmIcon />
-            ) : (
-              !formError[EFieldsNames.email] && <EditIcon />
-            )}
-          </div>
-        </div>
-        <h2 className={styles.form__subtitle}>Сменить пароль</h2>
-        <BaseInputField
-          isRequired={true}
-          name={EFieldsNames.password}
-          value={formData[EFieldsNames.password] || ''}
-          type="password"
-          placeholder="Ваш текущий пароль*"
-          onChange={handleChange}
-          error={formError.password}
-        />
-        <BaseInputField
-          isRequired={true}
-          name={EFieldsNames.newPassword}
-          value={formData[EFieldsNames.newPassword] || ''}
-          type="password"
-          placeholder="Новый пароль*"
-          onChange={handleChange}
-          error={formError.newPassword}
-        />
-        <BaseButton textContent="Обновить пароль" />
-        <h2 className={styles.form__subtitle}>Адреса</h2>
-        {user.addresses.map((address, index) => {
-          return (
-            <RegistrationAddress
-              key={address.id}
-              formData={formData}
-              setFormData={setFormData}
-              formError={formError}
-              setFormError={setFormError}
-              addressCount={3}
-              setAddressCount={() => {}}
-              index={index}
-              isShipping={user.shippingAddressIds.includes(address.id || '')}
-              isBilling={user.billingAddressIds.includes(address.id || '')}
-              isDefaultShipping={user.defaultShippingAddressId === address.id}
-              isDefaultBilling={user.defaultBillingAddressId === address.id}
-              isEditable={isFormEditable}
+      <div className={containerClassName}>
+        <form className={styles.form}>
+          <h1 className={styles.form__header}>Личный кабинет</h1>
+          <h2 className={styles.form__subtitle}>Информация о пользователе</h2>
+          <div className={styles.form__input_wrapper}>
+            <BaseInputField
+              isRequired={true}
+              name={EFieldsNames.firstName}
+              value={formData[EFieldsNames.firstName] || ''}
+              type="text"
+              placeholder="Ваше имя*"
+              onChange={handleChange}
+              error={formError.firstName}
+              isDisabled={!isEditClicked[EFieldsNames.firstName] || false}
+              label="Имя"
             />
-          );
-        })}
-      </form>
+            <div
+              className={editIconClassName}
+              onClick={() => handleEditClick(EFieldsNames.firstName)}>
+              {isEditClicked[EFieldsNames.firstName] && !formError[EFieldsNames.firstName] ? (
+                <ConfirmIcon />
+              ) : (
+                !formError[EFieldsNames.firstName] && <EditIcon />
+              )}
+            </div>
+          </div>
+          <div className={styles.form__input_wrapper}>
+            <BaseInputField
+              isRequired={true}
+              name={EFieldsNames.lastName}
+              value={formData[EFieldsNames.lastName] || ''}
+              type="text"
+              placeholder="Ваша фамилия*"
+              onChange={handleChange}
+              error={formError.lastName}
+              isDisabled={!isEditClicked[EFieldsNames.lastName] || false}
+              label="Фамилия"
+            />
+            <div className={editIconClassName} onClick={() => handleEditClick('lastName')}>
+              {isEditClicked[EFieldsNames.lastName] && !formError[EFieldsNames.lastName] ? (
+                <ConfirmIcon />
+              ) : (
+                !formError[EFieldsNames.lastName] && <EditIcon />
+              )}
+            </div>
+          </div>
+          <div className={styles.form__input_wrapper}>
+            <BaseInputField
+              isRequired={true}
+              name={EFieldsNames.birthDate}
+              value={formData[EFieldsNames.birthDate] || ''}
+              type="date"
+              placeholder="Дата рождения*"
+              onChange={handleChange}
+              error={formError.dateOfBirth}
+              isDisabled={!isEditClicked[EFieldsNames.birthDate] || false}
+              label="Дата рождения"
+            />
+            <div className={editIconClassName} onClick={() => handleEditClick('dateOfBirth')}>
+              {isEditClicked[EFieldsNames.birthDate] && !formError[EFieldsNames.birthDate] ? (
+                <ConfirmIcon />
+              ) : (
+                !formError[EFieldsNames.birthDate] && <EditIcon />
+              )}
+            </div>
+          </div>
+          <div className={styles.form__input_wrapper}>
+            <BaseInputField
+              isRequired={true}
+              name={EFieldsNames.email}
+              value={formData[EFieldsNames.email] || ''}
+              type="text"
+              placeholder="Ваш e-mail*"
+              onChange={handleChange}
+              error={formError.email}
+              isDisabled={!isEditClicked[EFieldsNames.email] || false}
+              label="E-mail"
+            />
+            <div className={editIconClassName} onClick={() => handleEditClick('email')}>
+              {isEditClicked[EFieldsNames.email] && !formError[EFieldsNames.email] ? (
+                <ConfirmIcon />
+              ) : (
+                !formError[EFieldsNames.email] && <EditIcon />
+              )}
+            </div>
+          </div>
+          <h2 className={styles.form__subtitle}>Сменить пароль</h2>
+          <BaseInputField
+            isRequired={true}
+            name={EFieldsNames.password}
+            value={formData[EFieldsNames.password] || ''}
+            type="password"
+            placeholder="Ваш текущий пароль*"
+            onChange={handleChange}
+            error={formError.password}
+          />
+          <BaseInputField
+            isRequired={true}
+            name={EFieldsNames.newPassword}
+            value={formData[EFieldsNames.newPassword] || ''}
+            type="password"
+            placeholder="Новый пароль*"
+            onChange={handleChange}
+            error={formError.newPassword}
+          />
+          <BaseButton textContent="Обновить пароль" />
+        </form>
+        <h2 className={styles.form__subtitle}>Адреса</h2>
+        {!loading &&
+          user.addresses.map((address, index) => {
+            return <UserAddressForm key={index} addressId={address.id || ''} user={user} />;
+          })}
+      </div>
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
           <article className={styles.modal}>

@@ -74,6 +74,16 @@ export function RegistrationAddress({
   const [selectedCountry, setSelectedCountry] = useState('Выберите*');
 
   useEffect(() => {
+    setCheckboxData({
+      ...checkboxData,
+      defaultShipping: isDefaultShipping,
+      defaultBilling: isDefaultBilling,
+      [`typeShipping_${index}`]: isShipping,
+      [`typeBilling_${index}`]: isBilling
+    });
+  }, [isShipping, isBilling]);
+
+  useEffect(() => {
     if (formData[`${EFieldsNames.country}_${index}`]) {
       const countryMatch = countries.find(
         (country) => country.value === formData[`${EFieldsNames.country}_${index}`]
