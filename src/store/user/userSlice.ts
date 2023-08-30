@@ -4,6 +4,7 @@ import {
   Cart,
   ClientResponse,
   CustomerSignInResult,
+  MyCustomerChangePassword,
   MyCustomerUpdate
 } from '@commercetools/platform-sdk';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
@@ -171,6 +172,32 @@ export const updateMeRequestAsync = createAsyncThunk(
   }
 );
 
+export const changePasswordRequestAsync = createAsyncThunk(
+  'me/ChangePassword',
+  async (payload: MyCustomerChangePassword, { rejectWithValue }) => {
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .me()
+        .password()
+        .post({
+          body: {
+            ...payload
+          }
+        })
+        .execute()
+        .then(({ body }) => getCustomerFromResponse(body))
+        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: 'userSlice',
   initialState,
@@ -252,6 +279,20 @@ export const userSlice = createSlice({
     });
 
     builder.addCase(updateMeRequestAsync.rejected, (state, action) => {
+      state.loading = false;
+      state.error = `${action.payload}`;
+    });
+
+    builder.addCase(changePasswordRequestAsync.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(changePasswordRequestAsync.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+    });
+
+    builder.addCase(changePasswordRequestAsync.rejected, (state, action) => {
       state.loading = false;
       state.error = `${action.payload}`;
     });

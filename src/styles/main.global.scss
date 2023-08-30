@@ -209,4 +209,9 @@ input[type='number']::-webkit-inner-spin-button {
   }
 }
 
+fieldset {
+  padding: 0;
+  border: none;
+}
+
 @import 'fonts';

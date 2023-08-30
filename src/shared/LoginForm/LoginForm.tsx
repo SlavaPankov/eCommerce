@@ -6,11 +6,12 @@ import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import EyeIcon from '../Icons/EyeIcon/EyeIcon';
 import { EErrorText } from '../../types/enums/EErrorText';
-import { emailRegex, passwordRegex } from '../../utils/validationRegex';
+import { emailRegex } from '../../utils/validationRegex';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { userSignInRequestAsync } from '../../store/user/userSlice';
 import { setCartData } from '../../store/cart/cartSlice';
 import { ERoutes } from '../../types/enums/ERoutes';
+import { validatePassword } from '../../utils/validatePassword';
 
 enum EFormFieldsNames {
   email = 'email',
@@ -88,18 +89,6 @@ export function LoginForm() {
   const validateEmail = (input: string): string => {
     if (!emailRegex.test(input)) {
       return EErrorText.emailFormat;
-    }
-
-    return '';
-  };
-
-  const validatePassword = (input: string): string => {
-    if (!passwordRegex.test(input)) {
-      return EErrorText.passwordFormat;
-    }
-
-    if (input.length < 8) {
-      return EErrorText.passwordMinLength;
     }
 
     return '';

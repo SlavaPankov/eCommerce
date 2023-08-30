@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import styles from './userProfileForm.scss';
 import { BaseInputField } from '../BaseInputField';
@@ -12,9 +12,14 @@ import { calculateAge } from '../../utils/calculateAge';
 import { useUserData } from '../../hooks/useUserData';
 import { BaseButton } from '../BaseButton';
 import { useAppDispatch } from '../../hooks/storeHooks';
-import { addAddress, updateMeRequestAsync } from '../../store/user/userSlice';
+import {
+  addAddress,
+  changePasswordRequestAsync,
+  updateMeRequestAsync
+} from '../../store/user/userSlice';
 import { EUserActionTypes } from '../../types/enums/EUserActionTypes';
 import { UserAddressForm } from './UserAddressForm';
+import { validatePassword } from '../../utils/validatePassword';
 
 interface IEditableInput {
   [k: string]: boolean;
@@ -23,11 +28,14 @@ interface IEditableInput {
 export function UserProfileForm() {
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<IFormData>({});
+  const [passwordFormData, setPasswordFormData] = useState<IFormData>({});
+  const [passwordFormError, setPasswordFormError] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
   const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
   const [addressId, setAddressId] = useState<number>(0);
+  const [isPasswordFormDisabled, setIsPasswordFormDisabled] = useState<boolean>(true);
   const { user } = useUserData();
 
   useEffect(() => {
@@ -143,6 +151,46 @@ export function UserProfileForm() {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     validateInput(event.target);
     setFormData({ ...formData, [event?.target.name]: event.target.value });
+  };
+
+  const handleChangePassword = (event: ChangeEvent<HTMLInputElement>) => {
+    if (
+      event.target.name === EFieldsNames.password ||
+      event.target.name === EFieldsNames.newPassword
+    ) {
+      setPasswordFormError({
+        ...passwordFormError,
+        [event.target.name]: validatePassword(event.target.value)
+      });
+    }
+
+    setPasswordFormData({
+      ...passwordFormData,
+      [event.target.name]: event.target.value
+    });
+  };
+
+  const handleBlur = (event: FormEvent<HTMLInputElement>) => {
+    if (event.currentTarget.value === '') {
+      setPasswordFormError({
+        ...passwordFormError,
+        [event.currentTarget.name]: EErrorText.requiredField
+      });
+    }
+  };
+
+  const handleSubmitPassword = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const data = Object.fromEntries(new FormData(event.currentTarget));
+
+    dispatch(
+      changePasswordRequestAsync({
+        version: user.version,
+        currentPassword: data[EFieldsNames.password] as string,
+        newPassword: data[EFieldsNames.newPassword] as string
+      })
+    );
   };
 
   const handleEditClick = (fieldName: string) => {
@@ -308,26 +356,41 @@ export function UserProfileForm() {
               )}
             </div>
           </div>
-          <h2 className={styles.form__subtitle}>Сменить пароль</h2>
-          <BaseInputField
-            isRequired={true}
-            name={EFieldsNames.password}
-            value={formData[EFieldsNames.password] || ''}
-            type="password"
-            placeholder="Ваш текущий пароль*"
-            onChange={handleChange}
-            error={formError.password}
-          />
-          <BaseInputField
-            isRequired={true}
-            name={EFieldsNames.newPassword}
-            value={formData[EFieldsNames.newPassword] || ''}
-            type="password"
-            placeholder="Новый пароль*"
-            onChange={handleChange}
-            error={formError.newPassword}
-          />
-          <BaseButton textContent="Обновить пароль" />
+        </form>
+        <form className={styles.form} onSubmit={handleSubmitPassword}>
+          <div className={styles.head}>
+            <h2 className={styles.form__subtitle}>Сменить пароль</h2>
+            <div className={styles.head_edit} onClick={() => setIsPasswordFormDisabled(false)}>
+              <EditIcon />
+            </div>
+          </div>
+          <fieldset className={styles.fieldset} disabled={isPasswordFormDisabled}>
+            <div className={styles.form__input_wrapper}>
+              <BaseInputField
+                isRequired={true}
+                name={EFieldsNames.password}
+                value={passwordFormData[EFieldsNames.password] || ''}
+                type="password"
+                placeholder="Текущий пароль*"
+                onChange={handleChangePassword}
+                error={passwordFormError.password}
+                onBlur={handleBlur}
+              />
+            </div>
+            <div className={styles.form__input_wrapper}>
+              <BaseInputField
+                isRequired={true}
+                name={EFieldsNames.newPassword}
+                value={passwordFormData[EFieldsNames.newPassword] || ''}
+                type="password"
+                placeholder="Новый пароль*"
+                onChange={handleChangePassword}
+                error={passwordFormError.newPassword}
+                onBlur={handleBlur}
+              />
+            </div>
+            <BaseButton textContent="Обновить пароль" />
+          </fieldset>
         </form>
         <h2 className={styles.form__subtitle}>Адреса</h2>
         {user.addresses.map((address, index) => {
