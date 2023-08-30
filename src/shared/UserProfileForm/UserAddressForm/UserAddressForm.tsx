@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
-import { MyCustomerUpdateAction } from '@commercetools/platform-sdk';
+import { Customer, MyCustomerUpdateAction } from '@commercetools/platform-sdk';
 import { IFormData } from '../../../types/interfaces/IFormData';
 import { IUser } from '../../../types/interfaces/IUser';
 import { RegistrationAddress } from '../../RegistrationForm/RagistrationAddress';
@@ -13,6 +13,7 @@ import { createAddressFromForm } from '../../../utils/createAddressFromForm';
 import { EUserActionTypes } from '../../../types/enums/EUserActionTypes';
 import { useAppDispatch } from '../../../hooks/storeHooks';
 import { createObjectFromFormData } from '../../../utils/createObjectFromFormData';
+import { EErrorText } from '../../../types/enums/EErrorText';
 
 interface IUserAddressFormProps {
   addressId: string;
@@ -24,6 +25,7 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
   const ref = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
+  const [globalFormError, setGlobalFormError] = useState<string>('');
   const [isFormEditable, setIsFormEditable] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState<boolean>(false);
@@ -37,7 +39,7 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
   const [isNewAddress, setIsNewAddress] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!addressId || !user.id) {
+    if (!addressId || !user.id || !Number.isNaN(Number(addressId))) {
       setIsNewAddress(true);
       return;
     }
@@ -64,32 +66,64 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
     }
   }, [isNewAddress]);
 
-  const handleClickConfirm = () => {
-    dispatch(removeAddress(addressId));
-    dispatch(
-      updateMeRequestAsync({
-        version: user.version,
-        actions: [
-          {
-            action: EUserActionTypes.removeAddress,
-            addressId
-          }
-        ]
-      })
-    ).then((payload) => {
-      setIsUpdateModalOpen(true);
+  const isFormValid = () => {
+    let flag = true;
+    const requiredFields =
+      ref.current?.querySelectorAll<HTMLInputElement>('[data-required="true"]');
 
-      if (payload.type.includes('rejected')) {
-        setIsUpdateSuccessfully(false);
-        return;
+    if (!requiredFields) {
+      return flag;
+    }
+
+    for (let i = 0; i < requiredFields.length; i += 1) {
+      const item = requiredFields[i];
+      flag = item.value !== '';
+
+      if (!flag) {
+        return flag;
       }
+    }
 
-      setIsUpdateSuccessfully(true);
-      setIsFormEditable(false);
-      setTimeout(() => {
-        setIsUpdateModalOpen(false);
-      }, 1500);
+    Object.values(formError).forEach((errorValue) => {
+      flag = !errorValue;
     });
+
+    return flag;
+  };
+
+  const handleClickConfirm = () => {
+    if (!addressId) {
+      return;
+    }
+
+    dispatch(removeAddress(addressId));
+    if (!isNewAddress) {
+      dispatch(
+        updateMeRequestAsync({
+          version: user.version,
+          actions: [
+            {
+              action: EUserActionTypes.removeAddress,
+              addressId
+            }
+          ]
+        })
+      ).then((payload) => {
+        setIsUpdateModalOpen(true);
+
+        if (payload.type.includes('rejected')) {
+          setIsUpdateSuccessfully(false);
+          return;
+        }
+
+        setIsUpdateSuccessfully(true);
+        setIsFormEditable(false);
+        setTimeout(() => {
+          setIsUpdateModalOpen(false);
+        }, 1500);
+      });
+    }
+
     setIsModalOpen(false);
   };
 
@@ -104,8 +138,31 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
   const handleClickEdit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsFormEditable(true);
+    setGlobalFormError('');
 
     if (isFormEditable) {
+      if (!isFormValid()) {
+        const tempError: IFormData = {};
+        const requiredFields =
+          ref.current?.querySelectorAll<HTMLInputElement>('[data-required="true"]');
+
+        if (!requiredFields) {
+          return;
+        }
+
+        requiredFields.forEach((item) => {
+          if (item.value === '') {
+            tempError[item.name] = EErrorText.requiredField;
+          }
+        });
+        setFormError({
+          ...formError,
+          ...tempError
+        });
+        setGlobalFormError('Заполните все обязательные поля');
+        return;
+      }
+
       const dataObject = Object.fromEntries(new FormData(event.currentTarget));
       const addressData = createObjectFromFormData(dataObject);
 
@@ -183,8 +240,7 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
           }, 1500);
         });
       } else {
-        console.log('now we save it');
-        dispatch(
+        const response = await dispatch(
           updateMeRequestAsync({
             version: user.version,
             actions: [
@@ -195,6 +251,66 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
             ]
           })
         );
+
+        if (!response.type.includes('reject')) {
+          const customer = response.payload as Customer;
+          const actions: Array<MyCustomerUpdateAction> = [];
+          const lastAddedAddress = [...customer.addresses].pop();
+
+          if (lastAddedAddress) {
+            Object.entries(addressData).forEach(([key]) => {
+              switch (key) {
+                case 'typeBilling':
+                  actions.push({
+                    action: EUserActionTypes.addBillingAddressId,
+                    addressId: lastAddedAddress.id
+                  });
+                  break;
+                case 'typeShipping':
+                  actions.push({
+                    action: EUserActionTypes.addShippingAddressId,
+                    addressId: lastAddedAddress.id
+                  });
+                  break;
+                case 'defaultBilling':
+                  actions.push({
+                    action: EUserActionTypes.setDefaultBillingAddress,
+                    addressId: lastAddedAddress.id
+                  });
+                  break;
+                case 'defaultShipping':
+                  actions.push({
+                    action: EUserActionTypes.setDefaultShippingAddress,
+                    addressId: lastAddedAddress.id
+                  });
+                  break;
+                default:
+                  break;
+              }
+            });
+
+            dispatch(
+              updateMeRequestAsync({
+                version: customer.version,
+                actions
+              })
+            ).then((payload) => {
+              setIsUpdateModalOpen(true);
+
+              if (payload.type.includes('rejected')) {
+                setIsUpdateSuccessfully(false);
+                return;
+              }
+
+              setIsUpdateSuccessfully(true);
+              setIsFormEditable(false);
+              setIsNewAddress(false);
+              setTimeout(() => {
+                setIsUpdateModalOpen(false);
+              }, 1500);
+            });
+          }
+        }
       }
     }
   };
@@ -219,8 +335,9 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
           isDefaultBilling={user.defaultBillingAddressId === addressId}
         />
       </fieldset>
+      {globalFormError ? <span className={styles.error}>{globalFormError}</span> : null}
       {isModalOpen && (
-        <Modal>
+        <Modal onClose={() => setIsModalOpen(false)}>
           <article className={styles.modal}>
             <ElephantIcon />
             <h6 className={styles.modal_title}>Удалить адрес?</h6>

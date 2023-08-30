@@ -181,9 +181,9 @@ export const userSlice = createSlice({
       );
     },
 
-    addAddress: (state) => {
+    addAddress: (state, action: PayloadAction<string>) => {
       state.user.addresses.push({
-        id: '',
+        id: action.payload,
         streetName: '',
         postalCode: '',
         city: '',

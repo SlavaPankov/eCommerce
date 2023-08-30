@@ -27,6 +27,7 @@ export function UserProfileForm() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isEditClicked, setIsEditClicked] = useState<IEditableInput>({});
   const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
+  const [addressId, setAddressId] = useState<number>(0);
   const { user } = useUserData();
 
   useEffect(() => {
@@ -208,8 +209,16 @@ export function UserProfileForm() {
   };
 
   const handleClickAddAddress = () => {
-    dispatch(addAddress());
+    setAddressId(addressId + 1);
   };
+
+  useEffect(() => {
+    if (addressId === 0) {
+      return;
+    }
+
+    dispatch(addAddress(`${addressId}`));
+  }, [addressId]);
 
   return (
     <section>
