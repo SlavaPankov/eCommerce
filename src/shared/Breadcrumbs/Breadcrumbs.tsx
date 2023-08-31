@@ -6,6 +6,7 @@ import styles from './breadcrumbs.scss';
 
 export function Breadcrumbs() {
   const { categories } = useAppSelector((state) => state.categories);
+  const { product } = useAppSelector((state) => state.product);
   const matches = useMatches();
   const crumbs = matches.filter((match) =>
     Boolean((match.handle as { [k: string]: () => string })?.crumb)
@@ -19,6 +20,11 @@ export function Breadcrumbs() {
     <nav className={className}>
       <ul className={styles.list}>
         {crumbs.map((crumb, index) => {
+          const crumbClassName = classNames({
+            [`${styles.item}`]: true,
+            [`${styles.active}`]: index === crumbs.length - 1
+          });
+
           if (/\/catalog\/[a-z]/gi.test(crumb.pathname)) {
             const currentCategory = categories.find(
               (category) => category.slug === crumb.params.id
@@ -30,10 +36,30 @@ export function Breadcrumbs() {
             }
           }
 
-          const crumbClassName = classNames({
-            [`${styles.item}`]: true,
-            [`${styles.active}`]: index === crumbs.length - 1
-          });
+          if (/\/product\/[a-z]/gi.test(crumb.pathname)) {
+            if (product && categories) {
+              const [currentCategory] = product.categories
+                .map((productCategory) => {
+                  return categories.find((category) => category.id === productCategory.id);
+                })
+                .filter((item) => item);
+
+              if (currentCategory) {
+                return (
+                  <li className={styles.product} key={index}>
+                    <div className={styles.item}>
+                      <NavLink to={`/catalog/${currentCategory.slug}`}>
+                        {currentCategory.name}
+                      </NavLink>
+                    </div>
+                    <div key={product.key} className={crumbClassName}>
+                      {product.name}
+                    </div>
+                  </li>
+                );
+              }
+            }
+          }
 
           if (index === crumbs.length - 1) {
             return (
