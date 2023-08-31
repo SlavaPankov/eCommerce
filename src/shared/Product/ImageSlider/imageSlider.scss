@@ -27,5 +27,53 @@
   max-width: 1000px;
   background-color: $white;
   border-radius: 10px;
-  padding: 50px;
+  padding: 35px;
+}
+
+@include tablet {
+  .container {
+    grid-area: 1 / 1 / 2 / 6;
+  }
+
+  .thumbSwiper {
+    grid-area: 2 / 1 / 3 / 6;
+  }
+
+  .modal_container {
+    max-width: 952px;
+    background-color: $white;
+    border-radius: 10px;
+    padding: 25px;
+  }
+}
+@include small-tablet {
+  .container {
+    grid-area: 1 / 1 / 3 / 7;
+  }
+
+  .thumbSwiper {
+    grid-area: 3 / 1 / 7 / 3;
+  }
+}
+@include mobile {
+  .container {
+    grid-area: 1 / 1 / 3 / 7;
+  }
+
+  .thumbSwiper {
+    grid-area: 2 / 1 / 3 / 7;
+  }
+
+  .swiper {
+    background-color: $grey_light;
+    box-sizing: border-box !important;
+    padding: 10px 25px;
+  }
+
+  .modal_container {
+    max-width: 296px;
+    background-color: $white;
+    border-radius: 10px;
+    padding: 5px;
+  }
 }

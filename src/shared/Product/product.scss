@@ -6,3 +6,29 @@
   gap: 16px 32px;
   padding-bottom: 70px !important;
 }
+@include tablet {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 16px 32px;
+    padding-bottom: 70px !important;
+  }
+}
+
+@include small-tablet {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px 32px;
+    padding-bottom: 70px !important;
+  }
+}
+
+@include mobile {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px 32px;
+    padding-bottom: 70px !important;
+  }
+}
