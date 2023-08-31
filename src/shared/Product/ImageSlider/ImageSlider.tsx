@@ -14,9 +14,12 @@ interface ISlider {
 export function ImageSlider({ images }: ISlider) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
+  const [thumbsSwiperModal, setThumbsSwiperModal] = useState<SwiperType | null>(null);
 
   const handleClose = () => {
     setIsModalOpen(false);
+    thumbsSwiperModal?.destroy();
+    setThumbsSwiperModal(null);
   };
 
   const handleClickSlider = () => {
@@ -53,7 +56,7 @@ export function ImageSlider({ images }: ISlider) {
       {isModalOpen && (
         <Modal onClose={handleClose}>
           <div className={styles.modal_container}>
-            <Swiper modules={[Thumbs]} thumbs={{ swiper: thumbsSwiper }}>
+            <Swiper modules={[Thumbs]} thumbs={{ swiper: thumbsSwiperModal }}>
               {images?.map((image, index) => (
                 <SwiperSlide key={index}>
                   <img src={image.url} alt="image" />
@@ -64,7 +67,7 @@ export function ImageSlider({ images }: ISlider) {
               className={styles.swiper}
               modules={[Thumbs]}
               watchSlidesProgress={true}
-              onSwiper={setThumbsSwiper}
+              onSwiper={setThumbsSwiperModal}
               slidesPerGroup={1}
               slidesPerView={4}
               spaceBetween={38}>
