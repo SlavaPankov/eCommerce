@@ -7,6 +7,7 @@ import { useProductData } from '../../hooks/useProductData';
 import { ImageSlider } from './ImageSlider';
 import { ProductInfo } from './ProductInfo';
 import { ProductCharacteristics } from './ProductCharacteristics';
+import { ProductDescription } from './ProductDescription';
 
 export function Product() {
   const { id } = useParams();
@@ -27,6 +28,7 @@ export function Product() {
             price={product.price}
             discountedPrice={product.discountedPrice}
           />
+          <ProductDescription description={product.description} />
           <ProductCharacteristics characteristics={product.attributes} />
         </div>
       )}

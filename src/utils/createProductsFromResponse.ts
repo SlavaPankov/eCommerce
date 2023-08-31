@@ -29,6 +29,7 @@ export function createProductsFromResponse(results: Array<ProductProjection>): A
     discountedPrice: getFormattedPrice({
       price: item.masterVariant.prices?.[0].discounted?.value.centAmount
     }),
-    rating: getRandomRating({})
+    rating: getRandomRating({}),
+    description: item.description?.ru || ''
   }));
 }

@@ -23,7 +23,8 @@ const initialState: IProductState = {
     attributes: [],
     price: '',
     discountedPrice: '',
-    rating: 0
+    rating: 0,
+    description: ''
   }
 };
 
