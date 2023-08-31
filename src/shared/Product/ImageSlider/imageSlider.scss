@@ -1,0 +1,24 @@
+@import '../../../styles/mixins/breakpoints';
+
+.mainImageContainer {
+  width: 624px;
+}
+
+.mainImage {
+  width: 100%;
+  height: 245px;
+}
+
+.container {
+  grid-area: 1 / 1 / 2 / 7;
+}
+
+.thumbSwiper {
+  grid-area: 2 / 1 / 3 / 7;
+}
+
+.swiper {
+  background-color: $grey_light;
+  box-sizing: border-box !important;
+  padding: 10px 25px;
+}
