@@ -228,6 +228,7 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignUpRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
+      state.error = '';
       state.user = action.payload.customer;
 
       tokenCache.set({
@@ -238,6 +239,7 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignUpRequestAsync.rejected, (state, action) => {
       state.loading = false;
+      state.error = '';
       state.error = `${action.payload}`;
     });
 
@@ -247,6 +249,7 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignInRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
+      state.error = '';
       state.user = action.payload.customer;
     });
 
@@ -261,6 +264,7 @@ export const userSlice = createSlice({
 
     builder.addCase(getMeRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
+      state.error = '';
       state.user = action.payload;
     });
 
@@ -275,6 +279,7 @@ export const userSlice = createSlice({
 
     builder.addCase(updateMeRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
+      state.error = '';
       state.user = action.payload;
     });
 
@@ -289,6 +294,7 @@ export const userSlice = createSlice({
 
     builder.addCase(changePasswordRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
+      state.error = '';
       state.user = action.payload;
     });
 

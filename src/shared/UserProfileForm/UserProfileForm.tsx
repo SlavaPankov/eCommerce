@@ -11,7 +11,7 @@ import { PasswordForm } from './PasswordForm';
 export function UserProfileForm() {
   const dispatch = useAppDispatch();
   const [addressId, setAddressId] = useState<number>(0);
-  const { user } = useUserData();
+  const { user, error } = useUserData();
 
   const containerClassName = classNames('container', {
     [`${styles.container}`]: true
@@ -33,7 +33,7 @@ export function UserProfileForm() {
     <section>
       <div className={containerClassName}>
         <PersonalForm user={user} />
-        <PasswordForm user={user} />
+        <PasswordForm user={user} error={error} />
         <h2 className={styles.form__subtitle}>Адреса</h2>
         {user.addresses.map((address, index) => {
           return <UserAddressForm key={index} addressId={address.id || ''} user={user} />;

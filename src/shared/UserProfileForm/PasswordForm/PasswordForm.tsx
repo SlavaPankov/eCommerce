@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import styles from '../userProfileForm.scss';
 import { EditIcon } from '../../Icons';
 import { BaseInputField } from '../../BaseInputField';
@@ -13,35 +13,49 @@ import { IUser } from '../../../types/interfaces/IUser';
 
 interface IPasswordFormProps {
   user: IUser;
+  error: string;
 }
 
-export function PasswordForm({ user }: IPasswordFormProps) {
+export function PasswordForm({ user, error }: IPasswordFormProps) {
   const dispatch = useAppDispatch();
-  const [passwordFormData, setPasswordFormData] = useState<IFormData>({});
-  const [passwordFormError, setPasswordFormError] = useState<IFormData>({});
+  const [formData, setFormData] = useState<IFormData>({});
+  const [formError, setFormError] = useState<IFormData>({});
   const [isPasswordFormDisabled, setIsPasswordFormDisabled] = useState<boolean>(true);
+  const [globalError, setGlobalError] = useState<string>('');
+
+  useEffect(() => {
+    if (!error) {
+      return;
+    }
+
+    if (error === 'InvalidCurrentPassword') {
+      setGlobalError('Неверный текущий пароль');
+    }
+  }, [error]);
 
   const handleChangePassword = (event: ChangeEvent<HTMLInputElement>) => {
+    setGlobalError('');
+
     if (
       event.target.name === EFieldsNames.password ||
       event.target.name === EFieldsNames.newPassword
     ) {
-      setPasswordFormError({
-        ...passwordFormError,
+      setFormError({
+        ...formError,
         [event.target.name]: validatePassword(event.target.value)
       });
     }
 
-    setPasswordFormData({
-      ...passwordFormData,
+    setFormData({
+      ...formData,
       [event.target.name]: event.target.value
     });
   };
 
   const handleBlur = (event: FormEvent<HTMLInputElement>) => {
     if (event.currentTarget.value === '') {
-      setPasswordFormError({
-        ...passwordFormError,
+      setFormError({
+        ...formError,
         [event.currentTarget.name]: EErrorText.requiredField
       });
     }
@@ -83,11 +97,11 @@ export function PasswordForm({ user }: IPasswordFormProps) {
           <BaseInputField
             isRequired={true}
             name={EFieldsNames.password}
-            value={passwordFormData[EFieldsNames.password] || ''}
+            value={formData[EFieldsNames.password] || ''}
             type="password"
             placeholder="Текущий пароль*"
             onChange={handleChangePassword}
-            error={passwordFormError.password}
+            error={formError.password}
             onBlur={handleBlur}
           />
         </div>
@@ -95,14 +109,15 @@ export function PasswordForm({ user }: IPasswordFormProps) {
           <BaseInputField
             isRequired={true}
             name={EFieldsNames.newPassword}
-            value={passwordFormData[EFieldsNames.newPassword] || ''}
+            value={formData[EFieldsNames.newPassword] || ''}
             type="password"
             placeholder="Новый пароль*"
             onChange={handleChangePassword}
-            error={passwordFormError.newPassword}
+            error={formError.newPassword}
             onBlur={handleBlur}
           />
         </div>
+        {globalError && <span className={styles.globalError}>{globalError}</span>}
         {!isPasswordFormDisabled && <BaseButton textContent="Обновить пароль" />}
       </fieldset>
     </form>
