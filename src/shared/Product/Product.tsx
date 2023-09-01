@@ -27,6 +27,8 @@ export function Product() {
             rating={product.rating}
             price={product.price}
             discountedPrice={product.discountedPrice}
+            id={product.id}
+            variantId={product.variantId}
           />
           <ProductDescription description={product.description} />
           <ProductCharacteristics characteristics={product.attributes} />

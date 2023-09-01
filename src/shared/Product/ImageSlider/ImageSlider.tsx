@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Thumbs } from 'swiper';
 import type { Swiper as SwiperType } from 'swiper';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import styles from './imageSlider.scss';
 import 'swiper/css/pagination';
 import { IImage } from '../../../types/interfaces/IImage';
@@ -26,6 +27,8 @@ export function ImageSlider({ images }: ISlider) {
     setIsModalOpen(true);
   };
 
+  const isVerticalLayout = useMediaQuery('(min-width: 685px) and (max-width: 850px)');
+
   return (
     <>
       <div className={styles.container} onClick={handleClickSlider}>
@@ -39,13 +42,14 @@ export function ImageSlider({ images }: ISlider) {
       </div>
       <div className={styles.thumbSwiper}>
         <Swiper
-          className={styles.swiper}
+          className={`${styles.swiper} ${isVerticalLayout ? styles.verticalSwiper : ''}`}
           modules={[Thumbs]}
           watchSlidesProgress={true}
           onSwiper={setThumbsSwiper}
           slidesPerGroup={1}
           slidesPerView={4}
-          spaceBetween={38}>
+          spaceBetween={38}
+          direction={isVerticalLayout ? 'vertical' : 'horizontal'}>
           {images?.map((image, index) => (
             <SwiperSlide key={index}>
               <img src={image.url} alt="image" />
@@ -64,7 +68,7 @@ export function ImageSlider({ images }: ISlider) {
               ))}
             </Swiper>
             <Swiper
-              className={styles.swiper}
+              className={`${styles.swiper} ${isVerticalLayout ? styles.verticalSwiper : ''}`}
               modules={[Thumbs]}
               watchSlidesProgress={true}
               onSwiper={setThumbsSwiperModal}
