@@ -35,7 +35,7 @@ export function ImageSlider({ images }: ISlider) {
         <Swiper modules={[Thumbs]} thumbs={{ swiper: thumbsSwiper }}>
           {images?.map((image, index) => (
             <SwiperSlide key={index}>
-              <img src={image.url} alt="image" />
+              <img src={image.url} alt="image" className={styles.main_image} />
             </SwiperSlide>
           ))}
         </Swiper>
