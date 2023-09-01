@@ -33,7 +33,7 @@ export function UserProfileForm() {
     <section>
       <div className={containerClassName}>
         <h1 className={styles.form__header}>Личный кабинет</h1>
-        <PersonalForm user={user} loading={loading} error={error} />
+        <PersonalForm user={user} loading={loading} />
         <PasswordForm user={user} loading={loading} error={error} />
         <h2 className={styles.form__subtitle}>Адреса</h2>
         {user.addresses.map((address, index) => {

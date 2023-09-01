@@ -76,12 +76,14 @@ export function PasswordForm({ user, error, loading }: IPasswordFormProps) {
     );
 
     if (!result.type.includes('reject')) {
+      setIsPasswordFormDisabled(true);
       dispatch(
         userSignInRequestAsync({
           email: user.email,
           password: data[EFieldsNames.newPassword] as string
         })
       );
+      setFormData({});
     }
   };
 

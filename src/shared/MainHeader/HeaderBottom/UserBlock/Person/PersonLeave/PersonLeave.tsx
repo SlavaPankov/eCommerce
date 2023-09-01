@@ -1,13 +1,16 @@
 import React, { MouseEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../PersonEnter/personEnter.scss';
 import { ERoutes } from '../../../../../../types/enums/ERoutes';
 
 export function PersonLeave() {
+  const navigate = useNavigate();
+
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
 
     localStorage.clear();
+    navigate('/');
     window.location.reload();
   };
 

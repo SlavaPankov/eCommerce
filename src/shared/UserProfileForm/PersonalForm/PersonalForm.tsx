@@ -18,10 +18,9 @@ import { BaseButton } from '../../BaseButton';
 interface IPersonalFormProps {
   user: IUser;
   loading: boolean;
-  error: string;
 }
 
-export function PersonalForm({ user, loading, error }: IPersonalFormProps) {
+export function PersonalForm({ user, loading }: IPersonalFormProps) {
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
@@ -181,7 +180,7 @@ export function PersonalForm({ user, loading, error }: IPersonalFormProps) {
           </div>
         )}
       </div>
-      {!loading && !error ? (
+      {!loading ? (
         <form className={styles.form} onSubmit={handleSubmit}>
           <fieldset className={styles.fieldset} disabled={isFormDisabled}>
             <div className={styles.form__input_wrapper}>
