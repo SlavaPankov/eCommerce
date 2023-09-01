@@ -36,7 +36,6 @@ module.exports = {
   mode: IS_DEV ? 'development' : 'production',
   entry: './index.jsx',
   output: {
-    path: path.resolve(__dirname, 'dist'),
     path: path.resolve(__dirname, './dist'),
     filename: `${filename('js')}`,
     assetModuleFilename: `assets/${filename('[ext]')}`,

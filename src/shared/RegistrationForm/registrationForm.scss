@@ -10,7 +10,7 @@
   padding-bottom: 70px !important;
 
   &__header {
-    color: var(--black, #333);
+    color: $black;
     font-size: 2rem;
     font-weight: 400;
     padding: 0;
@@ -18,7 +18,7 @@
   }
 
   &__text {
-    color: var(--black, #333);
+    color: $black;
     font-size: 14px;
     font-weight: 400;
     margin-bottom: 15px;
