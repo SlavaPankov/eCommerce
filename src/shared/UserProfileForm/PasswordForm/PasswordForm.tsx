@@ -14,9 +14,10 @@ import { IUser } from '../../../types/interfaces/IUser';
 interface IPasswordFormProps {
   user: IUser;
   error: string;
+  loading: boolean;
 }
 
-export function PasswordForm({ user, error }: IPasswordFormProps) {
+export function PasswordForm({ user, error, loading }: IPasswordFormProps) {
   const dispatch = useAppDispatch();
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
@@ -85,41 +86,52 @@ export function PasswordForm({ user, error }: IPasswordFormProps) {
   };
 
   return (
-    <form className={styles.form} onSubmit={handleSubmitPassword}>
+    <>
       <div className={styles.head}>
         <h2 className={styles.form__subtitle}>Сменить пароль</h2>
-        <div className={styles.head_edit} onClick={() => setIsPasswordFormDisabled(false)}>
-          <EditIcon />
-        </div>
+        {!loading && (
+          <div className={styles.head_edit} onClick={() => setIsPasswordFormDisabled(false)}>
+            <EditIcon />
+          </div>
+        )}
       </div>
-      <fieldset className={styles.fieldset} disabled={isPasswordFormDisabled}>
-        <div className={styles.form__input_wrapper}>
-          <BaseInputField
-            isRequired={true}
-            name={EFieldsNames.password}
-            value={formData[EFieldsNames.password] || ''}
-            type="password"
-            placeholder="Текущий пароль*"
-            onChange={handleChangePassword}
-            error={formError.password}
-            onBlur={handleBlur}
-          />
+      {!loading ? (
+        <form className={styles.form} onSubmit={handleSubmitPassword}>
+          <fieldset className={styles.fieldset} disabled={isPasswordFormDisabled}>
+            <div className={styles.form__input_wrapper}>
+              <BaseInputField
+                isRequired={true}
+                name={EFieldsNames.password}
+                value={formData[EFieldsNames.password] || ''}
+                type="password"
+                placeholder="Текущий пароль*"
+                onChange={handleChangePassword}
+                error={formError.password}
+                onBlur={handleBlur}
+              />
+            </div>
+            <div className={styles.form__input_wrapper}>
+              <BaseInputField
+                isRequired={true}
+                name={EFieldsNames.newPassword}
+                value={formData[EFieldsNames.newPassword] || ''}
+                type="password"
+                placeholder="Новый пароль*"
+                onChange={handleChangePassword}
+                error={formError.newPassword}
+                onBlur={handleBlur}
+              />
+            </div>
+            {globalError && <span className={styles.globalError}>{globalError}</span>}
+            {!isPasswordFormDisabled && <BaseButton textContent="Сменить пароль" />}
+          </fieldset>
+        </form>
+      ) : (
+        <div className={styles.skeleton_wrapper}>
+          <div className={styles.skeleton_item}></div>
+          <div className={styles.skeleton_item}></div>
         </div>
-        <div className={styles.form__input_wrapper}>
-          <BaseInputField
-            isRequired={true}
-            name={EFieldsNames.newPassword}
-            value={formData[EFieldsNames.newPassword] || ''}
-            type="password"
-            placeholder="Новый пароль*"
-            onChange={handleChangePassword}
-            error={formError.newPassword}
-            onBlur={handleBlur}
-          />
-        </div>
-        {globalError && <span className={styles.globalError}>{globalError}</span>}
-        {!isPasswordFormDisabled && <BaseButton textContent="Обновить пароль" />}
-      </fieldset>
-    </form>
+      )}
+    </>
   );
 }

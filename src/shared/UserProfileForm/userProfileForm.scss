@@ -9,21 +9,22 @@
   align-items: flex-start;
   flex-direction: column;
   gap: 20px;
+  margin-bottom: 32px;
 
   &__header {
-    color: var(--black, #333);
+    color: $black;
     font-size: 2rem;
     font-weight: 400;
     padding: 0;
-    margin: 0;
+    margin: 0 0 32px;
   }
 
   &__subtitle {
-    color: var(--black, #333);
-    font-size: 1.5rem;
+    color: $black;
+    font-size: 24px;
     font-weight: 400;
     padding: 0;
-    margin: 20px 0;
+    margin: 0 0 20px;
   }
 
   &__input_wrapper {
@@ -44,10 +45,6 @@
     position: absolute;
     top: -18px;
     right: 0;
-  }
-
-  & button {
-    margin-top: 30px;
   }
 }
 
@@ -114,6 +111,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 20px;
+
+  & > h2 {
+    margin: 0;
+  }
 }
 
 .head_edit {
@@ -151,4 +153,37 @@
   line-height: 130%;
   font-weight: 400;
   color: $red_input;
+}
+
+.skeleton_wrapper {
+  max-width: 66%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.skeleton_item {
+  height: 54px;
+  background-color: $grey_shade;
+  opacity: 0.1;
+  border-radius: 10px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-99%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0,
+      rgba(255, 255, 255, 0.3) 20%,
+      rgba(255, 255, 255, 0.4) 60%,
+      rgba(255, 255, 255, 0)
+    );
+    animation: shimmer 2s infinite;
+  }
 }
