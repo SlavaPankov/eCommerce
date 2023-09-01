@@ -54,6 +54,7 @@ export function PersonalForm({ user, loading, error }: IPersonalFormProps) {
       return;
     }
 
+    setIsFormDisabled(true);
     setIsUpdateSuccessfully(true);
     setTimeout(() => {
       setIsModalOpen(false);
