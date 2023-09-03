@@ -13,7 +13,8 @@ import { createAddressFromForm } from '../../../utils/createAddressFromForm';
 import { EUserActionTypes } from '../../../types/enums/EUserActionTypes';
 import { useAppDispatch } from '../../../hooks/storeHooks';
 import { createObjectFromFormData } from '../../../utils/createObjectFromFormData';
-import { EErrorText } from '../../../types/enums/EErrorText';
+import { isFormValid } from '../../../utils/isFormValid';
+import { getGlobalError } from '../../../utils/getGlobalError';
 
 interface IUserAddressFormProps {
   addressId: string;
@@ -66,31 +67,6 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
     }
   }, [isNewAddress]);
 
-  const isFormValid = () => {
-    let flag = true;
-    const requiredFields =
-      ref.current?.querySelectorAll<HTMLInputElement>('[data-required="true"]');
-
-    if (!requiredFields) {
-      return flag;
-    }
-
-    for (let i = 0; i < requiredFields.length; i += 1) {
-      const item = requiredFields[i];
-      flag = item.value !== '';
-
-      if (!flag) {
-        return flag;
-      }
-    }
-
-    Object.values(formError).forEach((errorValue) => {
-      flag = !errorValue;
-    });
-
-    return flag;
-  };
-
   const handleClickConfirm = () => {
     if (!addressId) {
       return;
@@ -141,25 +117,14 @@ export function UserAddressForm({ addressId, user }: IUserAddressFormProps) {
     setGlobalFormError('');
 
     if (isFormEditable) {
-      if (!isFormValid()) {
-        const tempError: IFormData = {};
-        const requiredFields =
-          ref.current?.querySelectorAll<HTMLInputElement>('[data-required="true"]');
+      if (!isFormValid(ref, formError)) {
+        const { tempError, globalError } = getGlobalError(ref);
 
-        if (!requiredFields) {
-          return;
-        }
-
-        requiredFields.forEach((item) => {
-          if (item.value === '') {
-            tempError[item.name] = EErrorText.requiredField;
-          }
-        });
         setFormError({
           ...formError,
           ...tempError
         });
-        setGlobalFormError('Заполните все обязательные поля');
+        setGlobalFormError(globalError);
         return;
       }
 

@@ -48,6 +48,13 @@
   }
 }
 
+.global_error {
+  font-size: 14px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $red_input;
+}
+
 .edit_icon {
   display: flex;
   position: absolute;

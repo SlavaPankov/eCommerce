@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from 'react';
 import styles from '../userProfileForm.scss';
 import { EditIcon } from '../../Icons';
 import { BaseInputField } from '../../BaseInputField';
@@ -10,6 +10,8 @@ import { EErrorText } from '../../../types/enums/EErrorText';
 import { changePasswordRequestAsync, userSignInRequestAsync } from '../../../store/user/userSlice';
 import { useAppDispatch } from '../../../hooks/storeHooks';
 import { IUser } from '../../../types/interfaces/IUser';
+import { isFormValid } from '../../../utils/isFormValid';
+import { getGlobalError } from '../../../utils/getGlobalError';
 
 interface IPasswordFormProps {
   user: IUser;
@@ -19,10 +21,11 @@ interface IPasswordFormProps {
 
 export function PasswordForm({ user, error, loading }: IPasswordFormProps) {
   const dispatch = useAppDispatch();
+  const ref = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
   const [isPasswordFormDisabled, setIsPasswordFormDisabled] = useState<boolean>(true);
-  const [globalError, setGlobalError] = useState<string>('');
+  const [globalFormError, setGlobalFormError] = useState<string>('');
 
   useEffect(() => {
     if (!error) {
@@ -30,12 +33,12 @@ export function PasswordForm({ user, error, loading }: IPasswordFormProps) {
     }
 
     if (error === 'InvalidCurrentPassword') {
-      setGlobalError('Неверный текущий пароль');
+      setGlobalFormError('Неверный текущий пароль');
     }
   }, [error]);
 
   const handleChangePassword = (event: ChangeEvent<HTMLInputElement>) => {
-    setGlobalError('');
+    setGlobalFormError('');
 
     if (
       event.target.name === EFieldsNames.password ||
@@ -64,6 +67,18 @@ export function PasswordForm({ user, error, loading }: IPasswordFormProps) {
 
   const handleSubmitPassword = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!isFormValid(ref, formError)) {
+      const { tempError, globalError } = getGlobalError(ref);
+
+      setFormError({
+        ...formError,
+        ...tempError
+      });
+
+      setGlobalFormError(globalError);
+      return;
+    }
 
     const data = Object.fromEntries(new FormData(event.currentTarget));
 
@@ -98,7 +113,7 @@ export function PasswordForm({ user, error, loading }: IPasswordFormProps) {
         )}
       </div>
       {!loading ? (
-        <form className={styles.form} onSubmit={handleSubmitPassword}>
+        <form ref={ref} className={styles.form} onSubmit={handleSubmitPassword}>
           <fieldset className={styles.fieldset} disabled={isPasswordFormDisabled}>
             <div className={styles.form__input_wrapper}>
               <BaseInputField
@@ -124,7 +139,7 @@ export function PasswordForm({ user, error, loading }: IPasswordFormProps) {
                 onBlur={handleBlur}
               />
             </div>
-            {globalError && <span className={styles.globalError}>{globalError}</span>}
+            {globalFormError && <span className={styles.globalError}>{globalFormError}</span>}
             {!isPasswordFormDisabled && <BaseButton textContent="Сменить пароль" />}
           </fieldset>
         </form>

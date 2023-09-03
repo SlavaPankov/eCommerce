@@ -13,7 +13,7 @@ export function UserProfile() {
       return;
     }
 
-    navigate('/');
+    navigate('/login');
   }, []);
 
   return (

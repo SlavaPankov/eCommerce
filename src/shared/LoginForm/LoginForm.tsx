@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, FormEvent, useEffect } from 'react';
+import React, { ChangeEvent, useState, FormEvent, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import styles from './loginForm.scss';
@@ -6,12 +6,14 @@ import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import EyeIcon from '../Icons/EyeIcon/EyeIcon';
 import { EErrorText } from '../../types/enums/EErrorText';
-import { emailRegex } from '../../utils/validationRegex';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { userSignInRequestAsync } from '../../store/user/userSlice';
 import { setCartData } from '../../store/cart/cartSlice';
 import { ERoutes } from '../../types/enums/ERoutes';
 import { validatePassword } from '../../utils/validatePassword';
+import { isFormValid } from '../../utils/isFormValid';
+import { getGlobalError } from '../../utils/getGlobalError';
+import { checkEmail } from '../../utils/checkEmail';
 
 enum EFormFieldsNames {
   email = 'email',
@@ -34,6 +36,7 @@ interface ICustomerSignIn {
 export function LoginForm() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const ref = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
   const [isEyeClicked, setIsEyeClicked] = useState(false);
@@ -62,38 +65,6 @@ export function LoginForm() {
     setGlobalFormError('');
   }, []);
 
-  const isFormValid = () => {
-    let flag = true;
-
-    for (
-      let i = 0;
-      i < document.querySelectorAll<HTMLInputElement>('[data-required="true"]').length;
-      i += 1
-    ) {
-      const item = document.querySelectorAll<HTMLInputElement>('[data-required="true"]')[i];
-      flag = item.value !== '';
-
-      if (!flag) {
-        return flag;
-      }
-    }
-
-    Object.values(formError).forEach((error) => {
-      flag = !error;
-      return flag;
-    });
-
-    return flag;
-  };
-
-  const validateEmail = (input: string): string => {
-    if (!emailRegex.test(input)) {
-      return EErrorText.emailFormat;
-    }
-
-    return '';
-  };
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({
       ...formError,
@@ -103,7 +74,7 @@ export function LoginForm() {
     if (event.target.name === EFormFieldsNames.email) {
       setFormError({
         ...formError,
-        [event.target.name]: validateEmail(event.target.value)
+        [event.target.name]: checkEmail(event.target.value)
       });
     }
 
@@ -136,18 +107,15 @@ export function LoginForm() {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isFormValid()) {
-      const tempError: IFormData = {};
-      document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
-        if (item.value === '') {
-          tempError[item.name] = EErrorText.requiredField;
-        }
-      });
+    if (!isFormValid(ref, formError)) {
+      const { tempError, globalError } = getGlobalError(ref);
+
       setFormError({
         ...formError,
         ...tempError
       });
-      setGlobalFormError('Заполните все обязательные поля или устаните ошибки');
+
+      setGlobalFormError(globalError);
       return;
     }
 
@@ -181,7 +149,7 @@ export function LoginForm() {
 
   return (
     <section className={containerClassName}>
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form ref={ref} className={styles.form} onSubmit={handleSubmit}>
         <h1 className={styles.form__header_login}>Вход</h1>
         <div className={styles.form__input_wrapper}>
           <BaseInputField

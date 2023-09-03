@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import styles from './registrationForm.scss';
@@ -7,7 +7,6 @@ import { BaseButton } from '../BaseButton';
 import { BaseInputField } from '../BaseInputField';
 import { EErrorText } from '../../types/enums/EErrorText';
 import { IFormData } from '../../types/interfaces/IFormData';
-import { textRegex, emailRegex, passwordRegex } from '../../utils/validationRegex';
 import { RegistrationAddress } from './RagistrationAddress';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICustomerDraft } from '../../types/interfaces/ICustomerDraft';
@@ -15,8 +14,13 @@ import { userSignInRequestAsync, userSignUpRequestAsync } from '../../store/user
 import { setCartData } from '../../store/cart/cartSlice';
 import { Modal } from '../Modal';
 import { ElephantIcon } from '../Icons';
-import { calculateAge } from '../../utils/calculateAge';
 import { createObjectFromFormData } from '../../utils/createObjectFromFormData';
+import { isFormValid } from '../../utils/isFormValid';
+import { getGlobalError } from '../../utils/getGlobalError';
+import { checkDateOfBirth } from '../../utils/checkDateOfBirth';
+import { checkName } from '../../utils/checkName';
+import { checkEmail } from '../../utils/checkEmail';
+import { validatePassword } from '../../utils/validatePassword';
 
 enum EFieldsNames {
   firstName = 'firstName',
@@ -30,6 +34,7 @@ enum EFieldsNames {
 export function RegistrationForm() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const ref = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState<IFormData>({});
   const [formError, setFormError] = useState<IFormData>({});
   const [addressCount, setAddressCount] = useState<number>(1);
@@ -52,29 +57,6 @@ export function RegistrationForm() {
     setGlobalFormError('Что-то пошло не так, попробуйте обновить страницу');
   }, [error]);
 
-  function isFormValid() {
-    let flag = true;
-
-    for (
-      let i = 0;
-      i < document.querySelectorAll<HTMLInputElement>('[data-required="true"]').length;
-      i += 1
-    ) {
-      const item = document.querySelectorAll<HTMLInputElement>('[data-required="true"]')[i];
-      flag = item.value !== '';
-
-      if (!flag) {
-        return flag;
-      }
-    }
-
-    Object.values(formError).forEach((errorValue) => {
-      flag = !errorValue;
-    });
-
-    return flag;
-  }
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({ ...formError, [event.target.name]: '' });
     setGlobalFormError('');
@@ -83,27 +65,18 @@ export function RegistrationForm() {
       event.target.name === EFieldsNames.firstName ||
       event.target.name === EFieldsNames.lastName
     ) {
-      if (event.target.value.length > 15) {
-        setFormError({ ...formError, [event.target.name]: EErrorText.maxLength15 });
-      }
-      if (event.target.value.length < 1) {
-        setFormError({ ...formError, [event.target.name]: EErrorText.minLength1 });
-      }
-      if (event.target.value && !textRegex.test(event.target.value)) {
-        setFormError({ ...formError, [event.target.name]: EErrorText.textFormat });
-      }
+      setFormError({ ...formError, [event.target.name]: checkName(event.target.value) });
     }
 
     if (event.target.name === EFieldsNames.email) {
-      if (event.target.value && !emailRegex.test(event.target.value)) {
-        setFormError({ ...formError, [event.target.name]: EErrorText.emailFormat });
-      }
+      setFormError({ ...formError, [event.target.name]: checkEmail(event.target.value) });
     }
 
-    if (event.target.name === EFieldsNames.password) {
-      if (event.target.value && !passwordRegex.test(event.target.value)) {
-        setFormError({ ...formError, [event.target.name]: EErrorText.passwordFormat });
-      }
+    if (
+      event.target.name === EFieldsNames.password ||
+      event.target.name === EFieldsNames.passwordConfirmed
+    ) {
+      setFormError({ ...formError, [event.target.name]: validatePassword(event.target.value) });
     }
 
     if (event.target.name === EFieldsNames.passwordConfirmed) {
@@ -129,47 +102,25 @@ export function RegistrationForm() {
     }
 
     if (event.currentTarget.name === EFieldsNames.birthDate) {
-      const birthDate = new Date(event.currentTarget.value);
-      const currentDate = new Date();
-
-      if (Number.isNaN(birthDate.getTime())) {
-        setFormError({
-          ...formError,
-          [event.currentTarget.name]: EErrorText.dateInvalid
-        });
-      }
-
-      if (calculateAge(event.currentTarget.value) < 13) {
-        setFormError({
-          ...formError,
-          [event.currentTarget.name]: EErrorText.dateToYoung
-        });
-      }
-
-      if (birthDate > currentDate) {
-        setFormError({
-          ...formError,
-          [event.currentTarget.name]: EErrorText.dateOutOfLimit
-        });
-      }
+      setFormError({
+        ...formError,
+        [event.currentTarget.name]: checkDateOfBirth(event.currentTarget.value)
+      });
     }
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
 
-    if (!isFormValid()) {
-      const tempError: IFormData = {};
-      document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
-        if (item.value === '') {
-          tempError[item.name] = EErrorText.requiredField;
-        }
-      });
+    if (!isFormValid(ref, formError)) {
+      const { tempError, globalError } = getGlobalError(ref);
+
       setFormError({
         ...formError,
         ...tempError
       });
-      setGlobalFormError('Заполните все обязательные поля');
+
+      setGlobalFormError(globalError);
       return;
     }
 
@@ -296,7 +247,7 @@ export function RegistrationForm() {
 
   return (
     <section>
-      <form className={formClassName} onSubmit={handleSubmit}>
+      <form ref={ref} className={formClassName} onSubmit={handleSubmit}>
         <h1 className={styles.form__header}>Регистрация</h1>
         <span className={styles.form__text}>
           Зарегистрируйтесь, чтобы получать специальные предложения. <br />

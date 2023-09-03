@@ -5,9 +5,10 @@ import { getMeRequestAsync } from '../store/user/userSlice';
 export function useUserData() {
   const dispatch = useAppDispatch();
   const { error, loading, user } = useAppSelector((state) => state.user);
+  const isAuth = localStorage.getItem('isAuth');
 
   useEffect(() => {
-    if (user.id) {
+    if (user.id || !isAuth) {
       return;
     }
 
