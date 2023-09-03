@@ -15,4 +15,5 @@ export interface IProduct {
   price: string;
   discountedPrice: string;
   rating: number;
+  description: string;
 }

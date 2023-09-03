@@ -1,0 +1,69 @@
+@import '../../../styles/mixins/breakpoints';
+
+.title {
+  margin: 0 0 21px;
+  font-size: 24px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+}
+
+.prices {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 21px;
+}
+
+.price {
+  font-size: 36px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+
+  @include mobile {
+    font-size: 24px;
+  }
+}
+
+.old_price {
+  font-size: 28px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $grey;
+  text-decoration: line-through;
+  @include mobile {
+    font-size: 20px;
+  }
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $secondary;
+}
+.product_info {
+  grid-area: 1 / 7 / 2 / 13;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 14px;
+
+  @include big-desktop {
+    grid-area: 1 / 6 / 2 / 10;
+  }
+
+  @include small-tablet {
+    grid-area: 2 / 3 / 3 / 7;
+    padding-top: 0;
+    align-self: center;
+  }
+
+  @include mobile {
+    grid-area: 3 / 1 / 4 / 7;
+  }
+}

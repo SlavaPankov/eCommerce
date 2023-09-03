@@ -14,7 +14,7 @@ $burger-line-height: 3px;
   color: $black;
   background-color: transparent;
   cursor: pointer;
-  z-index: 13;
+  z-index: 130;
 
   @include small-tablet {
     display: block;
@@ -86,8 +86,11 @@ $burger-line-height: 3px;
   transform: translateX(-101%);
   transition: transform 0.3s ease-in-out;
   z-index: 12;
+  visibility: hidden;
 
   &__active {
     transform: none;
+    visibility: visible;
+    z-index: 120;
   }
 }

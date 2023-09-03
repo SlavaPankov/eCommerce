@@ -5,8 +5,10 @@ import specialsReducer from './specials/specialSlice';
 import cartReducer from './cart/cartSlice';
 import discountCodeReducer from './discountCode/discountCodeSlice';
 import userReducer from './user/userSlice';
+import productReducer from './product/productSlice';
 
 const reducerState = combineReducers({
+  product: productReducer,
   products: productsReducer,
   categories: categoriesReducer,
   specials: specialsReducer,
