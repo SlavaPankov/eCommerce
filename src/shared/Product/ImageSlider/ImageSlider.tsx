@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Thumbs } from 'swiper';
 import type { Swiper as SwiperType } from 'swiper';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import styles from './imageSlider.scss';
 import 'swiper/css/pagination';
 import { IImage } from '../../../types/interfaces/IImage';
@@ -10,6 +9,11 @@ import { Modal } from '../../Modal';
 
 interface ISlider {
   images: IImage[] | undefined;
+}
+
+enum ESliderDirection {
+  vertical = 'vertical',
+  horizontal = 'horizontal'
 }
 
 export function ImageSlider({ images }: ISlider) {
@@ -27,29 +31,44 @@ export function ImageSlider({ images }: ISlider) {
     setIsModalOpen(true);
   };
 
-  const isVerticalLayout = useMediaQuery('(min-width: 685px) and (max-width: 850px)');
-
   return (
     <>
       <div className={styles.container} onClick={handleClickSlider}>
         <Swiper modules={[Thumbs]} thumbs={{ swiper: thumbsSwiper }}>
           {images?.map((image, index) => (
             <SwiperSlide key={index}>
-              <img src={image.url} alt="image" className={styles.main_image} />
+              <img src={image.url} alt="image" />
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
       <div className={styles.thumbSwiper}>
         <Swiper
-          className={`${styles.swiper} ${isVerticalLayout ? styles.verticalSwiper : ''}`}
+          className={styles.swiper}
           modules={[Thumbs]}
           watchSlidesProgress={true}
           onSwiper={setThumbsSwiper}
           slidesPerGroup={1}
           slidesPerView={4}
           spaceBetween={38}
-          direction={isVerticalLayout ? 'vertical' : 'horizontal'}>
+          direction={ESliderDirection.horizontal}
+          breakpoints={{
+            320: {
+              direction: ESliderDirection.horizontal,
+              slidesPerView: 2.5
+            },
+            685: {
+              direction: ESliderDirection.vertical,
+              slidesPerView: 4
+            },
+            850: {
+              direction: ESliderDirection.horizontal,
+              slidesPerView: 3.5
+            },
+            1024: {
+              slidesPerView: 4
+            }
+          }}>
           {images?.map((image, index) => (
             <SwiperSlide key={index}>
               <img src={image.url} alt="image" />
@@ -68,7 +87,7 @@ export function ImageSlider({ images }: ISlider) {
               ))}
             </Swiper>
             <Swiper
-              className={`${styles.swiper} ${isVerticalLayout ? styles.verticalSwiper : ''}`}
+              className={styles.swiper}
               modules={[Thumbs]}
               watchSlidesProgress={true}
               onSwiper={setThumbsSwiperModal}
