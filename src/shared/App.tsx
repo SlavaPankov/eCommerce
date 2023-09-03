@@ -9,6 +9,7 @@ import { RegistrationPage } from '../pages/RegistrationPage';
 import { NotFound } from '../pages/NotFound';
 import { MainPage } from '../pages/MainPage';
 import { LoginPage } from '../pages/LoginPage';
+import { UserProfile } from '../pages/UserProfile';
 import { useAppDispatch } from '../hooks/storeHooks';
 import { createCartRequestAsync, getActiveCartRequestAsync } from '../store/cart/cartSlice';
 import { ERoutes } from '../types/enums/ERoutes';
@@ -33,6 +34,12 @@ export const routeObject = createRoutesFromElements(
         path={ERoutes.registration}
         element={<RegistrationPage />}
         handle={{ crumb: () => 'Регистрация' }}
+      />
+      <Route
+        index={true}
+        path={ERoutes.person}
+        element={<UserProfile />}
+        handle={{ crumb: () => 'Личный кабинет' }}
       />
       <Route path={ERoutes.catalog} element={<CatalogPage />} handle={{ crumb: () => 'Каталог' }}>
         <Route

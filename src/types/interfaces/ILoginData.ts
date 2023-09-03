@@ -1,7 +1,7 @@
 export interface ILoginData {
   email: string;
   password: string;
-  anonymousCart: {
+  anonymousCart?: {
     id: string;
     typeId: string;
   };

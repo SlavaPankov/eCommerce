@@ -2,7 +2,7 @@ export enum ERoutes {
   main = '/',
   login = '/login',
   registration = '/registration',
-  person = '/person',
+  person = '/user',
   catalog = '/catalog',
   category = '/catalog/:id',
   product = '/product/:id',

@@ -1,7 +1,7 @@
-import { EActionTypes } from '../enums/EActionTypes';
+import { ECartActionTypes } from '../enums/ECartActionTypes';
 
 export interface ICartAction {
-  action: EActionTypes;
+  action: ECartActionTypes;
   productId: string;
   variantId: number;
   quantity?: number;

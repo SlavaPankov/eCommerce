@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, MouseEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, FormEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import styles from './registrationAddress.scss';
 import { BaseInputField } from '../../BaseInputField';
 import { CrossIcon } from '../../Icons';
@@ -43,6 +43,11 @@ interface IRegistrationAddressProps {
   addressCount: number;
   setAddressCount: (count: number) => void;
   index?: number;
+  isShipping?: boolean;
+  isBilling?: boolean;
+  isDefaultShipping?: boolean;
+  isDefaultBilling?: boolean;
+  isEditable?: boolean;
 }
 
 export function RegistrationAddress({
@@ -52,16 +57,43 @@ export function RegistrationAddress({
   formData,
   setFormData,
   formError,
-  setFormError
+  setFormError,
+  isShipping = false,
+  isBilling = false,
+  isDefaultShipping = false,
+  isDefaultBilling = false,
+  isEditable = true
 }: IRegistrationAddressProps) {
   const ref = useRef<HTMLSpanElement>(null);
   const [checkboxData, setCheckboxData] = useState({
-    defaultShipping: false,
-    defaultBilling: false,
-    [`typeShipping_${index}`]: true,
-    [`typeBilling_${index}`]: false
+    defaultShipping: isDefaultShipping,
+    defaultBilling: isDefaultBilling,
+    [`typeShipping_${index}`]: isShipping,
+    [`typeBilling_${index}`]: isBilling
   });
   const [selectedCountry, setSelectedCountry] = useState('Выберите*');
+
+  useEffect(() => {
+    setCheckboxData({
+      ...checkboxData,
+      defaultShipping: isDefaultShipping,
+      defaultBilling: isDefaultBilling,
+      [`typeShipping_${index}`]: isShipping,
+      [`typeBilling_${index}`]: isBilling
+    });
+  }, [isShipping, isBilling]);
+
+  useEffect(() => {
+    if (formData[`${EFieldsNames.country}_${index}`]) {
+      const countryMatch = countries.find(
+        (country) => country.value === formData[`${EFieldsNames.country}_${index}`]
+      );
+
+      if (countryMatch) {
+        setSelectedCountry(countryMatch.label);
+      }
+    }
+  }, [formData]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormError({ ...formError, [event.target.name]: '' });
@@ -190,6 +222,7 @@ export function RegistrationAddress({
           onBlur={handleBlurRequired}
           error={formError[`${EFieldsNames.postalCode}_${index}`]}
           maxLength={6}
+          isDisabled={!isEditable}
         />
       </div>
       <BaseInputField
@@ -200,6 +233,7 @@ export function RegistrationAddress({
         onChange={handleChange}
         onBlur={handleBlurRequired}
         error={formError[`${EFieldsNames.region}_${index}`]}
+        isDisabled={!isEditable}
       />
       <BaseInputField
         isRequired={true}
@@ -209,6 +243,7 @@ export function RegistrationAddress({
         onChange={handleChange}
         onBlur={handleBlurRequired}
         error={formError[`${EFieldsNames.city}_${index}`]}
+        isDisabled={!isEditable}
       />
       <BaseInputField
         isRequired={true}
@@ -218,6 +253,7 @@ export function RegistrationAddress({
         onChange={handleChange}
         onBlur={handleBlurRequired}
         error={formError[`${EFieldsNames.streetName}_${index}`]}
+        isDisabled={!isEditable}
       />
       <div className={styles.wrapper}>
         <BaseInputField
@@ -227,6 +263,7 @@ export function RegistrationAddress({
           onChange={handleChange}
           onBlur={handleBlur}
           error={formError[`${EFieldsNames.building}_${index}`]}
+          isDisabled={!isEditable}
         />
         <BaseInputField
           type="number"
@@ -236,6 +273,7 @@ export function RegistrationAddress({
           onChange={handleChange}
           onBlur={handleBlur}
           error={formError[`${EFieldsNames.apartment}_${index}`]}
+          isDisabled={!isEditable}
         />
       </div>
       <BaseCheckbox
@@ -243,7 +281,7 @@ export function RegistrationAddress({
         name="defaultShipping"
         value={`${index}`}
         onChange={handleChangeCheckbox}
-        isChecked={checkboxData.isDefaultShipping}
+        isChecked={checkboxData.defaultShipping}
         label="Сделать адресом для доставки по умолчанию"
       />
       <BaseCheckbox
@@ -251,7 +289,7 @@ export function RegistrationAddress({
         name="defaultBilling"
         value={`${index}`}
         onChange={handleChangeCheckbox}
-        isChecked={checkboxData.isDefaultBilling}
+        isChecked={checkboxData.defaultBilling}
         label="Сделать адресом для счетов по умолчанию"
       />
     </div>

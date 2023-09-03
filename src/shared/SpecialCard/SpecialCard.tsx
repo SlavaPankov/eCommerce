@@ -5,7 +5,7 @@ import { BaseButton } from '../BaseButton';
 import { EBaseButtonMode } from '../../types/enums/EBaseButtonMode';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICartAction } from '../../types/interfaces/ICartAction';
-import { EActionTypes } from '../../types/enums/EActionTypes';
+import { ECartActionTypes } from '../../types/enums/ECartActionTypes';
 import { addLineItemRequestAsync } from '../../store/cart/cartSlice';
 import { IImage } from '../../types/interfaces/IImage';
 
@@ -37,7 +37,7 @@ export function SpecialCard({
 
   const handleClick = () => {
     const addAction: ICartAction = {
-      action: EActionTypes.addLineItem,
+      action: ECartActionTypes.addLineItem,
       productId: id,
       variantId
     };

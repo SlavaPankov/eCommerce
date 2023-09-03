@@ -10,4 +10,7 @@ export * from './VkIcon/VkIcon';
 export * from './ElephantIcon/ElephantIcon';
 export * from './RatingIcon/RatingIcon';
 export * from './CrossIcon/CrossIcon';
+export * from './ConfirmIcon/ConfirmIcon';
+export * from './EditIcon/EditIcon';
 export * from './ThumbIcon/ThumbIcon';
+export * from './SaveIcon/SaveIcon';
