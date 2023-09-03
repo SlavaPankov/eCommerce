@@ -1,8 +1,14 @@
+@import '../../../styles/mixins/breakpoints';
+
 .form {
   position: relative;
   padding-bottom: 20px;
   margin-bottom: 20px;
   max-width: 66%;
+
+  @include small-tablet {
+    max-width: 100%;
+  }
 
   &:not(:last-child) {
     border-bottom: 1px solid $grey_light;
@@ -15,6 +21,10 @@
   top: 0;
   right: -40px;
   cursor: pointer;
+
+  @include small-tablet {
+    right: 0;
+  }
 
   & path {
     transition: fill 0.3s ease-in-out;
@@ -65,6 +75,10 @@
   opacity: 0.7;
   transition: opacity 0.3s ease-in-out;
   transform: translateY(-50%);
+
+  @include small-tablet {
+    right: 0;
+  }
 
   & path {
     fill: $primary;
