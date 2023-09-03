@@ -1,3 +1,5 @@
+@import '../../styles/mixins/breakpoints';
+
 .wrapper {
   position: fixed;
   top: 0;
@@ -23,4 +25,7 @@
 
 .content {
   z-index: 9999;
+  @include big-desktop {
+    max-width: 100%;
+  }
 }

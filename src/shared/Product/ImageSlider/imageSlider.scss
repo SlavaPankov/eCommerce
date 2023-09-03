@@ -46,9 +46,39 @@
   max-width: 1000px;
   background-color: $white;
   border-radius: 10px;
-  padding: 35px;
+
+  @include big-desktop {
+    margin: 0 auto;
+    max-width: calc(100% - 60px);
+  }
 
   @include tablet {
-    max-width: 952px;
+    max-width: calc(100% - 60px);
+  }
+}
+
+.modal_thumb {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: $grey_light;
+  padding: 0 35px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.swiper_main {
+  padding: 35px 35px 0;
+  background-color: $grey_light;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.button_container {
+  display: none;
+  flex-shrink: 0;
+
+  @include big-desktop {
+    display: block;
   }
 }

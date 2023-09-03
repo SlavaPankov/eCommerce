@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Thumbs } from 'swiper';
+import { Thumbs, Navigation } from 'swiper';
 import type { Swiper as SwiperType } from 'swiper';
 import styles from './imageSlider.scss';
-import 'swiper/css/pagination';
 import { IImage } from '../../../types/interfaces/IImage';
 import { Modal } from '../../Modal';
+import { BaseRoundButton } from '../../BaseRoundButton';
 
 interface ISlider {
   images: IImage[] | undefined;
@@ -79,27 +79,57 @@ export function ImageSlider({ images }: ISlider) {
       {isModalOpen && (
         <Modal onClose={handleClose}>
           <div className={styles.modal_container}>
-            <Swiper modules={[Thumbs]} thumbs={{ swiper: thumbsSwiperModal }}>
-              {images?.map((image, index) => (
-                <SwiperSlide key={index}>
-                  <img src={image.url} alt="image" />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-            <Swiper
-              className={styles.swiper}
-              modules={[Thumbs]}
-              watchSlidesProgress={true}
-              onSwiper={setThumbsSwiperModal}
-              slidesPerGroup={1}
-              slidesPerView={4}
-              spaceBetween={38}>
-              {images?.map((image, index) => (
-                <SwiperSlide key={index}>
-                  <img src={image.url} alt="image" />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            <div className={styles.swiper_main}>
+              <Swiper
+                modules={[Thumbs, Navigation]}
+                thumbs={{ swiper: thumbsSwiperModal }}
+                navigation={{
+                  prevEl: '#prev',
+                  nextEl: '#next'
+                }}>
+                {images?.map((image, index) => (
+                  <SwiperSlide key={index}>
+                    <img src={image.url} alt="image" />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+            <div className={styles.modal_thumb}>
+              <div className={styles.button_container}>
+                <BaseRoundButton isLeft={true} id="prev" />
+              </div>
+              <Swiper
+                className={styles.swiper}
+                modules={[Thumbs]}
+                watchSlidesProgress={true}
+                onSwiper={setThumbsSwiperModal}
+                slidesPerGroup={1}
+                slidesPerView={4}
+                spaceBetween={38}
+                breakpoints={{
+                  320: {
+                    slidesPerView: 1
+                  },
+                  685: {
+                    slidesPerView: 2
+                  },
+                  850: {
+                    slidesPerView: 3
+                  },
+                  1180: {
+                    slidesPerView: 4
+                  }
+                }}>
+                {images?.map((image, index) => (
+                  <SwiperSlide key={index}>
+                    <img src={image.url} alt="image" />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              <div className={styles.button_container}>
+                <BaseRoundButton id="next" />
+              </div>
+            </div>
           </div>
         </Modal>
       )}
