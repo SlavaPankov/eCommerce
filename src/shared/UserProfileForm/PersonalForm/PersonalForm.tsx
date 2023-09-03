@@ -6,7 +6,7 @@ import { EFieldsNames } from '../../../types/enums/EFieldsNames';
 import { EditIcon, ElephantIcon } from '../../Icons';
 import { IFormData } from '../../../types/interfaces/IFormData';
 import { EErrorText } from '../../../types/enums/EErrorText';
-import { emailRegex, passwordRegex, textRegex } from '../../../utils/validationRegex';
+import { emailRegex, textRegex } from '../../../utils/validationRegex';
 import { calculateAge } from '../../../utils/calculateAge';
 import { updateMeRequestAsync } from '../../../store/user/userSlice';
 import { EUserActionTypes } from '../../../types/enums/EUserActionTypes';
@@ -27,6 +27,7 @@ export function PersonalForm({ user, loading }: IPersonalFormProps) {
   const [isFormDisabled, setIsFormDisabled] = useState<boolean>(true);
   const [isUpdateSuccessfully, setIsUpdateSuccessfully] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [globalFormError, setGlobalFormError] = useState<string>('');
 
   useEffect(() => {
     if (!user.id) {
@@ -60,74 +61,116 @@ export function PersonalForm({ user, loading }: IPersonalFormProps) {
     }, 1500);
   };
 
-  const validateInput = (element: HTMLInputElement) => {
-    setFormError({ ...formError, [element.name]: '' });
+  function isFormValid(form: HTMLFormElement) {
+    let flag = true;
 
-    if (element.name === EFieldsNames.firstName || element.name === EFieldsNames.lastName) {
-      if (element.value.length > 15) {
-        setFormError({ ...formError, [element.name]: EErrorText.maxLength15 });
-      }
-      if (element.value.length < 1) {
-        setFormError({ ...formError, [element.name]: EErrorText.minLength1 });
-      }
-      if (element.value && !textRegex.test(element.value)) {
-        setFormError({ ...formError, [element.name]: EErrorText.textFormat });
+    for (
+      let i = 0;
+      i < form.querySelectorAll<HTMLInputElement>('[data-required="true"]').length;
+      i += 1
+    ) {
+      const item = form.querySelectorAll<HTMLInputElement>('[data-required="true"]')[i];
+      flag = item.value !== '';
+
+      if (!flag) {
+        return flag;
       }
     }
 
-    if (element.name === EFieldsNames.email) {
-      if (element.value && !emailRegex.test(element.value)) {
-        setFormError({ ...formError, [element.name]: EErrorText.emailFormat });
+    Object.values(formError).forEach((errorValue) => {
+      flag = !errorValue;
+    });
+    return flag;
+  }
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFormError({ ...formError, [event.target.name]: '' });
+    setGlobalFormError('');
+
+    if (
+      event.target.name === EFieldsNames.firstName ||
+      event.target.name === EFieldsNames.lastName
+    ) {
+      if (event.target.value.length > 15) {
+        setFormError({ ...formError, [event.target.name]: EErrorText.maxLength15 });
+      }
+      if (event.target.value.length < 1) {
+        setFormError({ ...formError, [event.target.name]: EErrorText.minLength1 });
+      }
+      if (event.target.value && !textRegex.test(event.target.value)) {
+        setFormError({ ...formError, [event.target.name]: EErrorText.textFormat });
       }
     }
 
-    if (element.name === EFieldsNames.birthDate) {
+    if (event.target.name === EFieldsNames.email) {
+      if (event.target.value && !emailRegex.test(event.target.value)) {
+        setFormError({ ...formError, [event.target.name]: EErrorText.emailFormat });
+      }
+    }
+
+    if (event.target.name === EFieldsNames.birthDate) {
       try {
-        const birthDate = new Date(element.value);
+        const birthDate = new Date(event.target.value);
         const currentDate = new Date();
 
         if (Number.isNaN(birthDate.getTime())) {
           setFormError({
             ...formError,
-            [element.name]: EErrorText.dateInvalid
+            [event.target.name]: EErrorText.dateInvalid
           });
         }
 
-        if (calculateAge(element.value) < 13) {
+        if (calculateAge(event.target.value) < 13) {
           setFormError({
             ...formError,
-            [element.name]: EErrorText.dateToYoung
+            [event.target.name]: EErrorText.dateToYoung
           });
         }
 
         if (birthDate > currentDate) {
           setFormError({
             ...formError,
-            [element.name]: EErrorText.dateOutOfLimit
+            [event.target.name]: EErrorText.dateOutOfLimit
           });
         }
       } catch {
         setFormError({
           ...formError,
-          [element.name]: EErrorText.dateInvalid
+          [event.target.name]: EErrorText.dateInvalid
         });
       }
     }
 
-    if (element.name === EFieldsNames.password || element.name === EFieldsNames.newPassword) {
-      if (element.value && !passwordRegex.test(element.value)) {
-        setFormError({ ...formError, [element.name]: EErrorText.passwordFormat });
-      }
-    }
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    validateInput(event.target);
-    setFormData({ ...formData, [event?.target.name]: event.target.value });
+  const handleBlurRequired = (event: FormEvent<HTMLInputElement>) => {
+    if (!event.currentTarget.value) {
+      setFormError({
+        ...formError,
+        [event.currentTarget.name]: EErrorText.requiredField
+      });
+    }
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!isFormValid(event.currentTarget)) {
+      const tempError: IFormData = {};
+      document.querySelectorAll<HTMLInputElement>('[data-required="true"]').forEach((item) => {
+        if (item.value === '') {
+          tempError[item.name] = EErrorText.requiredField;
+        }
+      });
+      setFormError({
+        ...formError,
+        ...tempError
+      });
+      setGlobalFormError('Заполните все обязательные поля');
+      return;
+    }
+
     const data = Object.fromEntries(new FormData(event.currentTarget));
     const actions: Array<MyCustomerUpdateAction> = [];
 
@@ -191,6 +234,7 @@ export function PersonalForm({ user, loading }: IPersonalFormProps) {
                 type="text"
                 placeholder="Ваше имя*"
                 onChange={handleChange}
+                onBlur={handleBlurRequired}
                 error={formError.firstName}
                 label="Имя"
               />
@@ -203,6 +247,7 @@ export function PersonalForm({ user, loading }: IPersonalFormProps) {
                 type="text"
                 placeholder="Ваша фамилия*"
                 onChange={handleChange}
+                onBlur={handleBlurRequired}
                 error={formError.lastName}
                 label="Фамилия"
               />
@@ -215,6 +260,7 @@ export function PersonalForm({ user, loading }: IPersonalFormProps) {
                 type="date"
                 placeholder="Дата рождения*"
                 onChange={handleChange}
+                onBlur={handleBlurRequired}
                 error={formError.dateOfBirth}
                 label="Дата рождения"
               />
@@ -227,11 +273,13 @@ export function PersonalForm({ user, loading }: IPersonalFormProps) {
                 type="text"
                 placeholder="Ваш e-mail*"
                 onChange={handleChange}
+                onBlur={handleBlurRequired}
                 error={formError.email}
                 label="E-mail"
               />
             </div>
           </fieldset>
+          {globalFormError ? <span className={styles.error}>{globalFormError}</span> : null}
           {!isFormDisabled && <BaseButton textContent="Сохранить" />}
         </form>
       ) : (
