@@ -6,11 +6,5 @@ interface IProductDescriptionProps {
 }
 
 export function ProductDescription({ description }: IProductDescriptionProps) {
-  return (
-    <div className={styles.description}>
-      {description} Lorem ipsum dolor, sit amet consectetur adipisicing elit. Voluptatibus velit hic
-      molestiae doloremque, cumque earum eaque tenetur suscipit tempore labore nesciunt odit alias
-      non fuga qui commodi incidunt porro? Ex?
-    </div>
-  );
+  return <>{description && <div className={styles.description}>{description}</div>}</>;
 }
