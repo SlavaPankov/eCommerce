@@ -93,7 +93,6 @@
 
   @include mobile {
     transform: none;
-    display: none;
   }
 }
 
@@ -112,9 +111,11 @@
 
   @include small-tablet {
     height: 500px;
+    width: 100%;
   }
 
   @include mobile {
+    width: calc(100% - 84px);
     height: auto;
   }
 }
