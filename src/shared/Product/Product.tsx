@@ -8,6 +8,7 @@ import { ImageSlider } from './ImageSlider';
 import { ProductInfo } from './ProductInfo';
 import { ProductCharacteristics } from './ProductCharacteristics';
 import { ProductDescription } from './ProductDescription';
+import { SkeletonProduct } from './SkeletonProduct';
 
 export function Product() {
   const { id } = useParams();
@@ -34,6 +35,7 @@ export function Product() {
           <ProductCharacteristics characteristics={product.attributes} />
         </div>
       )}
+      {loading && <SkeletonProduct />}
     </section>
   );
 }

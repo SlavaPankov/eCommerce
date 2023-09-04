@@ -54,14 +54,16 @@ export function SpecialCard({
   return (
     <article className={styles.card}>
       <span className={styles.discount}>- {discount}</span>
-      <img
-        className={styles.image}
-        src={imagePreview.url}
-        width={imagePreview.dimensions?.w}
-        height={imagePreview.dimensions?.h}
-        alt={title}
-      />
-      <Link to="#" data-key={productKey}>
+      <Link to={`/product/${productKey}`}>
+        <img
+          className={styles.image}
+          src={imagePreview.url}
+          width={imagePreview.dimensions?.w}
+          height={imagePreview.dimensions?.h}
+          alt={title}
+        />
+      </Link>
+      <Link to={`/product/${productKey}`}>
         <h2 className={styles.title}>
           {title
             .split(' ')

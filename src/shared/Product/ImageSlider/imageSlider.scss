@@ -4,6 +4,10 @@
   grid-area: 1 / 1 / 2 / 7;
   cursor: pointer;
 
+  & img {
+    width: 100%;
+  }
+
   @include big-desktop {
     grid-area: 1 / 1 / 2 / 6;
   }
@@ -23,6 +27,7 @@
 
   @include small-tablet {
     grid-area: 2 / 1 / 3 / 3;
+    max-height: 400px;
   }
 
   @include mobile {
@@ -34,7 +39,7 @@
   background-color: $grey_light;
   box-sizing: border-box !important;
   padding: 10px 25px;
-  max-height: 350px;
+  height: 100%;
 }
 
 .main_image {

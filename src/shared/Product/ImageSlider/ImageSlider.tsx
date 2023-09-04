@@ -37,7 +37,7 @@ export function ImageSlider({ images }: ISlider) {
         <Swiper modules={[Thumbs]} thumbs={{ swiper: thumbsSwiper }}>
           {images?.map((image, index) => (
             <SwiperSlide key={index}>
-              <img src={image.url} alt="image" />
+              <img src={image.url} width={624} height={420} alt="image" />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -55,15 +55,18 @@ export function ImageSlider({ images }: ISlider) {
           breakpoints={{
             320: {
               direction: ESliderDirection.horizontal,
-              slidesPerView: 2.5
+              slidesPerView: 2.5,
+              spaceBetween: 18
             },
             685: {
               direction: ESliderDirection.vertical,
-              slidesPerView: 4
+              slidesPerView: 4,
+              spaceBetween: 18
             },
             850: {
               direction: ESliderDirection.horizontal,
-              slidesPerView: 3.5
+              slidesPerView: 3.5,
+              spaceBetween: 38
             },
             1024: {
               slidesPerView: 4
