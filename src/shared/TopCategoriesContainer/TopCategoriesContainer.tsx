@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames';
-import { useCategoriesData } from '../../hooks/useCategoriesData';
 import { ICategory } from '../../types/interfaces/ICategory';
 import { TopCategoriesList } from './TopCategoriesList';
 import { BaseHeading } from '../BaseHeading';
 import styles from './topCategoriesContainer.scss';
+import { useAppSelector } from '../../hooks/storeHooks';
 
 export function TopCategoriesContainer() {
-  const { categories, loading } = useCategoriesData();
+  const { categories, loading } = useAppSelector((state) => state.categories);
   const [topCategories, setTopCategories] = useState<Array<ICategory>>(categories);
 
   useEffect(() => {

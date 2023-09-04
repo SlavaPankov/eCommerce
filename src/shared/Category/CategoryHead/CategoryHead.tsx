@@ -38,6 +38,12 @@ export function CategoryHead({ heading, sort, setSort }: ICategoryHeadProps) {
       case '2':
         setSort(['price desc']);
         break;
+      case '3':
+        setSort(['name.ru asc']);
+        break;
+      case '4':
+        setSort(['name.ru desc']);
+        break;
       default:
         setSort(sort);
         break;
@@ -63,6 +69,12 @@ export function CategoryHead({ heading, sort, setSort }: ICategoryHeadProps) {
           </li>
           <li data-sort="2" className={styles.sort_item} onClick={handleClickSelectItem}>
             Самые дорогие
+          </li>
+          <li data-sort="3" className={styles.sort_item} onClick={handleClickSelectItem}>
+            По имени (А-Я)
+          </li>
+          <li data-sort="4" className={styles.sort_item} onClick={handleClickSelectItem}>
+            По имени (Я-А)
           </li>
         </ul>
       </BaseSelect>

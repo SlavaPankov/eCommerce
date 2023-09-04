@@ -4,12 +4,12 @@ import { useParams } from 'react-router-dom';
 import styles from './category.scss';
 import { Filters } from './Filters';
 import { ProductsContainer } from './ProductsContainer';
-import { useCategoriesData } from '../../hooks/useCategoriesData';
 import { ICategory } from '../../types/interfaces/ICategory';
 import { CategoryHead } from './CategoryHead';
+import { useAppSelector } from '../../hooks/storeHooks';
 
 export function Category() {
-  const { categories } = useCategoriesData();
+  const { categories } = useAppSelector((state) => state.categories);
   const { id } = useParams();
   const [currentCategory, setCurrentCategory] = useState<Array<ICategory>>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);

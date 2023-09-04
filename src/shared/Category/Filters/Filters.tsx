@@ -8,6 +8,8 @@ import { ICategory } from '../../../types/interfaces/ICategory';
 import { CheckboxFilter } from './CheckboxFilter';
 import { IColor } from '../../../types/interfaces/IColor';
 import { PriceFilter } from './PriceFilter';
+import { BaseButton } from '../../BaseButton';
+import { EBaseButtonMode } from '../../../types/enums/EBaseButtonMode';
 
 interface ICheckboxValue {
   [k: string]: boolean;
@@ -94,6 +96,7 @@ export function Filters({
   const [checkedColors, setCheckedColors] = useState<Array<string>>([]);
   const [priceValue, setPriceValue] = useState<Array<number>>(initialPrice);
   const [filter, setFilter] = useState<IFilterData>({});
+  const [isChangeCommitted, setIsChangeCommitted] = useState<boolean>(false);
 
   const addToQueryString = (key: string, value: string) => {
     const queryValue = queryParams.get(key);
@@ -173,20 +176,11 @@ export function Filters({
   };
 
   const handleChangeCommitted = () => {
-    if (priceValue[0] !== 0) {
-      setFilter({
-        ...filter,
-        'variants.price.centAmount:range': `(${priceValue.join('00 to ')}00)`
-      });
-    } else {
-      setFilter({
-        ...filter,
-        'variants.price.centAmount:range': `(${priceValue.join(' to ')}00)`
-      });
-    }
+    setIsChangeCommitted(true);
   };
 
   const handleChangeSlider = (event: Event, newValue: number | number[]) => {
+    setIsChangeCommitted(false);
     setPriceValue(newValue as number[]);
   };
 
@@ -204,6 +198,17 @@ export function Filters({
 
       setPriceValue(tempPrice);
     }
+  };
+
+  const handleClickReset = () => {
+    setPriceValue(initialPrice);
+    setCheckedSubcategories([]);
+    setCheckedColors([]);
+    setCheckboxValues({});
+    setFilter({
+      'categories.id:': `"${currentCategory[0].id}"`
+    });
+    navigate({ search: '' });
   };
 
   useEffect(() => {
@@ -311,6 +316,22 @@ export function Filters({
   }, [checkedColors]);
 
   useEffect(() => {
+    if (isChangeCommitted) {
+      if (priceValue[0] !== 0) {
+        setFilter({
+          ...filter,
+          'variants.price.centAmount:range': `(${priceValue.join('00 to ')}00)`
+        });
+      } else {
+        setFilter({
+          ...filter,
+          'variants.price.centAmount:range': `(${priceValue.join(' to ')}00)`
+        });
+      }
+    }
+  }, [priceValue, isChangeCommitted]);
+
+  useEffect(() => {
     const tempFilter = Object.entries(filter).map(([key, value]) => `${key} ${value}`);
 
     if (tempFilter.length > 0) {
@@ -344,6 +365,11 @@ export function Filters({
           onChange={handleChange}
           checkboxValues={checkboxValues}
           isDesktop={isDesktop}
+        />
+        <BaseButton
+          textContent="Сбросить"
+          mode={EBaseButtonMode.secondary}
+          onClick={handleClickReset}
         />
       </div>
     </div>
