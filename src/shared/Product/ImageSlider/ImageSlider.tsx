@@ -120,7 +120,7 @@ export function ImageSlider({ images }: ISlider) {
                     slidesPerView: 3
                   },
                   1180: {
-                    slidesPerView: 4
+                    slidesPerView: 3
                   }
                 }}>
                 {images?.map((image, index) => (
