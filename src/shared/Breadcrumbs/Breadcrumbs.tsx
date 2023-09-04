@@ -37,6 +37,7 @@ export function Breadcrumbs() {
           }
 
           if (/\/product\/[a-z]/gi.test(crumb.pathname)) {
+            console.log('here');
             if (product && categories) {
               const [currentCategory] = product.categories
                 .map((productCategory) => {
