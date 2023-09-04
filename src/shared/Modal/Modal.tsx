@@ -33,7 +33,10 @@ export function Modal({ children, onClose = () => {} }: IModalProps) {
   return createPortal(
     <div className={styles.wrapper} ref={ref}>
       <div className={styles.wrapper_container} ref={backgroundRef}></div>
-      <div className={styles.content}>{children}</div>
+      <div className={styles.content}>
+        <div className={styles.cross} onClick={onClose}></div>
+        {children}
+      </div>
     </div>,
     node
   );
