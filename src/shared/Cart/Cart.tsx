@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { useAppSelector } from '../../hooks/storeHooks';
 import styles from './cart.scss';
@@ -6,10 +6,6 @@ import { CartItemList } from './CartItemList';
 
 export function Cart() {
   const { cart } = useAppSelector((state) => state.cart);
-
-  useEffect(() => {
-    console.log(cart);
-  }, [cart]);
 
   const className = classNames('container', {
     [`${styles.container}`]: true
