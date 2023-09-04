@@ -1,9 +1,10 @@
-import { Address, DiscountCodeInfo, LineItem } from '@commercetools/platform-sdk';
+import { Address, DiscountCodeInfo } from '@commercetools/platform-sdk';
+import { ILineItem } from './ILineItem';
 
 export interface ICart {
   id: string;
   customerId?: string;
-  lineItems: Array<LineItem>;
+  lineItems: Array<ILineItem>;
   totalPrice: string;
   billingAddress?: Address;
   shippingAddress?: Address;

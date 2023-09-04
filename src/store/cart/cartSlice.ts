@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Cart, ErrorResponse } from '@commercetools/platform-sdk';
 import { apiConfig } from '../../cfg/apiConfig';
 import { ICart } from '../../types/interfaces/ICart';
@@ -41,9 +41,7 @@ export const createCartRequestAsync = createAsyncThunk(
         }
       })
       .execute()
-      .then(({ body }): Cart => {
-        return body;
-      })
+      .then(({ body }): ICart => createCartFromResponse(body))
       .catch((error: ErrorResponse) => {
         return rejectWithValue(error.message);
       });
@@ -59,9 +57,7 @@ export const getActiveCartRequestAsync = createAsyncThunk(
       .activeCart()
       .get()
       .execute()
-      .then(({ body }): Cart => {
-        return body;
-      })
+      .then(({ body }): ICart => createCartFromResponse(body))
       .catch((error: ErrorResponse) => {
         return rejectWithValue(error.message);
       });
@@ -101,9 +97,7 @@ export const addLineItemRequestAsync = createAsyncThunk(
         }
       })
       .execute()
-      .then(({ body }) => {
-        return createCartFromResponse(body);
-      })
+      .then(({ body }) => createCartFromResponse(body))
       .catch((error: ErrorResponse) => {
         return rejectWithValue(error.message);
       });
@@ -114,15 +108,8 @@ export const cartSlice = createSlice({
   name: 'cartSlice',
   initialState,
   reducers: {
-    setCartData: (state, action) => {
-      state.cart.id = action.payload.id;
-      state.cart.billingAddress = action.payload.billingAddress;
-      state.cart.customerId = action.payload.customerId;
-      state.cart.lineItems = action.payload.lineItems;
-      state.cart.totalPrice = action.payload.totalPrice;
-      state.cart.shippingAddress = action.payload.shippingAddress;
-      state.cart.discountCodes = action.payload.discountCode;
-      state.cart.version = action.payload.version;
+    setCartData: (state, action: PayloadAction<Cart>) => {
+      state.cart = createCartFromResponse(action.payload);
     }
   },
   extraReducers: (builder) => {
@@ -132,14 +119,7 @@ export const cartSlice = createSlice({
 
     builder.addCase(createCartRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      state.cart.id = action.payload.id;
-      state.cart.version = action.payload.version;
-      state.cart.customerId = action.payload.customerId;
-      state.cart.lineItems = action.payload.lineItems;
-      state.cart.totalPrice = action.payload.totalPrice.centAmount.toString();
-      state.cart.billingAddress = action.payload.billingAddress;
-      state.cart.shippingAddress = action.payload.shippingAddress;
-      state.cart.discountCodes = action.payload.discountCodes;
+      state.cart = action.payload;
     });
 
     builder.addCase(createCartRequestAsync.rejected, (state, action) => {
@@ -153,14 +133,7 @@ export const cartSlice = createSlice({
 
     builder.addCase(getActiveCartRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
-      state.cart.id = action.payload.id;
-      state.cart.version = action.payload.version;
-      state.cart.customerId = action.payload.customerId;
-      state.cart.lineItems = action.payload.lineItems;
-      state.cart.totalPrice = action.payload.totalPrice.centAmount.toString();
-      state.cart.billingAddress = action.payload.billingAddress;
-      state.cart.shippingAddress = action.payload.shippingAddress;
-      state.cart.discountCodes = action.payload.discountCodes;
+      state.cart = action.payload;
     });
 
     builder.addCase(getActiveCartRequestAsync.rejected, (state, action) => {
