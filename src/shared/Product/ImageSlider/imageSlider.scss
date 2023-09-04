@@ -20,6 +20,11 @@
 .thumbSwiper {
   grid-area: 2 / 1 / 3 / 7;
   cursor: pointer;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background-color: $grey_light;
+  padding: 10px 25px;
 
   @include big-desktop {
     grid-area: 2 / 1 / 3 / 6;
@@ -38,7 +43,6 @@
 .swiper {
   background-color: $grey_light;
   box-sizing: border-box !important;
-  padding: 10px 25px;
   height: 100%;
 }
 
@@ -80,10 +84,5 @@
 }
 
 .button_container {
-  display: none;
-  flex-shrink: 0;
-
-  @include big-desktop {
-    display: block;
-  }
+  display: block;
 }

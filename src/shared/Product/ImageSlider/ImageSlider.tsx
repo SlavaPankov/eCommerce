@@ -34,7 +34,13 @@ export function ImageSlider({ images }: ISlider) {
   return (
     <>
       <div className={styles.container} onClick={handleClickSlider}>
-        <Swiper modules={[Thumbs]} thumbs={{ swiper: thumbsSwiper }}>
+        <Swiper
+          modules={[Thumbs, Navigation]}
+          thumbs={{ swiper: thumbsSwiper }}
+          navigation={{
+            prevEl: '#main-prev',
+            nextEl: '#main-next'
+          }}>
           {images?.map((image, index) => (
             <SwiperSlide key={index}>
               <img src={image.url} width={624} height={420} alt="image" />
@@ -43,6 +49,9 @@ export function ImageSlider({ images }: ISlider) {
         </Swiper>
       </div>
       <div className={styles.thumbSwiper}>
+        <div className={styles.button_container}>
+          <BaseRoundButton isLeft={true} id="main-prev" />
+        </div>
         <Swiper
           className={styles.swiper}
           modules={[Thumbs]}
@@ -78,6 +87,9 @@ export function ImageSlider({ images }: ISlider) {
             </SwiperSlide>
           ))}
         </Swiper>
+        <div className={styles.button_container}>
+          <BaseRoundButton id="main-next" />
+        </div>
       </div>
       {isModalOpen && (
         <Modal onClose={handleClose}>
