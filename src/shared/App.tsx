@@ -18,7 +18,6 @@ import { CategoryPage } from '../pages/CategoryPage';
 import { SearchPage } from '../pages/SearchPage';
 import { Layout } from './Layout';
 import { ProductPage } from '../pages/ProductPage';
-import { categoriesAsyncRequest } from '../store/categories/categoriesSlice';
 
 export const routeObject = createRoutesFromElements(
   <Route path={ERoutes.main} element={<Layout />}>
@@ -72,7 +71,6 @@ export function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(categoriesAsyncRequest());
     dispatch(getActiveCartRequestAsync()).then(({ type }) => {
       if (type.includes('rejected')) {
         dispatch(createCartRequestAsync());

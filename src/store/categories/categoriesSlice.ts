@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Category, ErrorResponse } from '@commercetools/platform-sdk';
 import { ICategory } from '../../types/interfaces/ICategory';
 import { getCategoriesImages } from '../../utils/getCategoriesImages';
@@ -68,21 +68,7 @@ export const categoriesAsyncRequest = createAsyncThunk(
 export const categoriesSlice = createSlice({
   name: 'categoriesSlice',
   initialState,
-  reducers: {
-    categoriesLoading: (state) => {
-      state.loading = true;
-    },
-
-    categoriesLoadingSuccess: (state, action: PayloadAction<Array<ICategory>>) => {
-      state.loading = false;
-      state.categories = action.payload;
-    },
-
-    categoriesLoadingError: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(categoriesAsyncRequest.pending, (state) => {
       state.loading = true;
