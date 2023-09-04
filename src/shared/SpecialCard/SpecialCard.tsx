@@ -4,9 +4,8 @@ import styles from './specialCard.scss';
 import { BaseButton } from '../BaseButton';
 import { EBaseButtonMode } from '../../types/enums/EBaseButtonMode';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
-import { ICartAction } from '../../types/interfaces/ICartAction';
 import { ECartActionTypes } from '../../types/enums/ECartActionTypes';
-import { addLineItemRequestAsync } from '../../store/cart/cartSlice';
+import { updateCartRequestAsync } from '../../store/cart/cartSlice';
 import { IImage } from '../../types/interfaces/IImage';
 
 interface ISpecialCardProps {
@@ -36,17 +35,19 @@ export function SpecialCard({
   ).toLocaleString();
 
   const handleClick = () => {
-    const addAction: ICartAction = {
-      action: ECartActionTypes.addLineItem,
-      productId: id,
-      variantId
-    };
-
     dispatch(
-      addLineItemRequestAsync({
+      updateCartRequestAsync({
         cartId: cart.id,
-        addAction,
-        version: cart.version
+        payload: {
+          version: cart.version,
+          actions: [
+            {
+              action: ECartActionTypes.addLineItem,
+              productId: id,
+              variantId
+            }
+          ]
+        }
       })
     );
   };

@@ -3,9 +3,8 @@ import styles from './productInfo.scss';
 import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
 import { RatingIcon } from '../../Icons';
 import { BaseButton } from '../../BaseButton';
-import { ICartAction } from '../../../types/interfaces/ICartAction';
 import { ECartActionTypes } from '../../../types/enums/ECartActionTypes';
-import { addLineItemRequestAsync } from '../../../store/cart/cartSlice';
+import { updateCartRequestAsync } from '../../../store/cart/cartSlice';
 
 interface IProductInfoProps {
   name: string;
@@ -27,17 +26,19 @@ export function ProductInfo({
   const dispatch = useAppDispatch();
   const { cart } = useAppSelector((state) => state.cart);
   const handleClick = () => {
-    const addAction: ICartAction = {
-      action: ECartActionTypes.addLineItem,
-      productId: id,
-      variantId
-    };
-
     dispatch(
-      addLineItemRequestAsync({
+      updateCartRequestAsync({
         cartId: cart.id,
-        addAction,
-        version: cart.version
+        payload: {
+          version: cart.version,
+          actions: [
+            {
+              action: ECartActionTypes.addLineItem,
+              productId: id,
+              variantId
+            }
+          ]
+        }
       })
     );
   };

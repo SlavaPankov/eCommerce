@@ -1,9 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Cart, ErrorResponse } from '@commercetools/platform-sdk';
+import { Cart, ErrorResponse, MyCartUpdateAction } from '@commercetools/platform-sdk';
 import { apiConfig } from '../../cfg/apiConfig';
 import { ICart } from '../../types/interfaces/ICart';
-import { ICartAction } from '../../types/interfaces/ICartAction';
 import { createCartFromResponse } from '../../utils/createCartFromResponse';
 import { getApiRoot } from '../../client/BuildClient';
 
@@ -27,6 +26,14 @@ const initialState: ICartState = {
     version: 0
   }
 };
+
+interface IUpdateCartPayload {
+  cartId: string;
+  payload: {
+    version: number;
+    actions: Array<MyCartUpdateAction>;
+  };
+}
 
 export const createCartRequestAsync = createAsyncThunk(
   'me/createCart',
@@ -64,43 +71,30 @@ export const getActiveCartRequestAsync = createAsyncThunk(
   }
 );
 
-export const addLineItemRequestAsync = createAsyncThunk(
-  'me/addLineItem',
-  async (
-    {
-      cartId,
-      version,
-      addAction
-    }: {
-      cartId: string;
-      version: number;
-      addAction: ICartAction;
-    },
-    { rejectWithValue }
-  ) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .me()
-      .carts()
-      .withId({ ID: cartId })
-      .post({
-        body: {
-          version,
-          actions: [
-            {
-              action: addAction.action,
-              productId: addAction.productId,
-              variantId: addAction.variantId,
-              quantity: addAction.quantity || 1
-            }
-          ]
-        }
-      })
-      .execute()
-      .then(({ body }) => createCartFromResponse(body))
-      .catch((error: ErrorResponse) => {
-        return rejectWithValue(error.message);
-      });
+export const updateCartRequestAsync = createAsyncThunk(
+  'cart/UpdateCart',
+  async (payload: IUpdateCartPayload, { rejectWithValue }) => {
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .me()
+        .carts()
+        .withId({ ID: payload.cartId })
+        .post({
+          body: {
+            ...payload.payload
+          }
+        })
+        .execute()
+        .then(({ body }): ICart => createCartFromResponse(body))
+        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
   }
 );
 
@@ -141,16 +135,16 @@ export const cartSlice = createSlice({
       state.error = `${action.payload}`;
     });
 
-    builder.addCase(addLineItemRequestAsync.pending, (state) => {
+    builder.addCase(updateCartRequestAsync.pending, (state) => {
       state.loading = true;
     });
 
-    builder.addCase(addLineItemRequestAsync.fulfilled, (state, action) => {
+    builder.addCase(updateCartRequestAsync.fulfilled, (state, action) => {
       state.loading = false;
       state.cart = action.payload;
     });
 
-    builder.addCase(addLineItemRequestAsync.rejected, (state, action) => {
+    builder.addCase(updateCartRequestAsync.rejected, (state, action) => {
       state.loading = false;
       state.error = `${action.payload}`;
     });
