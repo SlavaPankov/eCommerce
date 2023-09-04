@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
 import { RatingIcon } from '../../Icons';
 import { BaseButton } from '../../BaseButton';
 import { ICartAction } from '../../../types/interfaces/ICartAction';
-import { EActionTypes } from '../../../types/enums/EActionTypes';
+import { ECartActionTypes } from '../../../types/enums/ECartActionTypes';
 import { addLineItemRequestAsync } from '../../../store/cart/cartSlice';
 
 interface IProductInfoProps {
@@ -28,7 +28,7 @@ export function ProductInfo({
   const { cart } = useAppSelector((state) => state.cart);
   const handleClick = () => {
     const addAction: ICartAction = {
-      action: EActionTypes.addLineItem,
+      action: ECartActionTypes.addLineItem,
       productId: id,
       variantId
     };
