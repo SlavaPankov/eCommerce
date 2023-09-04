@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import { useAppSelector } from '../../hooks/storeHooks';
 import styles from './cart.scss';
+import { CartItemList } from './CartItemList';
 
 export function Cart() {
   const { cart } = useAppSelector((state) => state.cart);
@@ -17,13 +18,7 @@ export function Cart() {
   return (
     <section>
       <div className={className}>
-        <ul>
-          {cart.lineItems.map((item) => (
-            <li key={item.id}>
-              {item.name} - {item.quantity}
-            </li>
-          ))}
-        </ul>
+        <CartItemList list={cart.lineItems} />
 
         <div>{cart.totalPrice}</div>
       </div>

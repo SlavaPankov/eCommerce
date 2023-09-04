@@ -1,0 +1,107 @@
+.listItem {
+  &:not(:last-child) {
+    padding-bottom: 30px;
+    border-bottom: 1px solid $grey_light;
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.imageLink {
+  margin-right: 30px;
+}
+
+.title {
+  & > a {
+    font-size: 24px;
+    line-height: 130%;
+    font-weight: 400;
+    color: $black;
+    transition: color 0.3s ease-in-out;
+
+    &:hover {
+      color: $primary;
+    }
+
+    &:focus {
+      outline: none;
+      color: $primary_shade;
+    }
+
+    &:active {
+      color: $primary_shade;
+    }
+  }
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  margin-right: 30px;
+
+  & > button {
+    padding: 4px 10px;
+    font-size: 16px;
+    line-height: 130%;
+    font-weight: 700;
+  }
+}
+
+.input {
+  padding: 5px 10px;
+  max-width: 50px;
+  border: 1px solid $grey_light;
+  border-radius: 10px;
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 400;
+  text-align: center;
+  color: $black;
+}
+
+.prices {
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.price {
+  font-size: 24px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+}
+
+.discountedPrice {
+  font-size: 18px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $grey;
+  text-decoration: line-through;
+}
+
+.delete {
+  cursor: pointer;
+
+  & path {
+    transition: fill 0.3s ease-in-out;
+  }
+
+  &:hover {
+    & path {
+      fill: $primary_light;
+    }
+  }
+
+  &:active {
+    & path {
+      fill: $primary_shade;
+    }
+  }
+}
