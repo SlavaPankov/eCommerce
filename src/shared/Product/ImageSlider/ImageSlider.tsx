@@ -49,45 +49,48 @@ export function ImageSlider({ images }: ISlider) {
         </Swiper>
       </div>
       <div className={styles.thumbSwiper}>
-        <div className={styles.button_container}>
+        <div className={styles.button_container} id={styles.mainPrev}>
           <BaseRoundButton isLeft={true} id="main-prev" />
         </div>
-        <Swiper
-          className={styles.swiper}
-          modules={[Thumbs]}
-          watchSlidesProgress={true}
-          onSwiper={setThumbsSwiper}
-          slidesPerGroup={1}
-          slidesPerView={4}
-          spaceBetween={38}
-          direction={ESliderDirection.horizontal}
-          breakpoints={{
-            320: {
-              direction: ESliderDirection.horizontal,
-              slidesPerView: 2.5,
-              spaceBetween: 18
-            },
-            685: {
-              direction: ESliderDirection.vertical,
-              slidesPerView: 4,
-              spaceBetween: 18
-            },
-            850: {
-              direction: ESliderDirection.horizontal,
-              slidesPerView: 3.5,
-              spaceBetween: 38
-            },
-            1024: {
-              slidesPerView: 4
-            }
-          }}>
-          {images?.map((image, index) => (
-            <SwiperSlide key={index}>
-              <img src={image.url} alt="image" />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-        <div className={styles.button_container}>
+        <div className={styles.thumb_container}>
+          <Swiper
+            className={styles.swiper}
+            modules={[Thumbs]}
+            watchSlidesProgress={true}
+            onSwiper={setThumbsSwiper}
+            slidesPerGroup={1}
+            slidesPerView={4}
+            spaceBetween={38}
+            direction={ESliderDirection.horizontal}
+            breakpoints={{
+              320: {
+                direction: ESliderDirection.horizontal,
+                slidesPerView: 2.5,
+                spaceBetween: 18
+              },
+              685: {
+                direction: ESliderDirection.vertical,
+                slidesPerView: 4,
+                spaceBetween: 18
+              },
+              850: {
+                direction: ESliderDirection.horizontal,
+                slidesPerView: 3.5,
+                spaceBetween: 38
+              },
+              1024: {
+                direction: ESliderDirection.horizontal,
+                slidesPerView: 4
+              }
+            }}>
+            {images?.map((image, index) => (
+              <SwiperSlide key={index}>
+                <img src={image.url} alt="image" />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+        <div className={styles.button_container} id={styles.mainNext}>
           <BaseRoundButton id="main-next" />
         </div>
       </div>

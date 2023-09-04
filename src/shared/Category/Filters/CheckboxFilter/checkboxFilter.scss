@@ -41,7 +41,6 @@
   font-weight: 400;
   color: $black;
   border: 2px solid $grey_light;
-  z-index: 10;
   transition:
     border-color 0.3s ease-in-out,
     background-color 0.3s ease-in-out;
@@ -64,6 +63,7 @@
 .open {
   border-color: $primary;
   background-color: $white;
+  z-index: 13;
 
   &::after {
     transform: translateY(-15%) rotate(225deg);
@@ -82,5 +82,5 @@
   width: 100%;
   transform: none;
   bottom: 18px;
-  z-index: 9;
+  z-index: 12;
 }

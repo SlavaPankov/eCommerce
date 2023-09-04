@@ -83,7 +83,7 @@
     border-top: none;
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
-    z-index: 9;
+    z-index: 12;
   }
 }
 
@@ -101,6 +101,7 @@
 .open {
   border-color: $primary;
   background-color: $white;
+  z-index: 13;
 
   &::after {
     transform: translateY(-15%) rotate(225deg);

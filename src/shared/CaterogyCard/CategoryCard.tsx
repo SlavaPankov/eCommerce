@@ -36,7 +36,9 @@ export function CategoryCard({ name, imageSrc, subcategories, slug }: ICategoryC
           <span>{name}</span>
         </h2>
       </Link>
-      <img className={styles.image} src={imageSrc} alt={name} />
+      <Link to={`/catalog/${slug}`}>
+        <img className={styles.image} src={imageSrc} alt={name} />
+      </Link>
       <Link to={`/catalog/${slug}`} className={styles.catalogLink}>
         <span>В каталог</span>
         <BaseRoundButton />
