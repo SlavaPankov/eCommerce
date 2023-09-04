@@ -58,11 +58,7 @@
 
   @include big-desktop {
     margin: 0 auto;
-    max-width: calc(100% - 60px);
-  }
-
-  @include tablet {
-    max-width: calc(100% - 60px);
+    max-width: 100%;
   }
 }
 
