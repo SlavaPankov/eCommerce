@@ -75,9 +75,11 @@ export function App() {
     dispatch(categoriesAsyncRequest());
 
     dispatch(getActiveCartRequestAsync()).then(({ type }) => {
-      if (type.includes('rejected')) {
-        dispatch(createCartRequestAsync());
+      if (!type.includes('reject')) {
+        return;
       }
+
+      dispatch(createCartRequestAsync());
     });
   }, []);
 
