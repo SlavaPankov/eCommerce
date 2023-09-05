@@ -1,5 +1,7 @@
 export enum ECartActionTypes {
   addLineItem = 'addLineItem',
   changeLineItemQuantity = 'changeLineItemQuantity',
-  removeLineItem = 'removeLineItem'
+  removeLineItem = 'removeLineItem',
+  addDiscountCode = 'addDiscountCode',
+  removeDiscountCode = 'removeDiscountCode'
 }

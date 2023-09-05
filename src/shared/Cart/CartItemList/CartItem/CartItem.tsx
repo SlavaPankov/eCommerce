@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ILineItem } from '../../../../types/interfaces/ILineItem';
 import { BaseButton } from '../../../BaseButton';
@@ -39,7 +39,9 @@ export function CartItem({ item }: ICartItemProps) {
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setQuantity(+event.target.value);
+    if (+event.target.value > 0) {
+      setQuantity(+event.target.value);
+    }
   };
 
   const handleClickMinus = () => {
@@ -68,36 +70,63 @@ export function CartItem({ item }: ICartItemProps) {
     updateQuantity(+current.value + 1);
   };
 
+  const handleBlur = (event: FormEvent<HTMLInputElement>) => {
+    if (+event.currentTarget.value > 0) {
+      updateQuantity(+event.currentTarget.value);
+    }
+  };
+
+  const handleClickRemove = () => {
+    dispatch(
+      updateCartRequestAsync({
+        cartId,
+        payload: {
+          version,
+          actions: [
+            {
+              action: ECartActionTypes.removeLineItem,
+              lineItemId: item.id
+            }
+          ]
+        }
+      })
+    );
+  };
+
   return (
     <li className={styles.listItem}>
       <article className={styles.item}>
         <Link to={`/product/${item.key}`} className={styles.imageLink}>
-          <img src={item.images?.preview.url} width="250" alt={item.name} />
+          <img src={item.images?.preview.url} width="150" alt={item.name} />
         </Link>
-        <h2 className={styles.title}>
-          <Link to={`/product/${item.key}`}>{item.name}</Link>
-        </h2>
-        <div className={styles.quantity}>
-          <BaseButton
-            isDisabled={loading}
-            textContent="-"
-            mode={EBaseButtonMode.secondary}
-            onClick={handleClickMinus}
-          />
-          <input
-            className={styles.input}
-            ref={ref}
-            type="number"
-            value={quantity}
-            onChange={handleChange}
-          />
-          <BaseButton
-            isDisabled={loading}
-            textContent="+"
-            mode={EBaseButtonMode.secondary}
-            onClick={handleClickPlus}
-          />
+        <div className={styles.wrapper}>
+          <h2 className={styles.title}>
+            <Link to={`/product/${item.key}`}>{item.name}</Link>
+          </h2>
+          <div className={styles.quantity}>
+            <BaseButton
+              isDisabled={loading}
+              textContent="-"
+              mode={EBaseButtonMode.secondary}
+              onClick={handleClickMinus}
+            />
+            <input
+              className={styles.input}
+              ref={ref}
+              type="number"
+              value={quantity}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
+            <BaseButton
+              isDisabled={loading}
+              textContent="+"
+              mode={EBaseButtonMode.secondary}
+              onClick={handleClickPlus}
+            />
+          </div>
         </div>
+
         <div className={styles.prices}>
           {!item.discountedPrice ? (
             <div className={styles.price}>{item.price} руб</div>
@@ -108,7 +137,7 @@ export function CartItem({ item }: ICartItemProps) {
             </>
           )}
         </div>
-        <div className={styles.delete}>
+        <div className={styles.delete} onClick={handleClickRemove}>
           <TrashIcon />
         </div>
       </article>

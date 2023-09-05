@@ -1,3 +1,17 @@
 .container {
   padding-bottom: 70px !important;
 }
+
+.title {
+  font-size: 32px;
+  line-height: 130%;
+  margin: 0 0 26px;
+  font-weight: 400;
+  color: $black;
+}
+
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
