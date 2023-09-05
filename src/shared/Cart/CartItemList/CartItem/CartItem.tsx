@@ -85,7 +85,7 @@ export function CartItem({ item }: ICartItemProps) {
           actions: [
             {
               action: ECartActionTypes.removeLineItem,
-              lineItemId: item.id
+              lineItemId: item.lineItemId
             }
           ]
         }

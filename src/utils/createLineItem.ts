@@ -11,7 +11,8 @@ export function createLineItem(item: LineItem): ILineItem {
 
   return {
     discountedPrice: getFormattedPrice({ price: item.price.discounted?.value.centAmount }),
-    id: item.id,
+    lineItemId: item.id,
+    id: item.productId,
     images: {
       preview: item.variant.images?.find((image) => image.label === EImages.preview) || imageEmpty,
       slider:

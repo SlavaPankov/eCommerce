@@ -2,6 +2,7 @@ import { IImage } from './IImage';
 
 export interface ILineItem {
   id: string;
+  lineItemId: string;
   name: string;
   key: string;
   images?: {
