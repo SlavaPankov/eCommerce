@@ -3,7 +3,8 @@ import armchair from '../assets/images/armchair.png';
 import bed from '../assets/images/bed.png';
 import dresser from '../assets/images/dresser.png';
 import chair from '../assets/images/chair.png';
+import tables from '../assets/images/tables.png';
 
 export function getCategoriesImages(): Array<string> {
-  return [sofa, armchair, bed, dresser, chair];
+  return [sofa, armchair, bed, dresser, chair, tables];
 }

@@ -1,3 +1,3 @@
-export enum EActionTypes {
+export enum ECartActionTypes {
   addLineItem = 'addLineItem'
 }

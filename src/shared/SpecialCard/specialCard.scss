@@ -9,6 +9,12 @@
   justify-content: center;
   height: 100%;
 
+  transition: box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.1);
+  }
+
   & button {
     align-self: flex-start;
   }

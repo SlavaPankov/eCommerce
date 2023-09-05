@@ -5,6 +5,7 @@ import { SpecialsList } from './SpecialsList';
 import { BaseHeading } from '../BaseHeading';
 import styles from './specialsListContainer.scss';
 import { BaseRoundButton } from '../BaseRoundButton';
+import { SkeletonCard } from '../SkeletonCard';
 
 export function SpecialsListContainer() {
   const { specials, loading } = useSpecialsData();
@@ -40,12 +41,7 @@ export function SpecialsListContainer() {
           <BaseHeading textContent="Специальные предложения" />
           <ul className={styles.skeletonList}>
             {loadingList.map((item, index) => (
-              <li className={styles.item} key={index}>
-                <div className={styles.item_preview}></div>
-                <div className={styles.item_title}></div>
-                <div className={styles.item_price}></div>
-                <div className={styles.item_button}></div>
-              </li>
+              <SkeletonCard key={index} />
             ))}
           </ul>
         </div>

@@ -5,7 +5,7 @@ import { BaseButton } from '../BaseButton';
 import { EBaseButtonMode } from '../../types/enums/EBaseButtonMode';
 import { useAppDispatch, useAppSelector } from '../../hooks/storeHooks';
 import { ICartAction } from '../../types/interfaces/ICartAction';
-import { EActionTypes } from '../../types/enums/EActionTypes';
+import { ECartActionTypes } from '../../types/enums/ECartActionTypes';
 import { addLineItemRequestAsync } from '../../store/cart/cartSlice';
 import { IImage } from '../../types/interfaces/IImage';
 
@@ -37,7 +37,7 @@ export function SpecialCard({
 
   const handleClick = () => {
     const addAction: ICartAction = {
-      action: EActionTypes.addLineItem,
+      action: ECartActionTypes.addLineItem,
       productId: id,
       variantId
     };
@@ -54,14 +54,16 @@ export function SpecialCard({
   return (
     <article className={styles.card}>
       <span className={styles.discount}>- {discount}</span>
-      <img
-        className={styles.image}
-        src={imagePreview.url}
-        width={imagePreview.dimensions?.w}
-        height={imagePreview.dimensions?.h}
-        alt={title}
-      />
-      <Link to="#" data-key={productKey}>
+      <Link to={`/product/${productKey}`}>
+        <img
+          className={styles.image}
+          src={imagePreview.url}
+          width={imagePreview.dimensions?.w}
+          height={imagePreview.dimensions?.h}
+          alt={title}
+        />
+      </Link>
+      <Link to={`/product/${productKey}`}>
         <h2 className={styles.title}>
           {title
             .split(' ')

@@ -1,0 +1,33 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.button {
+  padding: 6px 9px;
+  border: 2px solid $primary;
+  border-radius: 10px;
+  font-size: 16px;
+  line-height: 100%;
+  font-weight: 600;
+  color: $primary;
+  background-color: transparent;
+  transition:
+    border-color 0.3s ease-in-out,
+    background-color 0.3s ease-in-out,
+    color 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $primary;
+    color: $white;
+  }
+
+  &_active {
+    background-color: $primary_shade;
+    border-color: $primary_shade;
+    color: $white;
+  }
+}

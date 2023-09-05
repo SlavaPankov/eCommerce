@@ -1,0 +1,28 @@
+@import '../../../styles/mixins/breakpoints';
+
+.products {
+  max-width: 100%;
+  width: 100%;
+
+  & ul {
+    grid-template-columns: repeat(3, minmax(296px, 1fr));
+
+    @include tablet {
+      grid-template-columns: repeat(auto-fill, minmax(296px, 1fr));
+    }
+  }
+}
+
+.list {
+  margin: 0 0 32px;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(296px, 1fr));
+  gap: 32px;
+  list-style: none;
+}
+
+.wrapper {
+  height: 100%;
+}
