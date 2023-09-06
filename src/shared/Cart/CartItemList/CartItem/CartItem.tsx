@@ -30,7 +30,7 @@ export function CartItem({ item }: ICartItemProps) {
             {
               action: ECartActionTypes.changeLineItemQuantity,
               quantity: newQuantity,
-              lineItemId: item.id
+              lineItemId: item.lineItemId
             }
           ]
         }

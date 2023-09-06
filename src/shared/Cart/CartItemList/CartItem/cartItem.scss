@@ -1,3 +1,5 @@
+@import '../../../../styles/mixins/breakpoints';
+
 .listItem {
   &:not(:last-child) {
     padding-bottom: 30px;
@@ -7,11 +9,33 @@
 
 .item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+
+  @include tablet {
+    display: grid;
+    align-items: center;
+    row-gap: 10px;
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
 
 .imageLink {
   margin-right: 30px;
+
+  @include tablet {
+    grid-area: 1 / 1 / 3 / 3;
+  }
+
+  @include mobile {
+    grid-area: 1 / 1 / 2 / 4;
+    margin-right: 0;
+  }
+
+  & img {
+    @include tablet {
+      width: 250px;
+    }
+  }
 }
 
 .title {
@@ -22,6 +46,10 @@
     font-weight: 400;
     color: $black;
     transition: color 0.3s ease-in-out;
+
+    @include mobile {
+      font-size: 18px;
+    }
 
     &:hover {
       color: $primary;
@@ -69,6 +97,15 @@
   align-items: center;
   gap: 15px;
   margin-left: auto;
+
+  @include tablet {
+    margin: 0;
+    grid-area: 2 / 3 / 3 / 6;
+  }
+
+  @include mobile {
+    grid-area: 3 / 1 / 4 / 6;
+  }
 }
 
 .price {
@@ -88,6 +125,12 @@
 
 .delete {
   cursor: pointer;
+
+  @include tablet {
+    grid-area: 1 / 6 / 4 / 7;
+    align-self: center;
+    text-align: right;
+  }
 
   & path {
     transition: fill 0.3s ease-in-out;
@@ -110,4 +153,12 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
+
+  @include tablet {
+    grid-area: 1 / 3 / 2 / 6;
+  }
+
+  @include mobile {
+    grid-area: 2 / 1 / 3 / 6;
+  }
 }
