@@ -6,7 +6,7 @@ import { useAppSelector } from '../../../../../hooks/storeHooks';
 import { ICart } from '../../../../../types/interfaces/ICart';
 import { ERoutes } from '../../../../../types/enums/ERoutes';
 
-export function Cart() {
+export function HeaderCart() {
   const { lineItems } = useAppSelector<ICart>((state) => state.cart.cart);
 
   return (
