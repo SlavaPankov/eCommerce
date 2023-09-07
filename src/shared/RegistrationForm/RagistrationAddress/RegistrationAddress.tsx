@@ -168,7 +168,7 @@ export function RegistrationAddress({
 
   return (
     <div className={styles.address}>
-      {index !== 0 ? (
+      {index > 0 ? (
         <span className={styles.cross} ref={ref} onClick={handleClickCross}>
           <CrossIcon />
         </span>
