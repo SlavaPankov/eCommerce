@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './productInfo.scss';
 import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
 import { RatingIcon } from '../../Icons';
@@ -25,7 +25,17 @@ export function ProductInfo({
 }: IProductInfoProps) {
   const dispatch = useAppDispatch();
   const { cart } = useAppSelector((state) => state.cart);
-  const handleClick = () => {
+  const [isProductInCart, setIsProductInCart] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (cart.lineItems.length === 0) {
+      return;
+    }
+
+    setIsProductInCart(cart.lineItems.filter((item) => item.id === id).length > 0);
+  }, [cart]);
+
+  const handleRemoveClick = () => {
     dispatch(
       updateCartRequestAsync({
         cartId: cart.id,
@@ -33,15 +43,37 @@ export function ProductInfo({
           version: cart.version,
           actions: [
             {
-              action: ECartActionTypes.addLineItem,
-              productId: id,
-              variantId
+              action: ECartActionTypes.removeLineItem,
+              lineItemId: cart.lineItems.find((item) => item.id === id)?.lineItemId || ''
             }
           ]
         }
       })
     );
   };
+
+  const handleClick = () => {
+    if (isProductInCart) {
+      handleRemoveClick();
+    } else {
+      dispatch(
+        updateCartRequestAsync({
+          cartId: cart.id,
+          payload: {
+            version: cart.version,
+            actions: [
+              {
+                action: ECartActionTypes.addLineItem,
+                productId: id,
+                variantId
+              }
+            ]
+          }
+        })
+      );
+    }
+  };
+
   return (
     <div className={styles.product_info}>
       <div className={styles.rating}>
@@ -59,7 +91,10 @@ export function ProductInfo({
           </>
         )}
       </div>
-      <BaseButton onClick={handleClick} textContent="Добавить в корзину" />
+      <BaseButton
+        onClick={handleClick}
+        textContent={isProductInCart ? 'Удалить из корзины' : 'Добавить в корзину'}
+      />
     </div>
   );
 }
