@@ -28,12 +28,8 @@ export function ProductInfo({
   const [isProductInCart, setIsProductInCart] = useState<boolean>(false);
 
   useEffect(() => {
-    if (cart.lineItems.length === 0) {
-      return;
-    }
-
     setIsProductInCart(cart.lineItems.filter((item) => item.id === id).length > 0);
-  }, [cart]);
+  }, [cart, id]);
 
   const handleRemoveClick = () => {
     dispatch(
