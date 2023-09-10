@@ -31,7 +31,7 @@ export function ProductInfo({
     setIsProductInCart(cart.lineItems.filter((item) => item.id === id).length > 0);
   }, [cart, id]);
 
-  const handleRemoveClick = () => {
+  const handleRemoveFromCart = () => {
     dispatch(
       updateCartRequestAsync({
         cartId: cart.id,
@@ -48,27 +48,26 @@ export function ProductInfo({
     );
   };
 
-  const handleClick = () => {
-    if (isProductInCart) {
-      handleRemoveClick();
-    } else {
-      dispatch(
-        updateCartRequestAsync({
-          cartId: cart.id,
-          payload: {
-            version: cart.version,
-            actions: [
-              {
-                action: ECartActionTypes.addLineItem,
-                productId: id,
-                variantId
-              }
-            ]
-          }
-        })
-      );
-    }
+  const handleAddToCart = () => {
+    dispatch(
+      updateCartRequestAsync({
+        cartId: cart.id,
+        payload: {
+          version: cart.version,
+          actions: [
+            {
+              action: ECartActionTypes.addLineItem,
+              productId: id,
+              variantId
+            }
+          ]
+        }
+      })
+    );
   };
+
+  const buttonText = isProductInCart ? 'Удалить из корзины' : 'Добавить в корзину';
+  const handleClick = isProductInCart ? handleRemoveFromCart : handleAddToCart;
 
   return (
     <div className={styles.product_info}>
@@ -87,10 +86,7 @@ export function ProductInfo({
           </>
         )}
       </div>
-      <BaseButton
-        onClick={handleClick}
-        textContent={isProductInCart ? 'Удалить из корзины' : 'Добавить в корзину'}
-      />
+      <BaseButton onClick={handleClick} textContent={buttonText} />
     </div>
   );
 }
