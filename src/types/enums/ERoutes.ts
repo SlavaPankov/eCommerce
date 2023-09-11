@@ -8,5 +8,6 @@ export enum ERoutes {
   product = '/product/:id',
   cart = '/cart',
   search = '/search',
+  about = '/about-us',
   all = '*'
 }

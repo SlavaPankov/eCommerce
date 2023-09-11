@@ -1,0 +1,133 @@
+@import '../../styles/mixins/breakpoints';
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+}
+
+.header {
+  color: $black;
+  font-size: 32px;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+}
+
+.subtitle {
+  color: $black;
+  font-size: 24px;
+  font-weight: 400;
+  padding: 0;
+  margin: 30px 0 15px 0;
+  text-align: left;
+}
+
+.link {
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 700;
+  color: $primary;
+  text-decoration: underline;
+}
+
+.logo {
+  width: 100px;
+  position: absolute;
+  top: 0;
+  right: 15px;
+
+  @include big-desktop {
+    right: 36px;
+  }
+
+  @include small-tablet {
+    right: 72px;
+  }
+
+  @include mobile {
+    right: 16px;
+  }
+}
+
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+
+  @include tablet {
+    gap: 7px;
+  }
+
+  @include small-tablet {
+    flex-direction: column;
+  }
+}
+
+.text,
+.list {
+  color: $grey_shade;
+  font-size: 16px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  margin: -10px 0 50px;
+
+  &__item {
+    padding: 10px 0;
+    position: relative;
+
+    @include mobile {
+      max-width: 80%;
+    }
+  }
+
+  &__item:before {
+    content: '✓';
+    margin-right: 10px;
+  }
+
+  &__item:nth-child(1) .author,
+  &__item:nth-child(4) .author,
+  &__item:nth-child(7) .author {
+    color: $primary;
+    background-color: #cdb8e2;
+  }
+
+  &__item:nth-child(2) .author,
+  &__item:nth-child(6) .author {
+    color: $secondary;
+    background-color: #f7d9c3;
+  }
+
+  &__item:nth-child(3) .author,
+  &__item:nth-child(5) .author {
+    color: green;
+    background-color: $green_input;
+  }
+
+  & .author {
+    border-radius: 10px;
+    padding: 5px 10px;
+    margin-left: 7px;
+    position: absolute;
+    top: 0;
+    font-size: 12px;
+
+    @include mobile {
+      top: 10px;
+      right: -50px;
+    }
+  }
+
+  @include small-tablet {
+    padding-left: 0;
+  }
+}

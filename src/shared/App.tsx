@@ -19,6 +19,7 @@ import { SearchPage } from '../pages/SearchPage';
 import { Layout } from './Layout';
 import { ProductPage } from '../pages/ProductPage';
 import { categoriesAsyncRequest } from '../store/categories/categoriesSlice';
+import { AboutUs } from '../pages/AboutUs';
 
 export const routeObject = createRoutesFromElements(
   <Route path={ERoutes.main} element={<Layout />}>
@@ -40,6 +41,12 @@ export const routeObject = createRoutesFromElements(
         path={ERoutes.person}
         element={<UserProfile />}
         handle={{ crumb: () => 'Личный кабинет' }}
+      />
+      <Route
+        index={true}
+        path={ERoutes.about}
+        element={<AboutUs />}
+        handle={{ crumb: () => 'О нас' }}
       />
       <Route path={ERoutes.catalog} element={<CatalogPage />} handle={{ crumb: () => 'Каталог' }}>
         <Route
