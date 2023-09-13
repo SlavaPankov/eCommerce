@@ -1,0 +1,70 @@
+@import '../../../styles/mixins/breakpoints';
+
+.container {
+  max-width: 25%;
+  width: 100%;
+  padding: 20px 10px;
+  border: 1px solid $primary;
+  border-radius: 10px;
+
+  @include tablet {
+    max-width: 100%;
+  }
+}
+
+.discount {
+  padding-bottom: 10px;
+  border-bottom: 1px solid $grey_light;
+  font-size: 18px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+
+  &_value {
+    font-weight: 700;
+  }
+}
+
+.general {
+  padding-top: 15px;
+  margin-bottom: 26px;
+}
+
+.total {
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $grey;
+  margin-bottom: 20px;
+}
+
+.totalPrice {
+  font-size: 32px;
+  line-height: 130%;
+  font-weight: 700;
+  color: $black;
+}
+
+.prices {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  @include tablet {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  @include mobile {
+    flex-wrap: wrap;
+  }
+}
+
+.oldPrice {
+  font-size: 20px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $grey;
+  text-decoration: line-through;
+}

@@ -1,0 +1,71 @@
+@import '../../styles/mixins/breakpoints';
+
+.container {
+  padding-bottom: 70px !important;
+}
+
+.title {
+  font-size: 32px;
+  line-height: 130%;
+  margin: 0 0 26px;
+  font-weight: 400;
+  color: $black;
+  max-width: calc(75% - 32px);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  @include tablet {
+    max-width: 100%;
+  }
+
+  & span {
+    font-size: 14px;
+    line-height: 130%;
+    text-decoration: underline;
+    color: $primary;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+
+    &:hover {
+      color: $primary_shade;
+    }
+  }
+}
+
+.wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+
+  @include tablet {
+    flex-wrap: wrap;
+  }
+}
+
+.modal_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+  justify-content: center;
+  max-width: 500px;
+  width: 100%;
+  padding: 25px;
+  border-radius: 10px;
+  background-color: $white;
+}
+
+.modal_text {
+  font-size: 24px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}

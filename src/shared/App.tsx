@@ -20,6 +20,7 @@ import { Layout } from './Layout';
 import { ProductPage } from '../pages/ProductPage';
 import { categoriesAsyncRequest } from '../store/categories/categoriesSlice';
 import { AboutUs } from '../pages/AboutUs';
+import { CartPage } from '../pages/CartPage';
 
 export const routeObject = createRoutesFromElements(
   <Route path={ERoutes.main} element={<Layout />}>
@@ -62,6 +63,12 @@ export const routeObject = createRoutesFromElements(
         path={ERoutes.search}
         element={<SearchPage />}
         handle={{ crumb: () => 'Результаты поиска' }}
+      />
+      <Route
+        index={true}
+        path={ERoutes.cart}
+        element={<CartPage />}
+        handle={{ crumb: () => 'Корзина' }}
       />
       <Route
         index={true}

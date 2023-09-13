@@ -1,0 +1,16 @@
+@import '../../../styles/mixins/breakpoints';
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  max-width: 75%;
+  width: 100%;
+
+  @include tablet {
+    max-width: 100%;
+  }
+}

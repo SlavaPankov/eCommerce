@@ -14,3 +14,4 @@ export * from './ConfirmIcon/ConfirmIcon';
 export * from './EditIcon/EditIcon';
 export * from './ThumbIcon/ThumbIcon';
 export * from './SaveIcon/SaveIcon';
+export * from './TrashIcon/TrashIcon';
