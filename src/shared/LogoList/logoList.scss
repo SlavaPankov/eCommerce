@@ -1,18 +1,19 @@
 @import '../../styles/mixins/breakpoints';
 
 .list {
-  display: flex;
-  justify-content: space-evenly;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  justify-items: center;
   width: 100%;
   gap: 20px;
+  margin-bottom: 30px !important;
 
   @include small-tablet {
-    gap: 7px;
+    grid-template-columns: repeat(3, 1fr);
   }
 
   @include mobile {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
