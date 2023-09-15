@@ -87,7 +87,13 @@ export const updateCartRequestAsync = createAsyncThunk(
         })
         .execute()
         .then(({ body }): ICart => createCartFromResponse(body))
-        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+        .catch(({ body, message }) => {
+          if (body) {
+            rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
     } catch (error) {
       let message = 'Unknown Error';
       if (error instanceof Error) {
@@ -109,6 +115,7 @@ export const cartSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(createCartRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(createCartRequestAsync.fulfilled, (state, action) => {
@@ -123,6 +130,7 @@ export const cartSlice = createSlice({
 
     builder.addCase(getActiveCartRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(getActiveCartRequestAsync.fulfilled, (state, action) => {
@@ -137,6 +145,7 @@ export const cartSlice = createSlice({
 
     builder.addCase(updateCartRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(updateCartRequestAsync.fulfilled, (state, action) => {
