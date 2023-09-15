@@ -66,7 +66,7 @@ export function ProductInfo({
     );
   };
 
-  const buttonText = isProductInCart ? 'Удалить из корзины' : 'Добавить в корзину';
+  const buttonText = isProductInCart ? 'Удалить из корзины' : 'В корзину';
   const handleClick = isProductInCart ? handleRemoveFromCart : handleAddToCart;
 
   return (
