@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styles from './productInfo.scss';
 import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
-import { RatingIcon } from '../../Icons';
+import { RatingIcon, ElephantIcon } from '../../Icons';
 import { BaseButton } from '../../BaseButton';
 import { ECartActionTypes } from '../../../types/enums/ECartActionTypes';
 import { updateCartRequestAsync } from '../../../store/cart/cartSlice';
+import { Modal } from '../../Modal';
 
 interface IProductInfoProps {
   name: string;
@@ -26,6 +27,8 @@ export function ProductInfo({
   const dispatch = useAppDispatch();
   const { cart } = useAppSelector((state) => state.cart);
   const [isProductInCart, setIsProductInCart] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>('');
 
   useEffect(() => {
     setIsProductInCart(cart.lineItems.filter((item) => item.id === id).length > 0);
@@ -46,6 +49,8 @@ export function ProductInfo({
         }
       })
     );
+    setShowModal(true);
+    setModalMessage(`${name} успешно удалён из корзины`);
   };
 
   const handleAddToCart = () => {
@@ -64,6 +69,8 @@ export function ProductInfo({
         }
       })
     );
+    setShowModal(true);
+    setModalMessage(`${name} успешно добавлен в корзину`);
   };
 
   const buttonText = isProductInCart ? 'Удалить из корзины' : 'В корзину';
@@ -87,6 +94,15 @@ export function ProductInfo({
         )}
       </div>
       <BaseButton onClick={handleClick} textContent={buttonText} />
+
+      {showModal && (
+        <Modal onClose={() => setShowModal(false)}>
+          <div className={styles.modal}>
+            <ElephantIcon />
+            <span className={styles.modal_text}>{modalMessage}</span>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
