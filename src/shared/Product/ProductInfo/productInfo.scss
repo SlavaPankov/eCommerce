@@ -73,15 +73,15 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  max-width: 100%;
-  border-radius: 16px;
-  padding: 16px;
   text-align: center;
-  background-color: $white;
-  color: #333;
-  font-size: 24px;
+  max-width: 100%;
+  gap: 16px;
   margin: 0 auto;
+  padding: 16px;
+  border-radius: 16px;
+  background-color: $white;
+  font-size: 24px;
+  color: #333;
 
   & svg {
     width: 100%;
@@ -90,5 +90,5 @@
 
 .modal_text {
   max-width: 300px;
-  margin: 0 20px;
+  margin: 0 16px;
 }
