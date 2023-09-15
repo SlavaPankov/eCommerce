@@ -38,9 +38,9 @@ export function MiddleNavigation() {
           </a>
         </li>
         <li>
-          <a className={styles.link} href="#">
-            <span>Контакты</span>
-          </a>
+          <Link className={styles.link} to={ERoutes.about}>
+            <span>О нас</span>
+          </Link>
         </li>
       </ul>
     </nav>
