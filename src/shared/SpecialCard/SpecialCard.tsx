@@ -32,7 +32,7 @@ export function SpecialCard({
   const { cart } = useAppSelector((state) => state.cart);
   const discount: string = (
     Number(price.replace(/\s/g, '')) - Number(discountedPrice.replace(/\s/g, ''))
-  ).toLocaleString();
+  ).toLocaleString('ru-RU');
 
   const handleClick = () => {
     dispatch(
