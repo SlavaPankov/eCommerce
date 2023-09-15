@@ -25,14 +25,23 @@ export function ProductInfo({
   variantId
 }: IProductInfoProps) {
   const dispatch = useAppDispatch();
-  const { cart } = useAppSelector((state) => state.cart);
+  const { cart, error: cartError, loading } = useAppSelector((state) => state.cart);
   const [isProductInCart, setIsProductInCart] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [modalMessage, setModalMessage] = useState<string>('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setIsProductInCart(cart.lineItems.filter((item) => item.id === id).length > 0);
   }, [cart, id]);
+
+  useEffect(() => {
+    if (!cartError) {
+      setError('');
+      return;
+    }
+
+    setError('Не удалось добавить в корзину');
+  }, [cartError]);
 
   const handleRemoveFromCart = () => {
     dispatch(
@@ -48,9 +57,13 @@ export function ProductInfo({
           ]
         }
       })
-    );
-    setShowModal(true);
-    setModalMessage(`${name} успешно удалён из корзины`);
+    ).then((result) => {
+      if (result.type.includes('reject')) {
+        return;
+      }
+
+      setShowModal(true);
+    });
   };
 
   const handleAddToCart = () => {
@@ -68,9 +81,13 @@ export function ProductInfo({
           ]
         }
       })
-    );
-    setShowModal(true);
-    setModalMessage(`${name} успешно добавлен в корзину`);
+    ).then((result) => {
+      if (result.type.includes('reject')) {
+        return;
+      }
+
+      setShowModal(true);
+    });
   };
 
   const buttonText = isProductInCart ? 'Удалить из корзины' : 'В корзину';
@@ -93,13 +110,16 @@ export function ProductInfo({
           </>
         )}
       </div>
-      <BaseButton onClick={handleClick} textContent={buttonText} />
+      {error && <div className={styles.error}>{error}</div>}
+      <BaseButton isDisabled={loading} onClick={handleClick} textContent={buttonText} />
 
-      {showModal && (
+      {showModal && !error && (
         <Modal onClose={() => setShowModal(false)}>
           <div className={styles.modal}>
             <ElephantIcon />
-            <span className={styles.modal_text}>{modalMessage}</span>
+            <span className={styles.modal_text}>
+              {name} {!isProductInCart ? 'успешно удалён из корзины' : 'успешно добавлен в корзину'}
+            </span>
           </div>
         </Modal>
       )}

@@ -92,3 +92,11 @@
   max-width: 300px;
   margin: 0 16px;
 }
+
+.error {
+  font-size: 14px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $red_input;
+  margin-bottom: 10px;
+}
