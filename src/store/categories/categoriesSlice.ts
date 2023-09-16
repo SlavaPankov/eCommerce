@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Category, ErrorResponse } from '@commercetools/platform-sdk';
+import { Category } from '@commercetools/platform-sdk';
 import { ICategory } from '../../types/interfaces/ICategory';
 import { getCategoriesImages } from '../../utils/getCategoriesImages';
 import noImage from '../../assets/images/noPhoto.png';
@@ -23,45 +23,57 @@ const initialState: ICategoriesState = {
 export const categoriesAsyncRequest = createAsyncThunk(
   'categories/getCategories',
   async (arg, { rejectWithValue }) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .categories()
-      .get()
-      .execute()
-      .then(({ body: { results } }): Array<ICategory> => {
-        const categories: Array<ICategory> = results
-          .filter((item: Category) => !item.parent)
-          .map((category: Category, index: number) => ({
-            id: category.id,
-            name: category.name.ru,
-            slug: category.slug.ru,
-            externalId: category.externalId,
-            imageSrc: getCategoriesImages()[index] || noImage,
-            subcategories: []
-          }));
-        const subcategories: Array<ISubcategory> = results
-          .filter((item: Category) => item.parent)
-          .map((category: Category) => ({
-            id: category.id,
-            parentId: category.parent?.id || '',
-            name: category.name.ru,
-            slug: category.slug.ru,
-            externalId: category.externalId
-          }));
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .categories()
+        .get()
+        .execute()
+        .then(({ body: { results } }): Array<ICategory> => {
+          const categories: Array<ICategory> = results
+            .filter((item: Category) => !item.parent)
+            .map((category: Category, index: number) => ({
+              id: category.id,
+              name: category.name.ru,
+              slug: category.slug.ru,
+              externalId: category.externalId,
+              imageSrc: getCategoriesImages()[index] || noImage,
+              subcategories: []
+            }));
+          const subcategories: Array<ISubcategory> = results
+            .filter((item: Category) => item.parent)
+            .map((category: Category) => ({
+              id: category.id,
+              parentId: category.parent?.id || '',
+              name: category.name.ru,
+              slug: category.slug.ru,
+              externalId: category.externalId
+            }));
 
-        for (let i = 0; i < categories.length; i += 1) {
-          for (let j = 0; j < subcategories.length; j += 1) {
-            if (subcategories[j].parentId === categories[i].id) {
-              categories[i].subcategories.push(subcategories[j]);
+          for (let i = 0; i < categories.length; i += 1) {
+            for (let j = 0; j < subcategories.length; j += 1) {
+              if (subcategories[j].parentId === categories[i].id) {
+                categories[i].subcategories.push(subcategories[j]);
+              }
             }
           }
-        }
 
-        return categories;
-      })
-      .catch((error: ErrorResponse) => {
-        return rejectWithValue(error.message);
-      });
+          return categories;
+        })
+        .catch(({ body, message }) => {
+          if (body) {
+            return rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
   }
 );
 
@@ -72,6 +84,7 @@ export const categoriesSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(categoriesAsyncRequest.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(categoriesAsyncRequest.fulfilled, (state, action) => {

@@ -31,19 +31,31 @@ const initialState: IProductState = {
 export const getProductByKeyAsyncRequest = createAsyncThunk(
   'product/getProductByKey',
   async (key: string, { rejectWithValue }) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .productProjections()
-      .withKey({ key })
-      .get()
-      .execute()
-      .then(({ body }) => {
-        const [result] = [...createProductsFromResponse([body])];
-        return result;
-      })
-      .catch((error: Error) => {
-        return rejectWithValue(error.message);
-      });
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .productProjections()
+        .withKey({ key })
+        .get()
+        .execute()
+        .then(({ body }) => {
+          const [result] = [...createProductsFromResponse([body])];
+          return result;
+        })
+        .catch(({ body, message }) => {
+          if (body) {
+            return rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
   }
 );
 
@@ -54,6 +66,7 @@ const productSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getProductByKeyAsyncRequest.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
     builder.addCase(getProductByKeyAsyncRequest.rejected, (state, action) => {
       state.loading = false;
