@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './productInfo.scss';
 import { useAppDispatch, useAppSelector } from '../../../hooks/storeHooks';
-import { RatingIcon } from '../../Icons';
+import { RatingIcon, ElephantIcon } from '../../Icons';
 import { BaseButton } from '../../BaseButton';
 import { ECartActionTypes } from '../../../types/enums/ECartActionTypes';
 import { updateCartRequestAsync } from '../../../store/cart/cartSlice';
+import { Modal } from '../../Modal';
 
 interface IProductInfoProps {
   name: string;
@@ -24,8 +25,48 @@ export function ProductInfo({
   variantId
 }: IProductInfoProps) {
   const dispatch = useAppDispatch();
-  const { cart } = useAppSelector((state) => state.cart);
-  const handleClick = () => {
+  const { cart, error: cartError, loading } = useAppSelector((state) => state.cart);
+  const [isProductInCart, setIsProductInCart] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setIsProductInCart(cart.lineItems.filter((item) => item.id === id).length > 0);
+  }, [cart, id]);
+
+  useEffect(() => {
+    if (!cartError) {
+      setError('');
+      return;
+    }
+
+    setError('Не удалось добавить в корзину');
+  }, [cartError]);
+
+  const handleRemoveFromCart = () => {
+    dispatch(
+      updateCartRequestAsync({
+        cartId: cart.id,
+        payload: {
+          version: cart.version,
+          actions: [
+            {
+              action: ECartActionTypes.removeLineItem,
+              lineItemId: cart.lineItems.find((item) => item.id === id)?.lineItemId || ''
+            }
+          ]
+        }
+      })
+    ).then((result) => {
+      if (result.type.includes('reject')) {
+        return;
+      }
+
+      setShowModal(true);
+    });
+  };
+
+  const handleAddToCart = () => {
     dispatch(
       updateCartRequestAsync({
         cartId: cart.id,
@@ -40,8 +81,18 @@ export function ProductInfo({
           ]
         }
       })
-    );
+    ).then((result) => {
+      if (result.type.includes('reject')) {
+        return;
+      }
+
+      setShowModal(true);
+    });
   };
+
+  const buttonText = isProductInCart ? 'Удалить из корзины' : 'В корзину';
+  const handleClick = isProductInCart ? handleRemoveFromCart : handleAddToCart;
+
   return (
     <div className={styles.product_info}>
       <div className={styles.rating}>
@@ -59,7 +110,19 @@ export function ProductInfo({
           </>
         )}
       </div>
-      <BaseButton onClick={handleClick} textContent="Добавить в корзину" />
+      {error && <div className={styles.error}>{error}</div>}
+      <BaseButton isDisabled={loading} onClick={handleClick} textContent={buttonText} />
+
+      {showModal && !error && (
+        <Modal onClose={() => setShowModal(false)}>
+          <div className={styles.modal}>
+            <ElephantIcon />
+            <span className={styles.modal_text}>
+              {name} {!isProductInCart ? 'успешно удалён из корзины' : 'успешно добавлен в корзину'}
+            </span>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
