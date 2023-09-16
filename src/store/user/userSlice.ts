@@ -78,8 +78,12 @@ export const userSignUpRequestAsync = createAsyncThunk<
           cart
         };
       })
-      .catch(({ body }) => {
-        return rejectWithValue(body.errors?.[0].code);
+      .catch(({ body, message }) => {
+        if (body) {
+          return rejectWithValue(body.errors?.[0].code);
+        }
+
+        throw new Error(message);
       });
   } catch (error) {
     let message = 'Unknown Error';
@@ -118,8 +122,12 @@ export const userSignInRequestAsync = createAsyncThunk<
           };
         }
       )
-      .catch(({ body }) => {
-        return rejectWithValue(body.errors?.[0].code);
+      .catch(({ body, message }) => {
+        if (body) {
+          return rejectWithValue(body.errors?.[0].code);
+        }
+
+        throw new Error(message);
       });
   } catch (error) {
     let message = 'Unknown Error';
@@ -140,7 +148,13 @@ export const getMeRequestAsync = createAsyncThunk(
         .get()
         .execute()
         .then(({ body }) => getCustomerFromResponse(body))
-        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+        .catch(({ body, message }) => {
+          if (body) {
+            return rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
     } catch (error) {
       let message = 'Unknown Error';
       if (error instanceof Error) {
@@ -161,7 +175,13 @@ export const updateMeRequestAsync = createAsyncThunk(
         .post({ body: { ...payload } })
         .execute()
         .then(({ body }) => getCustomerFromResponse(body))
-        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+        .catch(({ body, message }) => {
+          if (body) {
+            rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
     } catch (error) {
       let message = 'Unknown Error';
       if (error instanceof Error) {
@@ -187,7 +207,13 @@ export const changePasswordRequestAsync = createAsyncThunk(
         })
         .execute()
         .then(({ body }) => getCustomerFromResponse(body))
-        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+        .catch(({ body, message }) => {
+          if (body) {
+            return rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
     } catch (error) {
       let message = 'Unknown Error';
       if (error instanceof Error) {
@@ -224,6 +250,7 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(userSignUpRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(userSignUpRequestAsync.fulfilled, (state, action) => {
@@ -245,6 +272,7 @@ export const userSlice = createSlice({
 
     builder.addCase(userSignInRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(userSignInRequestAsync.fulfilled, (state, action) => {
@@ -260,6 +288,7 @@ export const userSlice = createSlice({
 
     builder.addCase(getMeRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(getMeRequestAsync.fulfilled, (state, action) => {
@@ -275,6 +304,7 @@ export const userSlice = createSlice({
 
     builder.addCase(updateMeRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(updateMeRequestAsync.fulfilled, (state, action) => {
@@ -290,6 +320,7 @@ export const userSlice = createSlice({
 
     builder.addCase(changePasswordRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(changePasswordRequestAsync.fulfilled, (state, action) => {

@@ -8,13 +8,17 @@ interface IBaseButtonProps {
   onClick?: () => void;
   mode?: EBaseButtonMode;
   isDisabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
+  form?: string;
 }
 
 export function BaseButton({
   textContent,
   onClick = () => {},
   mode = EBaseButtonMode.primary,
-  isDisabled = false
+  isDisabled = false,
+  type = 'button',
+  form = ''
 }: IBaseButtonProps) {
   const className = classNames({
     [`${styles.primary}`]: mode === EBaseButtonMode.primary,
@@ -22,7 +26,7 @@ export function BaseButton({
   });
 
   return (
-    <button className={className} onClick={onClick} disabled={isDisabled}>
+    <button form={form} type={type} className={className} onClick={onClick} disabled={isDisabled}>
       {textContent}
     </button>
   );

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { IProduct } from '../../types/interfaces/IProduct';
 import { createProductsFromResponse } from '../../utils/createProductsFromResponse';
 import { apiConfig } from '../../cfg/apiConfig';
@@ -45,19 +45,31 @@ interface IProductsRequestProps {
 export const productsRequestAsync = createAsyncThunk(
   'products/getProducts',
   async ({ offset }: IProductsRequestProps, { rejectWithValue }) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .productProjections()
-      .get({
-        queryArgs: {
-          offset
-        }
-      })
-      .execute()
-      .then(({ body: { results } }): Array<IProduct> => createProductsFromResponse(results))
-      .catch(({ body }) => {
-        return rejectWithValue(body.errors?.[0].code);
-      });
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .productProjections()
+        .get({
+          queryArgs: {
+            offset
+          }
+        })
+        .execute()
+        .then(({ body: { results } }): Array<IProduct> => createProductsFromResponse(results))
+        .catch(({ body, message }) => {
+          if (body) {
+            return rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
   }
 );
 
@@ -90,60 +102,54 @@ export const productsFiltersRequestAsync = createAsyncThunk(
     }: IProductsFiltersRequestAsync,
     { rejectWithValue }
   ) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .productProjections()
-      .search()
-      .get({
-        queryArgs: {
-          filter,
-          limit,
-          offset,
-          fuzzy,
-          fuzzyLevel,
-          sort,
-          'text.ru': text
-        }
-      })
-      .execute()
-      .then(
-        ({ body }): IFilteredResults => ({
-          products: createProductsFromResponse(body.results),
-          totalCount: body.total || body.count
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .productProjections()
+        .search()
+        .get({
+          queryArgs: {
+            filter,
+            limit,
+            offset,
+            fuzzy,
+            fuzzyLevel,
+            sort,
+            'text.ru': text
+          }
         })
-      )
-      .catch(({ body }) => {
-        return rejectWithValue(body.errors?.[0].code);
-      });
+        .execute()
+        .then(
+          ({ body }): IFilteredResults => ({
+            products: createProductsFromResponse(body.results),
+            totalCount: body.total || body.count
+          })
+        )
+        .catch(({ body, message }) => {
+          if (body) {
+            return rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
   }
 );
 
 export const productsSlice = createSlice({
   name: 'productSlice',
   initialState,
-  reducers: {
-    productsLoading: (state) => {
-      state.loading = true;
-    },
-
-    productsLoadingSuccess: (state, action: PayloadAction<Array<IProduct>>) => {
-      console.log(action.payload);
-      state.loading = false;
-      state.payload.products.products = action.payload;
-    },
-
-    productsLoadingError: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
-
-    setOffset: (state, action: PayloadAction<number>) => {
-      state.offset += action.payload;
-    }
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(productsRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(productsRequestAsync.fulfilled, (state, action) => {
@@ -160,6 +166,7 @@ export const productsSlice = createSlice({
 
     builder.addCase(productsFiltersRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(productsFiltersRequestAsync.fulfilled, (state, action) => {
@@ -176,7 +183,5 @@ export const productsSlice = createSlice({
     });
   }
 });
-
-export const { setOffset } = productsSlice.actions;
 
 export default productsSlice.reducer;

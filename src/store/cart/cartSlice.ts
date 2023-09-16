@@ -89,7 +89,7 @@ export const updateCartRequestAsync = createAsyncThunk(
         .then(({ body }): ICart => createCartFromResponse(body))
         .catch(({ body, message }) => {
           if (body) {
-            rejectWithValue(body.errors?.[0].code);
+            return rejectWithValue(body.errors?.[0].code);
           }
 
           throw new Error(message);

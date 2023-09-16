@@ -1,13 +1,15 @@
 @import '../../styles/mixins/breakpoints';
 
+.container {
+  padding-bottom: 70px !important;
+}
+
 .form {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   gap: 20px;
-  max-width: 620px;
-  margin: 0 auto;
-  padding-bottom: 70px !important;
+  margin-bottom: 20px;
 
   &__header {
     color: $black;
@@ -59,6 +61,7 @@
   transition: color 0.3s ease-in-out;
   text-decoration: underline;
   cursor: pointer;
+  margin-bottom: 20px;
 
   &:hover {
     color: $primary_light;

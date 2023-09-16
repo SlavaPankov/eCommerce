@@ -18,19 +18,33 @@ const initialState: IDiscountCodeState = {
 export const getDiscountCodeRequestAsync = createAsyncThunk(
   'get/discountCode',
   async (arg, { rejectWithValue }) => {
-    return getApiRoot()
-      .withProjectKey({ projectKey: apiConfig.projectKey })
-      .discountCodes()
-      .get({
-        queryArgs: {
-          where: 'name(ru="First Buy")'
-        }
-      })
-      .execute()
-      .then(({ body: { results } }): string => {
-        return results[0].code;
-      })
-      .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+    try {
+      return await getApiRoot()
+        .withProjectKey({ projectKey: apiConfig.projectKey })
+        .discountCodes()
+        .get({
+          queryArgs: {
+            where: 'name(ru="First Buy")'
+          }
+        })
+        .execute()
+        .then(({ body: { results } }): string => {
+          return results[0].code;
+        })
+        .catch(({ body, message }) => {
+          if (body) {
+            return rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
+    } catch (error) {
+      let message = 'Unknown Error';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      return rejectWithValue(message);
+    }
   }
 );
 
@@ -47,7 +61,13 @@ export const getDiscountCodeByIdRequestAsync = createAsyncThunk(
         .then(({ body }): string => {
           return body.code;
         })
-        .catch(({ body }) => rejectWithValue(body.errors?.[0].code));
+        .catch(({ body, message }) => {
+          if (body) {
+            return rejectWithValue(body.errors?.[0].code);
+          }
+
+          throw new Error(message);
+        });
     } catch (error) {
       let message = 'Unknown Error';
       if (error instanceof Error) {
@@ -65,6 +85,7 @@ export const discountCodeSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getDiscountCodeRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(getDiscountCodeRequestAsync.rejected, (state, action) => {
@@ -79,6 +100,7 @@ export const discountCodeSlice = createSlice({
 
     builder.addCase(getDiscountCodeByIdRequestAsync.pending, (state) => {
       state.loading = true;
+      state.error = '';
     });
 
     builder.addCase(getDiscountCodeByIdRequestAsync.rejected, (state, action) => {
