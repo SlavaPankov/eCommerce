@@ -2,9 +2,9 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper';
 import { IProduct } from '../../../types/interfaces/IProduct';
-import { SpecialCard } from '../../SpecialCard';
 import { IImage } from '../../../types/interfaces/IImage';
 import 'swiper/css';
+import { ProductCard } from '../../ProductCard';
 
 interface ISpecialsListProps {
   list: Array<IProduct>;
@@ -46,14 +46,16 @@ export function SpecialsList({ list }: ISpecialsListProps) {
       }}>
       {list.map((item) => (
         <SwiperSlide key={item.id}>
-          <SpecialCard
-            id={item.id}
-            variantId={item.variantId}
+          <ProductCard
+            productKey={item.key}
+            discountedPrice={item.discountedPrice}
+            rating={item.rating}
             imagePreview={item.images?.preview || imageEmpty}
             title={item.name}
             price={item.price}
-            discountedPrice={item.discountedPrice}
-            productKey={item.key}
+            id={item.id}
+            variantId={item.variantId}
+            mode={'discount'}
           />
         </SwiperSlide>
       ))}
