@@ -9,5 +9,5 @@ export function getFormattedPrice({ price, fractionDigits = 2 }: IGetFormattedPr
   }
   const priceString = price.toString();
 
-  return Number(priceString.slice(0, priceString.length - fractionDigits)).toLocaleString();
+  return Number(priceString.slice(0, priceString.length - fractionDigits)).toLocaleString('ru-RU');
 }

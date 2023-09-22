@@ -19,6 +19,8 @@ import { SearchPage } from '../pages/SearchPage';
 import { Layout } from './Layout';
 import { ProductPage } from '../pages/ProductPage';
 import { categoriesAsyncRequest } from '../store/categories/categoriesSlice';
+import { AboutUs } from '../pages/AboutUs';
+import { CartPage } from '../pages/CartPage';
 
 export const routeObject = createRoutesFromElements(
   <Route path={ERoutes.main} element={<Layout />}>
@@ -41,6 +43,12 @@ export const routeObject = createRoutesFromElements(
         element={<UserProfile />}
         handle={{ crumb: () => 'Личный кабинет' }}
       />
+      <Route
+        index={true}
+        path={ERoutes.about}
+        element={<AboutUs />}
+        handle={{ crumb: () => 'О нас' }}
+      />
       <Route path={ERoutes.catalog} element={<CatalogPage />} handle={{ crumb: () => 'Каталог' }}>
         <Route
           index={true}
@@ -55,6 +63,12 @@ export const routeObject = createRoutesFromElements(
         path={ERoutes.search}
         element={<SearchPage />}
         handle={{ crumb: () => 'Результаты поиска' }}
+      />
+      <Route
+        index={true}
+        path={ERoutes.cart}
+        element={<CartPage />}
+        handle={{ crumb: () => 'Корзина' }}
       />
       <Route
         index={true}
@@ -75,9 +89,11 @@ export function App() {
     dispatch(categoriesAsyncRequest());
 
     dispatch(getActiveCartRequestAsync()).then(({ type }) => {
-      if (type.includes('rejected')) {
-        dispatch(createCartRequestAsync());
+      if (!type.includes('reject')) {
+        return;
       }
+
+      dispatch(createCartRequestAsync());
     });
   }, []);
 

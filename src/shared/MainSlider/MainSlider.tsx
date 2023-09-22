@@ -18,9 +18,7 @@ export function MainSlider() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleClickDiscount = () => {
-    if (!discountCode) {
-      dispatch(getDiscountCodeRequestAsync());
-    }
+    dispatch(getDiscountCodeRequestAsync());
 
     setIsModalOpen(true);
   };

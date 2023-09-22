@@ -85,3 +85,57 @@
   color: $grey_shade;
   text-decoration: line-through;
 }
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  margin: 0 auto;
+  padding: 16px;
+  border-radius: 16px;
+  background-color: $white;
+  font-size: 24px;
+  color: #333;
+
+  & svg {
+    width: 100%;
+  }
+}
+
+.modal_text {
+  max-width: 300px;
+  margin: 0 16px;
+}
+
+.discount {
+  padding: 7px 25px 7px 15px;
+  position: absolute;
+  top: 30px;
+  left: 0;
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: 700;
+  color: $white;
+  background-color: $secondary;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-top: 15px solid $grey_light;
+    border-left: 10px solid $secondary;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-bottom: 15px solid $grey_light;
+    border-left: 10px solid $secondary;
+  }
+}
