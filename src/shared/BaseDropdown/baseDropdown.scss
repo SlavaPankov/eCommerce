@@ -1,0 +1,36 @@
+.container {
+  width: 100%;
+  flex: 1 1 0;
+}
+
+.listContainer {
+  position: relative;
+}
+
+.list {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: fit-content;
+  height: 100%;
+  z-index: 99;
+}
+
+.arrow {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 24px;
+    width: 8px;
+    height: 8px;
+    transform: translateY(-50%) rotate(45deg);
+    border-bottom: 1px solid #a65cf0;
+    border-right: 1px solid #a65cf0;
+    transition: transform 0.3s ease-in-out;
+    z-index: 11;
+  }
+}

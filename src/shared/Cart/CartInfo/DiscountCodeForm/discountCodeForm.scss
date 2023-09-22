@@ -1,0 +1,26 @@
+@import '../../../../styles/mixins/breakpoints';
+
+.discountForm {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 100%;
+  width: 100%;
+  align-items: flex-start;
+
+  & fieldset {
+    width: 100%;
+  }
+
+  @include tablet {
+    max-width: 33%;
+  }
+
+  @include small-tablet {
+    max-width: 50%;
+  }
+
+  @include mobile {
+    max-width: 100%;
+  }
+}

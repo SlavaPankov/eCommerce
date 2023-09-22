@@ -1,0 +1,96 @@
+@import '../../../styles/mixins/breakpoints';
+
+.address {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 100%;
+  width: 100%;
+  padding-bottom: 20px;
+
+  @include small-tablet {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 2px solid $grey_light;
+  }
+
+  & label {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.country_wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  position: relative;
+
+  @include mobile {
+    flex-direction: column;
+  }
+
+  & label:first-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  & > div {
+    max-height: 64px;
+    padding: 6px 18px;
+    border-radius: 10px;
+    font-size: 16px;
+    line-height: 250%;
+    border: 1px solid transparent;
+    background-color: $grey_light;
+    transition:
+      border-color 0.3s ease-in-out,
+      background-color 0.3s ease-in-out;
+  }
+}
+
+.wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+
+  @include mobile {
+    flex-direction: column;
+  }
+}
+
+.cross {
+  position: absolute;
+  top: 0;
+  right: -30px;
+  cursor: pointer;
+}
+
+.list {
+  width: 100%;
+  margin: 0;
+  padding: 18px;
+  list-style: none;
+  background-color: $grey_light;
+}
+
+.item {
+  cursor: pointer;
+}
+
+.type_wrapper {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}

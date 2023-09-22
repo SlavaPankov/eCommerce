@@ -1,0 +1,57 @@
+.link {
+  position: relative;
+  cursor: pointer;
+
+  & svg {
+    position: relative;
+    z-index: 2;
+  }
+
+  & path {
+    transition: fill 0.3s ease-in-out;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -2px;
+    width: calc(100% + 4px);
+    height: 100%;
+    background-color: transparent;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  &:hover {
+    & path {
+      fill: $primary_light;
+    }
+  }
+
+  &:active {
+    & path {
+      fill: $primary_shade;
+    }
+  }
+
+  &:focus {
+    outline: none;
+
+    &::after {
+      background-color: $primary_light;
+    }
+
+    & path {
+      fill: $white;
+    }
+  }
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: auto;
+  transform: none;
+  z-index: 101;
+}

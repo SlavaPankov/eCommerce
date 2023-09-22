@@ -1,0 +1,16 @@
+@import '../../styles/mixins/breakpoints';
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px 32px;
+  padding-bottom: 70px !important;
+
+  @include big-desktop {
+    grid-template-columns: repeat(9, 1fr);
+  }
+
+  @include small-tablet {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}

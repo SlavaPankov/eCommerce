@@ -1,0 +1,43 @@
+@import '../../../styles/mixins/breakpoints';
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 32px;
+
+  @include big-desktop {
+    grid-template-columns: repeat(9, 1fr);
+  }
+
+  @include small-tablet {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.item {
+  grid-column: span 4;
+
+  @include big-desktop {
+    grid-column: span 3;
+  }
+
+  &:nth-child(5n + 1) {
+    grid-column: span 6;
+
+    @include big-desktop {
+      grid-column: span 6;
+    }
+  }
+
+  &:nth-child(5n + 2) {
+    grid-column: span 6;
+
+    @include big-desktop {
+      grid-column: span 3;
+    }
+
+    @include tablet {
+      grid-column: span 3;
+    }
+  }
+}

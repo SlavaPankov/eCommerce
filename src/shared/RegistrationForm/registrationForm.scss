@@ -1,0 +1,120 @@
+@import '../../styles/mixins/breakpoints';
+
+.container {
+  padding-bottom: 70px !important;
+}
+
+.form {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 20px;
+
+  &__header {
+    color: $black;
+    font-size: 2rem;
+    font-weight: 400;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__text {
+    color: $black;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 15px;
+
+    & a {
+      color: $primary;
+      text-decoration: underline;
+      transition: color 0.3s ease-in-out;
+
+      &:hover {
+        color: $primary_light;
+      }
+
+      &:active {
+        color: $primary_shade;
+      }
+    }
+  }
+
+  & label {
+    width: 66%;
+
+    @include small-tablet {
+      width: 100%;
+    }
+  }
+
+  & button {
+    margin-top: 30px;
+  }
+}
+
+.addAddress {
+  font-size: 16px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $primary;
+  transition: color 0.3s ease-in-out;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-bottom: 20px;
+
+  &:hover {
+    color: $primary_light;
+  }
+
+  &:active {
+    color: $primary_shade;
+  }
+}
+
+.address_title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $black;
+}
+
+.address {
+  position: relative;
+  width: 100%;
+  max-width: 66%;
+}
+
+.cross {
+  position: absolute;
+  top: 0;
+  right: -30px;
+  cursor: pointer;
+}
+
+.error {
+  font-size: 14px;
+  line-height: 130%;
+  font-weight: 400;
+  color: $red_input;
+}
+
+.modal {
+  padding: 50px 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 10px;
+  background-color: $white;
+
+  &_heading {
+    margin: 0;
+    font-size: 24px;
+    line-height: 130%;
+    font-weight: 400;
+    color: $black;
+  }
+}

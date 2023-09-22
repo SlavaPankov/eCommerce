@@ -1,0 +1,66 @@
+@import '../../../../styles/mixins/breakpoints';
+
+.form {
+  display: flex;
+  max-width: 100%;
+  width: 100%;
+
+  @include mobile {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.input_wrapper {
+  position: relative;
+  max-width: 761px;
+  width: 100%;
+
+  & input {
+    padding-left: 59px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    @include mobile {
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+  }
+
+  & svg {
+    position: absolute;
+    top: 50%;
+    left: 32px;
+    transform: translateY(-50%);
+  }
+}
+
+.button_wrapper {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+}
+
+.dropdown_wrapper {
+  max-width: 300px;
+  width: 100%;
+
+  @include small-tablet {
+    max-width: 189px;
+  }
+
+  @include mobile {
+    max-width: 100%;
+  }
+}
+
+.dropdown_list {
+  left: 0;
+  width: 100%;
+  transform: none;
+  top: -18px;
+  z-index: 99;
+}

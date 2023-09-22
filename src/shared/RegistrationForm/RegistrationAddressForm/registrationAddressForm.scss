@@ -1,0 +1,13 @@
+.form {
+  position: relative;
+  max-width: 66%;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.cross {
+  position: absolute;
+  top: 0;
+  right: -30px;
+  cursor: pointer;
+}
